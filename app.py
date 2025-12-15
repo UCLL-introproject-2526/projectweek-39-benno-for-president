@@ -3,7 +3,6 @@ def create_main_surface():
     while True == True:
         pygame.display.set_mode(screen_size)
 
-
 # Initialize Pygame
 pygame.init()
 
