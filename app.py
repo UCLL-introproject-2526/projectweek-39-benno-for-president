@@ -1,12 +1,6 @@
 import pygame
-
-
-def create_main_surface():
-    while True:
-        pygame.display.set_mode(screen_size)
-
-def draw_circle_on_surface(surface, color, center, radius):
-    
+from pygame.display import flip
+from time import sleep
 
 # Initialize Pygame
 pygame.init()
@@ -15,8 +9,19 @@ pygame.init()
 screen_size = (1024, 768)
 
 # Create window with given size
+def create_main_surface():
+    return type(pygame.display.set_mode(screen_size))
 
+def buffer():
+    while True:
+        sleep(1/60)
+        flip()
+        
+def render_frame(surface):
+    while True:
+        surface
+        pygame.draw.circle(surface = surface, color = (0,255,255), center = (512, 384), radius = 200)
+        buffer()
 
-pygame.draw(surface = surface, color= color, center = center, radius = radius)
-create_main_surface()
-
+print(create_main_surface())
+# render_frame(pygame.display.set_mode(screen_size))
