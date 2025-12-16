@@ -248,19 +248,26 @@ class Camera:
 
     def update(self, player1, player2): #mouse_pos nog niet gemaakt
         mouse_pos = list(pygame.mouse.get_pos())
-        cam_x = (player1.get_cords()[0] + player2.get_cords()[0] + mouse_pos[0] ) / 3
+        cam_x = (player1.get_cords()[0] + player2.get_cords()[0] + mouse_pos[0] ) / 3 #x & y cordinaat 3hoek spelers &muis
         cam_y = (player1.get_cords()[1] + player2.get_cords()[1] + mouse_pos[1] ) / 3
 
-        self.offset.x = cam_x - self.width / 2
+        self.offset.x = cam_x - self.width / 2      #offset zodat het middelpunt van 2spelers & muis in het midden van camera is
         self.offset.y = cam_y - self.height / 2
 
 
-        # deze self.dist inputs zorgen voor fouten op lijn 246
-        max_dist = max(self.dist([cam_x, cam_y],player1.get_cords()), self.dist(cam_x, cam_y),player1.get_cords(), self.dist(cam_x, cam_y),player1.get_cords())
+        max_dist = max(self.dist((cam_x, cam_y),player1.get_cords()),
+                       self.dist((cam_x, cam_y),player2.get_cords()),
+                       self.dist((cam_x, cam_y),mouse_pos)
+                       )
 
-        target_zoom = 800 / (max_dist + 1)
+        target_zoom = 1200 / (max_dist + 1)
+        #target_zoom = 800 / (max_dist + 1)
 
         self.zoom = max(0.5, min(1.3, target_zoom))
+
+    def apply(self, x, y):          #mapcordinaten naar pccordinaten
+        return ((x - self.offset.x) * self.zoom, (y- self.offset.y) * self.zoom)
+    
 
 #testing -
 
@@ -322,6 +329,7 @@ def main():
     while run:
         # camera
         cam1.update(player1, player2)
+
 
         # animation initialisatie
         movingfront = False
