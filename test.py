@@ -1,24 +1,23 @@
 import pygame
-from pygame.display import flip
-from time import sleep
 
-# Initialize Pygame
-pygame.init()
+def main():
+    pygame.init()
 
-# Tuple representing width and height in pixels
-screen_size = (1024, 768)
+    screen_size = (800,400)
+    screen = pygame.display.set_mode(screen_size)
+    clock = pygame.time.Clock()
 
-# Create window with given size
-def create_main_surface():
-    while True:
-        surface = pygame.display.set_mode(screen_size)
-        pygame.draw.circle(surface = surface, color = (255,255,255), center = (512, 384), radius = 200)
-        buffer()
+    run = True
 
-def buffer():
-    while True:
-        sleep(1/60)
-        flip()
-        
+    while run:
 
-create_main_surface()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+
+    pygame.display.flip()
+    clock.tick(60)
+    pygame.quit()
+
+
+main()
