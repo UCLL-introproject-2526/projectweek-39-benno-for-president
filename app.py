@@ -207,7 +207,6 @@ player1 = Player1([400,200], 5, 50)
 
 def main():
     
-
     screen_size = (1024,834)
     screen = pygame.display.set_mode(screen_size)
     clock = pygame.time.Clock()
@@ -219,29 +218,81 @@ def main():
 
     benno_img = pygame.image.load('sprites/bigbenno_sprite.png').convert_alpha()
     benno_img = pygame.transform.smoothscale(benno_img, (100, 100))
-    player1_sprite = pygame.image.load('sprites/player1/kerstmanachterkant1.png')
+    player1_sprite_back = pygame.image.load('sprites/player1/kerstmanachterkant1.png')
+    player1_sprite_front = pygame.image.load('sprites/player1/kerstmanfront1.png')
 
+    player1fronts = [pygame.image.load("sprites/player1/kerstmanfront1.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/kerstmanfront0.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/kerstmanfront2.png").convert_alpha(),]
     
+    player1backs = [pygame.image.load("sprites/player1/kerstmanachterkant1.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/kerstmanachterkant0.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/kerstmanachterkant2.png").convert_alpha(),]
+    
+    current_frame_fr = 0
+    current_frame_ba = 0
+    animation_speed = 0.09
+    face_me = False
+    # game loop
     run = True
 
+
     while run:
+
+        # animation initialisatie
+        movingfront = False
+        movingback = False
+
+        # scherm tekenen
         screen.fill((0,0,0))
         screen.blit(background, (0,0))
-        screen.blit(player1_sprite, player1.get_cords())
         
 
-        key = pygame.key.get_pressed()
+        
 
+
+        # key inputs
+        key = pygame.key.get_pressed()
         if key[pygame.K_d]:
             player1.move("d")
-        if key[pygame.K_q]:
+            movingfront = True
+            screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
+        elif key[pygame.K_q]:
             player1.move("q")
-        if key[pygame.K_s]:
+            movingfront = True
+            screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
+        elif key[pygame.K_s]:
             player1.move("s")
-        if key[pygame.K_z]:
+            movingfront = True
+            face_me = True
+            screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
+        elif key[pygame.K_z]:
             player1.move("z")
+            movingback = True
+            face_me = False
+            screen.blit(player1backs[int(current_frame_ba)], player1.get_cords())
+        else:
+            if face_me:
+                screen.blit(player1_sprite_front, player1.get_cords())
+            else:
+                screen.blit(player1_sprite_back, player1.get_cords())
 
+        # animation handler
+        if movingfront:
+            current_frame_fr += animation_speed
+            if current_frame_fr >= len(player1fronts):
+                current_frame_fr = 0
+        else:
+            current_frame_fr = 0
 
+        if movingback:
+            current_frame_ba += animation_speed
+            if current_frame_ba >= len(player1backs):
+                current_frame_ba = 0
+        else:
+            current_frame_ba = 0
+
+        # event handler
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
