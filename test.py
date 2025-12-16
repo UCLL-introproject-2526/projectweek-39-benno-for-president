@@ -8,7 +8,7 @@ def main():
     clock = pygame.time.Clock()
 
     pygame.mixer.music.load('projectweek-39-benno-for-president/sounds/background.ogg')
-    pygame.mixer.music.play(-1)
+    pygame.mixer.music.play(-1, fade_ms=3000)
 
     run = True
 
@@ -17,7 +17,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-     
+    
 
 
 

@@ -8,6 +8,9 @@ def main():
     screen = pygame.display.set_mode(screen_size)
     clock = pygame.time.Clock()
 
+    pygame.mixer.music.load('projectweek-39-benno-for-president/sounds/background.ogg')
+    pygame.mixer.music.play(-1, fade_ms=3000)
+
 
     def render_frame(surface, xpos, ypos):
         pygame.draw.circle(surface, (255,255,255), (xpos, ypos), 100)
