@@ -7,42 +7,6 @@ pygame.init()
 
 Player_lives = 3
 
-class Weapon:
-    def __init__(self, dmg, rpm, spread):
-        self.set_dmg(dmg)
-        self.set_rpm(rpm)
-        self.set_spread(spread)
-
-
-    def get_dmg(self):
-        return self.__dmg
-
-    def set_dmg(self, value):
-        if isinstance(value, int):
-            if value <= 0:
-                raise ValueError("weapon dmg cannot be negative")
-            self.__dmg = value
-        else:
-            raise ValueError("weapon dmg must be int")
-            
-    def get_rpm(self):
-        return self.__rpm
-    
-    def set_rpm(self, value):
-        if value < 0:
-            raise ValueError("weapon rpm cannot be negative")
-        self.__rpm = value
-
-
-    def get_spread(self):
-        return self.__spread
-    
-    def set_spread(self, value):
-        if value < 0:
-            raise ValueError("weapon spread cannot be negative")
-        self.__spread = value
-
-
 class Player1:
     def __init__(self, cords, speed, health):
         self.set_cords(cords)
@@ -104,35 +68,6 @@ class Player1:
             self.set_cords([self.get_cords()[0] + diag, self.get_cords()[1] - diag ])
         
 
-#testing +
-class Camera:
-    def __init__(self, width, height): #
-        #self.game = game
-        self.width = width
-        self.height = height
-        self.camera = pygame.Rect(0, 0, width, height)
-        self.offset = pygame.Vector2(0,0)
-        self.zoom = 1
-
-    def dist(self, a, b):
-        return ((a[0]-b[0])**2 + (a[1]-b[1])**2) ** 0.5
-
-    def update(self, player1, player2, mouse_world): #mouse_pos nog niet gemaakt
-        mouse_pos = pygame.mouse.get_pos()
-        cam_x = (player1.get_cords[0] + player2.get_cords[0] + mouse_pos[0] ) / 3
-        cam_y = (player1.get_cords[1] + player2.get_cords[1] + mouse_pos[1] ) / 3
-
-        self.offset.x = cam_x - self.width / 2
-        self.offset.y = cam_y - self.height / 2
-
-        max_dist = max(self.dist((cam_x, cam_y),player1.get_cords), self.dist(cam_x, cam_y),player1.get_cords, self.dist(cam_x, cam_y),player1.get_cords)
-
-        target_zoom = 800 / (max_dist + 1)
-
-        self.zoom = max(0.5, min(1.3, target_zoom))
-
-#testing -
-
 class Player2:
     def __init__(self, cords, speed, health):
         self.set_cords(cords)
@@ -193,6 +128,40 @@ class Player2:
         if key == "ur":
             self.set_cords([self.get_cords()[0] + diag, self.get_cords()[1] - diag ])
 
+class Weapon:
+    def __init__(self, dmg, rpm, spread):
+        self.set_dmg(dmg)
+        self.set_rpm(rpm)
+        self.set_spread(spread)
+
+
+    def get_dmg(self):
+        return self.__dmg
+
+    def set_dmg(self, value):
+        if isinstance(value, int):
+            if value <= 0:
+                raise ValueError("weapon dmg cannot be negative")
+            self.__dmg = value
+        else:
+            raise ValueError("weapon dmg must be int")
+            
+    def get_rpm(self):
+        return self.__rpm
+    
+    def set_rpm(self, value):
+        if value < 0:
+            raise ValueError("weapon rpm cannot be negative")
+        self.__rpm = value
+
+
+    def get_spread(self):
+        return self.__spread
+    
+    def set_spread(self, value):
+        if value < 0:
+            raise ValueError("weapon spread cannot be negative")
+        self.__spread = value
 
 class Enemy:
     def __init__(self, cords, speed, health, dmg):
@@ -264,10 +233,42 @@ class Enemy:
         if self.__health <= 0:
             self.__alive = False
 
+#testing +
+class Camera:
+    def __init__(self, width, height):
+        #self.game = game
+        self.width = width
+        self.height = height
+        self.camera = pygame.Rect(0, 0, width, height)
+        self.offset = pygame.Vector2(0,0)
+        self.zoom = 1
+
+    def dist(self, a, b):
+        return ((a[0]-b[0])**2 + (a[1]-b[1])**2) ** 0.5
+
+    def update(self, player1, player2): #mouse_pos nog niet gemaakt
+        mouse_pos = list(pygame.mouse.get_pos())
+        cam_x = (player1.get_cords()[0] + player2.get_cords()[0] + mouse_pos[0] ) / 3
+        cam_y = (player1.get_cords()[1] + player2.get_cords()[1] + mouse_pos[1] ) / 3
+
+        self.offset.x = cam_x - self.width / 2
+        self.offset.y = cam_y - self.height / 2
+
+
+        # deze self.dist inputs zorgen voor fouten op lijn 246
+        max_dist = max(self.dist([cam_x, cam_y],player1.get_cords()), self.dist(cam_x, cam_y),player1.get_cords(), self.dist(cam_x, cam_y),player1.get_cords())
+
+        target_zoom = 800 / (max_dist + 1)
+
+        self.zoom = max(0.5, min(1.3, target_zoom))
+
+#testing -
+
 
 
 player1 = Player1([400,200], 5, 50)
 player2 = Player2([600,200], 5, 50)
+cam1 = Camera(1024,834)
 
 
 def main():
@@ -319,6 +320,8 @@ def main():
     # game loop
     run = True
     while run:
+        # camera
+        cam1.update(player1, player2)
 
         # animation initialisatie
         movingfront = False
@@ -454,6 +457,8 @@ def main():
                 current_frame_ba2 = 0
         else:
             current_frame_ba2 = 0
+
+        
 
         # event handler
         for event in pygame.event.get():
