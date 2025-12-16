@@ -8,7 +8,7 @@ def main():
     screen = pygame.display.set_mode(screen_size)
     clock = pygame.time.Clock()
 
-    background = pygame.image.load('projectweek-39-benno-for-president/sprites/icy_background.png')
+    background = pygame.image.load('projectweek-39-benno-for-president/sprites/icy_background.png').convert()
 
     pygame.mixer.music.load('projectweek-39-benno-for-president/sounds/lobby_music.mp3')
     pygame.mixer.music.play(-1, fade_ms=3000)
@@ -19,8 +19,8 @@ def main():
     
 
     def render_frame(surface, xpos, ypos):
-        rect = benno_img.get_rect(center=(xpos, ypos))
-        surface.blit(benno_img, rect)
+        benno_rect = benno_img.get_rect((xpos, ypos))
+        surface.blit(benno_img, benno_rect)
 
     xpos = 400
     ypos = 200
@@ -28,9 +28,8 @@ def main():
     run = True
 
     while run:
-        screen.fill((0,0,0))
-        screen.blit(background,(-100,-250))
-
+        screen.fill(background)
+        
 
         key = pygame.key.get_pressed()
         if key[pygame.K_d]:
@@ -43,16 +42,13 @@ def main():
             ypos -= 5
 
 
-
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
                 run = False
 
-        
         render_frame(screen, xpos, ypos)
     
-
         clock.tick(60)
         pygame.display.flip()
     
