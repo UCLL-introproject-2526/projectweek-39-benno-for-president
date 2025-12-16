@@ -100,7 +100,34 @@ class Player1:
             self.set_cords([self.get_cords()[0] + diag, self.get_cords()[1] - diag ])
         
 
+#testing +
+class Camera:
+    def __init__(self, width, height): #
+        #self.game = game
+        self.width = width
+        self.height = height
+        self.camera = pygame.Rect(0, 0, width, height)
+        self.offset = pygame.Vector2(0,0)
+        self.zoom = 1
 
+    def dist(self, a, b):
+        return ((a[0]-b[0])**2 + (a[1]-b[1])**2) ** 0.5
+
+    def update(self, player1, player2, mouse_world): #mouse_pos nog niet gemaakt
+        mouse_pos = pygame.mouse.get_pos()
+        cam_x = (player1.get_cords[0] + player2.get_cords[0] + mouse_pos[0] ) / 3
+        cam_y = (player1.get_cords[1] + player2.get_cords[1] + mouse_pos[1] ) / 3
+
+        self.offset.x = cam_x - self.width / 2
+        self.offset.y = cam_y - self.height / 2
+
+        max_dist = max(self.dist((cam_x, cam_y),player1.get_cords), self.dist(cam_x, cam_y),player1.get_cords, self.dist(cam_x, cam_y),player1.get_cords)
+
+        target_zoom = 800 / (max_dist + 1)
+
+        self.zoom = max(0.5, min(1.3, target_zoom))
+
+#testing -
 
 class Player2:
     def __init__(self, cords, speed, health):
