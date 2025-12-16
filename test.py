@@ -1,10 +1,7 @@
-import pygame
-from pygame.locals import *
-from pygame import mixer
-
 def main():
+    import pygame
+
     pygame.init()
-    pygame.mixer.init()
 
     screen_size = (800,400)
     screen = pygame.display.set_mode(screen_size)
@@ -20,14 +17,15 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+     
 
 
-    
+
 
     pygame.display.flip()
     clock.tick(60)
+
     pygame.quit()
-    
-    
+
 
 main()
