@@ -177,7 +177,7 @@ class Enemy:
             self.__x =- self.get_speed()
 
         if self.__y < player.get_cords[1]:
-          self.__y =+ self.get_speed()
+            self.__y =+ self.get_speed()
         else:
             self.__y =- self.get_speed()
 
