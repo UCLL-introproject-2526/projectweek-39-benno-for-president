@@ -1,30 +1,269 @@
+import pygame
+from math import sqrt
+import random
+import os
+
+pygame.init()
+
+
+Player_lives = 3
+
+class Weapon:
+    def __init__(self, dmg, rpm, spread):
+        self.set_dmg(dmg)
+        self.__rpm = rpm
+        self.__spread = spread
+
+    def get_dmg(self):
+        return self.__dmg
+    
+    def set_dmg(self, value):
+        if isinstance(value, int):
+            if value <= 0:
+                raise ValueError("weapon dmg cannot be negative")
+            self.__dmg = value
+        else:
+            raise ValueError("weapon dmg must be int")
+            
+    def get_rpm(self):
+        return self.__rpm
+    
+    def set_rpm(self, value):
+        if value < 0:
+            raise ValueError("weapon rpm cannot be negative")
+        self.__rpm = value
+
+
+    def get_spread(self):
+        return self.__spread
+    
+    def set_spread(self, value):
+        if value < 0:
+            raise ValueError("weapon spread cannot be negative")
+        self.__spread = value
+
+
+class Player1:
+    def __init__(self, cords, speed, health):
+        self.set_cords(cords)
+        self.set_speed(speed)
+        self.set_health(health)
+        self.__alive = True
+
+    def get_speed(self):
+        return self.__speed
+    
+    def set_speed(self, value):
+        if value < 0:
+            raise ValueError("enemy speed cannot be negative")
+        self.__speed = value
+    
+    def get_health(self):
+        return self.__health
+    
+    def set_health(self, value):
+        if value < 0:
+            raise ValueError("enemy health cannot be negative")
+        self.__health = value
+        if self.__health <= 0:
+            self.__alive = False
+
+    def get_cords(self):
+        return [self.__x, self.__y]
+    
+    def set_cords(self, list_inp):
+        if isinstance(list_inp, list):
+            if len(list_inp) != 2:
+                raise ValueError("player 1 cords cannot be empty")
+            self.__x = list_inp[0]
+            self.__y = list_inp[1]
+        else:
+            raise ValueError("player 1 cords have to be list")
+
+
+class Player2:
+    def __init__(self, cords, speed, health):
+        self.set_cords(cords)
+        self.set_speed(speed)
+        self.set_health(health)
+        self.__alive = True
+
+    def get_speed(self):
+        return self.__speed
+    
+    def set_speed(self, value):
+        if value < 0:
+            raise ValueError("enemy speed cannot be negative")
+        self.__speed = value
+    
+    def get_health(self):
+        return self.__health
+    
+    def set_health(self, value):
+        if value < 0:
+            raise ValueError("enemy health cannot be negative")
+        self.__health = value
+        if self.__health <= 0:
+            self.__alive = False
+
+    def get_cords(self):
+        return [self.__x, self.__y]
+    
+    def set_cords(self, list_inp):
+        if isinstance(list_inp, list):
+            if len(list_inp) != 2:
+                raise ValueError("player 2 cords cannot be empty")
+            self.__x = list_inp[0]
+            self.__y = list_inp[1]
+        else:
+            raise ValueError("player 2 cords have to be list")
+
+
+class Enemy:
+    def __init__(self, cords, speed, health, dmg):
+        self.set_cords(cords)
+        self.set_speed(speed)
+        self.set_health(health)
+        self.set_dmg(dmg)
+        self.__alive = True
+    
+    def get_cords(self):
+        return [self.__x, self.__y]
+
+    def set_cords(self, list_inp):
+        if not isinstance(list_inp, list):
+            if not  len(list_inp) == 2:
+                raise ValueError("enemy cords cannot be empty and has to be list")
+            
+        self.__x = list_inp[0]
+        self.__y = list_inp[1]
+
+    def get_speed(self):
+        return self.__speed
+    
+    def set_speed(self, value):
+        if value < 0:
+            raise ValueError("enemy speed cannot be negative")
+        self.__speed = value
+
+    def get_health(self):
+        return self.__health
+    
+    def set_health(self, value):
+        if value < 0:
+            raise ValueError("enemy health cannot be negative")
+        self.__health = value
+
+    def get_dmg(self):
+        return self.__dmg
+    
+    def set_dmg(self, value):
+        if value < 0:
+            raise ValueError("enemy dmg cannot be negative")
+        self.__dmg = value
+
+    def get_alive(self):
+        return self.__alive
+
+    def get_closest(self, player1, player2):
+        if sqrt((self.__x - player1.get_cords[0])**2 + (self.__y - player1.get_cords[1])**2) < sqrt((self.__x - player2.get_cords[0])**2 + (self.__y - player2.get_cords[1])**2):
+            return player1
+        else:
+            return player2
+
+    def move(self, player):
+        if self.__x < player.get_cords[0]:
+            self.__x =+ self.get_speed()
+        else:
+            self.__x =- self.get_speed()
+
+        if self.__y < player.get_cords[1]:
+            self.__y =+ self.get_speed()
+        else:
+            self.__y =- self.get_speed()
+
+
+    def hit(self, other):
+        diff = max(0, self.__health - other.get_dmg())
+        self.set_health(diff)
+        if self.__health <= 0:
+            self.__alive = False
+
+
 def main():
-    import pygame
+    
 
-    pygame.init()
-
-    screen_size = (800,400)
+    screen_size = (1024,834)
     screen = pygame.display.set_mode(screen_size)
     clock = pygame.time.Clock()
 
-    pygame.mixer.music.load('projectweek-39-benno-for-president/sounds/background.ogg')
+    background = pygame.image.load('sprites/icy_background.png').convert()
+
+    pygame.mixer.music.load('sounds/lobby_music.ogg')
     pygame.mixer.music.play(-1, fade_ms=3000)
+
+    player1_frames = []
+
+    for file in sorted(os.listdir("sprites/player1")):
+        if file.endswith(".png"):
+            img = pygame.image.load(f"sprites/player1/{file}").convert_alpha()
+            img = pygame.transform.smoothscale(img, (100, 100))
+            player1_frames.append(img)
+
+
+    
+
+    def render_frame(surface, xpos, ypos):
+        frame = player1_frames[int(current_frame)]
+        rect = frame.get_rect(center=(xpos, ypos))
+        surface.blit(frame, rect)
+
+
+    xpos = 400
+    ypos = 200
+    
+    current_frame = 0
+    animation_speed = 0.2
 
     run = True
 
     while run:
+        screen.fill((0,0,0))
+        screen.blit(background, (0,0))
+        
+        moving = False
+        key = pygame.key.get_pressed()
+        if key[pygame.K_d]:
+            xpos += 5
+            moving = True
+        if key[pygame.K_q]:
+            xpos -= 5
+            moving = True
+        if key[pygame.K_s]:
+            ypos += 5
+            moving = True
+        if key[pygame.K_z]:
+            ypos -= 5
+            moving = True
+
+        if moving:
+            current_frame += animation_speed
+            if current_frame >= len(player1_frames):
+                current_frame = 0
+        else:
+            current_frame = 0
+
 
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 run = False
+
+        render_frame(screen, xpos, ypos)
     
-
-
-
-
-    pygame.display.flip()
-    clock.tick(60)
-
+        clock.tick(60)
+        pygame.display.flip()
+    
     pygame.quit()
 
 
