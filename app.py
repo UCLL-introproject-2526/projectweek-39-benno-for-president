@@ -60,7 +60,7 @@ def main():
 
     background = pygame.image.load('sprites/icy_background.png').convert()
 
-    # pygame.mixer.music.load('projectweek-39-benno-for-president/sounds/lobby_music.mp3')
+    # pygame.mixer.music.load('sounds/lobby_music.ogg')
     # pygame.mixer.music.play(-1, fade_ms=3000)
 
     benno_img = pygame.image.load('sprites/bigbenno_sprite.png').convert_alpha()
