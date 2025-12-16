@@ -1,6 +1,39 @@
 import pygame
 pygame.init()
 
+class Player1:
+    def __init__(self, cords, speed, health):
+        self.set_cords(cords)
+        self.set_speed(speed)
+        self.set_health(health)
+
+    def get_speed(self):
+        return self.__speed
+    
+    def set_speed(self, value):
+        if value < 0:
+            raise ValueError("enemy speed cannot be negative")
+        self.__speed = value
+    
+    def get_health(self):
+        return self.__health
+    
+    def set_health(self, value):
+        if value < 0:
+            raise ValueError("enemy health cannot be negative")
+        self.__health = value
+
+    def get_cords(self):
+        return [self.__x, self.__y]
+    
+    def set_cords(self, list_inp):
+        if isinstance(list_inp, list):
+            if len(list_inp) == 2:
+                self.__x = list_inp[0]
+                self.__y = list_inp[1]
+        else: 
+            raise ValueError("player 1 cords cannot be empty and has to be list")
+
 class Enemy:
     def __init__(self, cords, speed, health, dmg):
         self.set_cords(cords)
@@ -44,11 +77,14 @@ class Enemy:
             raise ValueError("enemy dmg cannot be negative")
         self.__dmg = value
 
+    def get_closest(self, player1, player2):
+        ...
+
     def move(self, play_x, play_y):
         ...
 
     def hit(self, other):
-        self.__health 
+        self.__health
 
 
 def main():
@@ -60,8 +96,8 @@ def main():
 
     background = pygame.image.load('sprites/icy_background.png').convert()
 
-    # pygame.mixer.music.load('sounds/lobby_music.ogg')
-    # pygame.mixer.music.play(-1, fade_ms=3000)
+    pygame.mixer.music.load('sounds/lobby_music.ogg')
+    pygame.mixer.music.play(-1, fade_ms=3000)
 
     benno_img = pygame.image.load('sprites/bigbenno_sprite.png').convert_alpha()
     benno_img = pygame.transform.smoothscale(benno_img, (100, 100))
