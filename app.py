@@ -1,12 +1,14 @@
 import pygame
 
+pygame.init()
+
 def main():
-    pygame.init()
+    
 
     screen_size = (800,400)
     screen = pygame.display.set_mode(screen_size)
     clock = pygame.time.Clock()
-
+    circle
     run = True
 
     while run:
