@@ -10,12 +10,13 @@ Player_lives = 3
 class Weapon:
     def __init__(self, dmg, rpm, spread):
         self.set_dmg(dmg)
-        self.__rpm = rpm
-        self.__spread = spread
+        self.set_rpm(rpm)
+        self.set_spread(spread)
+
 
     def get_dmg(self):
         return self.__dmg
-    
+
     def set_dmg(self, value):
         if isinstance(value, int):
             if value <= 0:
@@ -48,6 +49,9 @@ class Player1:
         self.set_speed(speed)
         self.set_health(health)
         self.__alive = True
+    
+    def alive(self):
+        return self.__alive
 
     def get_speed(self):
         return self.__speed
@@ -136,6 +140,9 @@ class Player2:
         self.set_health(health)
         self.__alive = True
 
+    def alive(self):
+        return self.__alive
+
     def get_speed(self):
         return self.__speed
     
@@ -165,6 +172,26 @@ class Player2:
             self.__y = list_inp[1]
         else:
             raise ValueError("player 2 cords have to be list")
+    
+    def move(self, key):
+        diag = self.__speed / sqrt(2)
+        
+        if key == "left":
+            self.set_cords([self.get_cords()[0] - self.__speed,self.get_cords()[1]])
+        if key == "right":
+            self.set_cords([self.get_cords()[0] + self.__speed,self.get_cords()[1]])
+        if key == "up":
+            self.set_cords([self.get_cords()[0], self.get_cords()[1] - self.__speed])
+        if key == "down":            
+            self.set_cords([self.get_cords()[0], self.get_cords()[1] + self.__speed])
+        if key == "dl":
+            self.set_cords([self.get_cords()[0] - diag, self.get_cords()[1] + diag ])
+        if key == "dr":
+            self.set_cords([self.get_cords()[0] + diag, self.get_cords()[1] + diag ])
+        if key == "ul":
+            self.set_cords([self.get_cords()[0] - diag, self.get_cords()[1] - diag ])
+        if key == "ur":
+            self.set_cords([self.get_cords()[0] + diag, self.get_cords()[1] - diag ])
 
 
 class Enemy:
@@ -265,11 +292,19 @@ def main():
     player1backs = [pygame.image.load("sprites/player1/kerstmanachterkant1.png").convert_alpha(),
                           pygame.image.load("sprites/player1/kerstmanachterkant0.png").convert_alpha(),
                           pygame.image.load("sprites/player1/kerstmanachterkant2.png").convert_alpha(),]
+    player2fronts = [pygame.image.load("sprites/player1/kerstmanfront1.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/kerstmanfront0.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/kerstmanfront2.png").convert_alpha(),]
+    
+    player2backs = [pygame.image.load("sprites/player1/kerstmanachterkant1.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/kerstmanachterkant0.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/kerstmanachterkant2.png").convert_alpha(),]
     
     current_frame_fr = 0
     current_frame_ba = 0
     animation_speed = 0.09
-    face_me = False
+    face_me1 = False
+    face_me2 = False
     # game loop
     run = True
 
@@ -285,30 +320,27 @@ def main():
         screen.blit(background, (0,0))
         
 
-        
-
-
         # key inputs
         key = pygame.key.get_pressed()
         if key[pygame.K_s] and key[pygame.K_q]:
             player1.move("sq")
             movingfront = True
-            face_me = True
+            face_me1 = True
             screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
         elif key[pygame.K_s] and key[pygame.K_d]:
             player1.move("sd")
             movingfront = True
-            face_me = True
+            face_me1 = True
             screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
         elif key[pygame.K_z] and key[pygame.K_q]:
             player1.move("zq")
             movingback = True
-            face_me = False
+            face_me1 = False
             screen.blit(player1backs[int(current_frame_ba)], player1.get_cords())
         elif key[pygame.K_z] and key[pygame.K_d]:
             player1.move("zd")
             movingback = True
-            face_me = False
+            face_me1 = False
             screen.blit(player1backs[int(current_frame_ba)], player1.get_cords())
         elif key[pygame.K_d]:
             player1.move("d")
@@ -321,16 +353,62 @@ def main():
         elif key[pygame.K_s]:
             player1.move("s")
             movingfront = True
-            face_me = True
+            face_me1 = True
             screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
         elif key[pygame.K_z]:
             player1.move("z")
             movingback = True
-            face_me = False
+            face_me1 = False
             screen.blit(player1backs[int(current_frame_ba)], player1.get_cords())
         
         else:
-            if face_me:
+            if face_me1:
+                screen.blit(player1_sprite_front, player1.get_cords())
+            else:
+                screen.blit(player1_sprite_back, player1.get_cords())
+
+        key = pygame.key.get_pressed()
+        if key[pygame.K_DOWN] and key[pygame.K_LEFT]:
+            player1.move("dl")
+            movingfront = True
+            face_me2 = True
+            screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
+        elif key[pygame.K_s] and key[pygame.K_d]:
+            player1.move("sd")
+            movingfront = True
+            face_me2 = True
+            screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
+        elif key[pygame.K_z] and key[pygame.K_q]:
+            player1.move("zq")
+            movingback = True
+            face_me2 = False
+            screen.blit(player1backs[int(current_frame_ba)], player1.get_cords())
+        elif key[pygame.K_z] and key[pygame.K_d]:
+            player1.move("zd")
+            movingback = True
+            face_me2 = False
+            screen.blit(player1backs[int(current_frame_ba)], player1.get_cords())
+        elif key[pygame.K_d]:
+            player1.move("d")
+            movingfront = True
+            screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
+        elif key[pygame.K_q]:
+            player1.move("q")
+            movingfront = True
+            screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
+        elif key[pygame.K_s]:
+            player1.move("s")
+            movingfront = True
+            face_me2 = True
+            screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
+        elif key[pygame.K_z]:
+            player1.move("z")
+            movingback = True
+            face_me2 = False
+            screen.blit(player1backs[int(current_frame_ba)], player1.get_cords())
+        
+        else:
+            if face_me2:
                 screen.blit(player1_sprite_front, player1.get_cords())
             else:
                 screen.blit(player1_sprite_back, player1.get_cords())
