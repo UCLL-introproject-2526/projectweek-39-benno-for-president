@@ -78,6 +78,18 @@ class Player1:
             self.__y = list_inp[1]
         else:
             raise ValueError("player 1 cords have to be list")
+        
+    def move(self, key):
+        if key == "q":
+            self.set_cords([self.get_cords()[0] - self.__speed,self.get_cords()[1]])
+        if key == "d":
+            self.set_cords([self.get_cords()[0] + self.__speed,self.get_cords()[1]])
+        if key == "z":
+            self.set_cords([self.get_cords()[0], self.get_cords()[1] - self.__speed])
+        if key == "s":            
+            self.set_cords([self.get_cords()[0], self.get_cords()[1] + self.__speed])
+        
+
 
 
 class Player2:
@@ -189,6 +201,10 @@ class Enemy:
             self.__alive = False
 
 
+
+player1 = Player1([400,200], 5, 50)
+
+
 def main():
     
 
@@ -203,32 +219,27 @@ def main():
 
     benno_img = pygame.image.load('sprites/bigbenno_sprite.png').convert_alpha()
     benno_img = pygame.transform.smoothscale(benno_img, (100, 100))
+    player1_sprite = pygame.image.load('sprites/player1/kerstmanachterkant1.png')
 
-    
-
-    def render_frame(surface, xpos, ypos):
-        benno_rect = benno_img.get_rect(center = [xpos, ypos])
-        surface.blit(benno_img, benno_rect)
-
-    xpos = 400
-    ypos = 200
     
     run = True
 
     while run:
         screen.fill((0,0,0))
         screen.blit(background, (0,0))
+        screen.blit(player1_sprite, player1.get_cords())
         
 
         key = pygame.key.get_pressed()
+
         if key[pygame.K_d]:
-            xpos += 5
+            player1.move("d")
         if key[pygame.K_q]:
-            xpos -= 5
+            player1.move("q")
         if key[pygame.K_s]:
-            ypos += 5
+            player1.move("s")
         if key[pygame.K_z]:
-            ypos -= 5
+            player1.move("z")
 
 
         for event in pygame.event.get():
@@ -236,8 +247,7 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
 
-        render_frame(screen, xpos, ypos)
-    
+
         clock.tick(60)
         pygame.display.flip()
     
@@ -245,3 +255,15 @@ def main():
 
 
 main()
+
+
+
+    # def render_frame(surface, xpos, ypos):
+    #     benno_rect = benno_img.get_rect(center = [xpos, ypos])
+    #     surface.blit(benno_img, benno_rect)
+
+    # xpos = 400
+    # ypos = 200
+
+
+    #  render_frame(screen, xpos, ypos)
