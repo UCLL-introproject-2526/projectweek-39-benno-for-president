@@ -12,6 +12,7 @@ def main():
     # pygame setup
     pygame.init()
     
+    pygame.display.set_caption("Benno vs Santa")
     screen_size = (1024,834)
     screen = pygame.display.set_mode(screen_size)
     clock = pygame.time.Clock()
@@ -28,6 +29,7 @@ def main():
     bullet_dict = {}
     fullscreen = False
     Player_lives = 3
+    ui_switch = 0
 
 
     # sound:
@@ -38,8 +40,15 @@ def main():
     # sprites:
     background = pygame.image.load('sprites/icy_background.png').convert()
 
-    heart = pygame.image.load('sprites/hearts/l0_hearts1.png').convert_alpha()
-    heart = pygame.transform.smoothscale(heart, (45,45))
+    heart1 = pygame.image.load('sprites/hearts/l0_hearts1.png').convert_alpha()
+    heart1 = pygame.transform.smoothscale(heart1, (45,45))
+
+    heart2 = pygame.image.load('sprites/hearts/l0_hearts1.png').convert_alpha()
+    heart2 = pygame.transform.smoothscale(heart2, (45,45))
+
+    heart3 = pygame.image.load('sprites/hearts/l0_hearts1.png').convert_alpha()
+    heart3 = pygame.transform.smoothscale(heart3, (45,45))
+
 
     player1_sprite_back = pygame.image.load('sprites/player1/dikkeelfsprite5.png').convert_alpha()
     player1_sprite_back = pygame.transform.smoothscale(player1_sprite_back, (75,75))
@@ -126,6 +135,7 @@ def main():
         if rifle_timer >= rifle.get_rpm():
             rifle_delay = True
         else: rifle_delay = False
+        ui_switch += 1
 
         # camera
         cam1.update(player1, player2)
@@ -301,7 +311,7 @@ def main():
 
         # player 1 shooting
         if key[pygame.K_TAB] and rifle_delay == True:
-            last_cursor = list(pygame.mouse.get_pos())
+            last_cursor = pygame.mouse.get_pos()
             bullet = Bullet(cam1.screen_to_world()[0], cam1.screen_to_world()[1], f"bullet{name_rand}", rifle, last_cursor, world_time)
             name_rand += 1
             bullet_spr = pygame.image.load("sprites/Bullet.png").convert_alpha()
@@ -311,8 +321,8 @@ def main():
             rifle_timer = 0
             
 
-        # for bul, spr in bullet_dict.items():
-        #     screen.blit(spr, [bul.get_cords()[0] + ] )
+        for bul, spr in bullet_dict.items():
+            screen.blit(spr, [bul.get_cords()[0] + ] )
 
 
 
@@ -488,7 +498,7 @@ def main():
         else:
             current_frame_ba2 = 0
 
-                # enforce map bounds
+        # enforce map bounds
         if 50 > player1.get_cords()[0]:
             player1.set_cords([player1.get_cords()[0] + 5, player1.get_cords()[1]])
         if cam1.map_width - 125 < player1.get_cords()[0]:
@@ -512,9 +522,11 @@ def main():
 
 
         # UI bars
-        screen.blit(heart,(cam1.width / 2, cam1.height - 771 )) #if you read this code.. EASTER EGGG
-        screen.blit(heart,(cam1.width / 2.15, cam1.height - 770 ))
-        screen.blit(heart,(cam1.width / 1.85, cam1.height - 770 ))
+        screen.blit(heart1,(cam1.width // 2 , cam1.height - 771 )) #if you read this code.. EASTER EGGG
+        screen.blit(heart2,(cam1.width // 2 + 35 , cam1.height - 770 ))
+        screen.blit(heart3,(cam1.width // 2 - 35, cam1.height - 770 ))
+
+
 
         # event handler
         for event in pygame.event.get():
