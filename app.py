@@ -541,8 +541,10 @@ def main():
             last_cursor = list(pygame.mouse.get_pos())
             bullet = Bullet(player1.get_cords()[0], player1.get_cords()[1], f"bullet{name_rand}", rifle, last_cursor)
             name_rand += 1
-            bullet = pygame.image.load("sprites/bullet")
             bullet_list.append(bullet)
+            bullet = pygame.image.load("sprites/bullet")
+            bullet = pygame.transform.smoothscale(bullet, (5,25))
+            
 
         for bul in bullet_list:
             screen.blit(bul, [bul.get_cords()[0] - bul.get_target()[0] + bul.get_speed(), bul.get_cords()[1] - bul.get_target()[1] + bul.get_speed()    ])
