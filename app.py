@@ -354,37 +354,37 @@ def main():
     p1img1 = pygame.transform.smoothscale(p1img1, (75,75))
     
     p1img2 = pygame.image.load("sprites/player1/dikkeelfsprite2.png").convert_alpha()
-    p1img2 = pygame.transform.smoothscale(p1img1, (75,75))
+    p1img2 = pygame.transform.smoothscale(p1img2, (75,75))
     
     p1img3 = pygame.image.load("sprites/player1/dikkeelfsprite3.png").convert_alpha()
-    p1img3 = pygame.transform.smoothscale(p1img1, (75,75))
+    p1img3 = pygame.transform.smoothscale(p1img3, (75,75))
     
     p1img4 = pygame.image.load("sprites/player1/dikkeelfsprite4.png").convert_alpha()
-    p1img4 = pygame.transform.smoothscale(p1img1, (75,75))
+    p1img4 = pygame.transform.smoothscale(p1img4, (75,75))
     
     p1img5 = pygame.image.load("sprites/player1/dikkeelfsprite5.png").convert_alpha()
-    p1img5 = pygame.transform.smoothscale(p1img1, (75,75))
+    p1img5 = pygame.transform.smoothscale(p1img5, (75,75))
     
     p1img6 = pygame.image.load("sprites/player1/dikkeelfsprite6.png").convert_alpha()
-    p1img6 = pygame.transform.smoothscale(p1img1, (75,75))
+    p1img6 = pygame.transform.smoothscale(p1img6, (75,75))
     
     p2img1 = pygame.image.load("sprites/player2/kerstmanachterkant1.png").convert_alpha()
-    p2img1 = pygame.transform.smoothscale(p1img1, (75,75))
+    p2img1 = pygame.transform.smoothscale(p2img1, (75,75))
     
     p2img2 = pygame.image.load("sprites/player2/kerstmanachterkant0.png").convert_alpha()
-    p2img2 = pygame.transform.smoothscale(p1img1, (75,75))
+    p2img2 = pygame.transform.smoothscale(p2img2, (75,75))
     
     p2img3 = pygame.image.load("sprites/player2/kerstmanachterkant2.png").convert_alpha()
-    p2img3 = pygame.transform.smoothscale(p1img1, (75,75))
+    p2img3 = pygame.transform.smoothscale(p2img3, (75,75))
     
     p2img4 = pygame.image.load("sprites/player2/kerstmanfront1.png").convert_alpha()
-    p2img4 = pygame.transform.smoothscale(p1img1, (75,75))
+    p2img4 = pygame.transform.smoothscale(p2img4, (75,75))
 
     p2img5 = pygame.image.load("sprites/player2/kerstmanfront0.png").convert_alpha()
-    p2img5 = pygame.transform.smoothscale(p1img1, (75,75))
+    p2img5 = pygame.transform.smoothscale(p2img5, (75,75))
 
     p2img6 = pygame.image.load("sprites/player2/kerstmanfront2.png").convert_alpha()
-    p2img6 = pygame.transform.smoothscale(p1img1, (75,75))
+    p2img6 = pygame.transform.smoothscale(p2img6, (75,75))
 
     player1fronts = [p1img1,
                     p1img2,
@@ -406,7 +406,7 @@ def main():
     current_frame_ba = 0
     current_frame_fr2 = 0
     current_frame_ba2 = 0
-    animation_speed = 0.09
+    animation_speed = 0.2
     face_me1 = False
     face_me2 = False
 
