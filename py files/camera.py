@@ -29,7 +29,7 @@ class Camera:
         max_y = max(p1[1], p2[1])
 
         min_x -= self.safe_zone
-        max_x += self.safe_zone
+        max_x += self.safe_zone # aanpassen, dit zijn 6 lijnen voor 4, self.safe_zone gw bij required *2 toevoegen
         min_y -= self.safe_zone
         max_y += self.safe_zone
 
@@ -37,7 +37,7 @@ class Camera:
         required_h = max_y - min_y
         zoom_x = self.width / required_w
         zoom_y = self.height / required_h
-        self.zoom = max(0.7, min(1.3, min(zoom_x, zoom_y)))
+        self.zoom = max(0.7, min(1.4, min(zoom_x, zoom_y))) #hoe grotere int hoe verder ingezoemt
 
         view_w = self.width / self.zoom
         view_h = self.height / self.zoom

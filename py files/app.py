@@ -22,8 +22,8 @@ def main():
     world_time = 0
     world_time2 = 0
     player1 = Player1([200,200], 6, 50) #speed was 3
-    player2 = Player2([300,200], 6.1, 50) #(spawncordinat), speed, ...
-    cam1 = Camera(1024,834, (2400,2400))
+    player2 = Player2([300,200], 6.1, 50) #(spawncordinate), speed, health
+    cam1 = Camera(1024,834, (2400,2400))    #width, height, mapsize
     rifle = Weapon(15, 0.7, 400) #damage, shootdelay ,bulletspeed, 
     rifle_timer = 0
     name_rand = 0
