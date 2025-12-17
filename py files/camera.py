@@ -61,7 +61,9 @@ class Camera:
 
 
     def apply(self, x, y):          #mapcordinaten naar pccordinaten
-        return (int((x - self.offset.x) * self.zoom), int((y- self.offset.y) * self.zoom))
+        #return (int((x - self.offset.x) * self.zoom), int((y- self.offset.y) * self.zoom))
+    
+        return (int((x - self.offset.x) * 10), int((y- self.offset.y) * 10))
     
     def screen_to_world(self, sx, sy):
         return (

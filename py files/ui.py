@@ -8,14 +8,14 @@ screen_size = (1024,823)
 pygame.display.set_caption('Main Menu')
 window_surface = pygame.display.set_mode(screen_size)
 
-background = pygame.Surface(screen_size)
-background_picture = pygame.image.load('../sprites/gui/background_start_screen')
+background_picture = pygame.image.load('sprites/gui/background_start_screen.png')
+
 
 manager = pygame_gui.UIManager(screen_size)
 
-hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
-                                             text='Say Hello',
-                                             manager=manager)
+# hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
+#                                              text='Say Hello',
+#                                              manager=manager)
 
 clock = pygame.time.Clock()
 is_running = True
@@ -34,7 +34,7 @@ while is_running:
 
     manager.update(time_delta)
 
-    window_surface.blit(background, (0, 0))
+    window_surface.blit(background_picture, (0, 0))
     manager.draw_ui(window_surface)
 
     pygame.display.update()
