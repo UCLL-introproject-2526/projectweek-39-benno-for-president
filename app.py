@@ -315,9 +315,9 @@ class Camera:
 def main():
     # loop setup
     world_time = 0
-    player1 = Player1([400,200], 5, 50)
-    player2 = Player2([600,200], 5, 50)
-    cam1 = Camera(1024,834)
+    player1 = Player1([200,200], 5, 50)
+    player2 = Player2([300,200], 5, 50)
+    cam1 = Camera(1024,834, (1024,834))
     rifle = Weapon(15, 0.7, 40)
     rifle_timer = 0
     name_rand = 0
@@ -337,29 +337,70 @@ def main():
     # sprites:
     background = pygame.image.load('sprites/icy_background.png').convert()
 
-    player1_sprite_back = pygame.image.load('sprites/player1/dikkeelfsprite5.png')
-    player1_sprite_front = pygame.image.load('sprites/player1/dikkeelfsprite2.png')
+    player1_sprite_back = pygame.image.load('sprites/player1/dikkeelfsprite5.png').convert_alpha()
+    player1_sprite_back = pygame.transform.smoothscale(player1_sprite_back, (75,75))
 
-    player2_sprite_back = pygame.image.load('sprites/player2/kerstmanachterkant1.png')
-    player2_sprite_front = pygame.image.load('sprites/player2/kerstmanfront1.png')
+    player1_sprite_front = pygame.image.load('sprites/player1/dikkeelfsprite2.png').convert_alpha()
+    player1_sprite_front = pygame.transform.smoothscale(player1_sprite_front, (75,75))
+
+    player2_sprite_back = pygame.image.load('sprites/player2/kerstmanachterkant1.png').convert_alpha()
+    player2_sprite_back = pygame.transform.smoothscale(player2_sprite_back, (75,75))
+
+    player2_sprite_front = pygame.image.load('sprites/player2/kerstmanfront1.png').convert_alpha()
+    player2_sprite_front = pygame.transform.smoothscale(player2_sprite_front, (75,75))
     
     # ------------
-
-    player1fronts = [pygame.image.load("sprites/player1/dikkeelfsprite1.png").convert_alpha(),
-                          pygame.image.load("sprites/player1/dikkeelfsprite2.png").convert_alpha(),
-                          pygame.image.load("sprites/player1/dikkeelfsprite3.png").convert_alpha(),]
+    p1img1 = pygame.image.load("sprites/player1/dikkeelfsprite1.png").convert_alpha()
+    p1img1 = pygame.transform.smoothscale(p1img1, (75,75))
     
-    player1backs = [pygame.image.load("sprites/player1/dikkeelfsprite4.png").convert_alpha(),
-                          pygame.image.load("sprites/player1/dikkeelfsprite5.png").convert_alpha(),
-                          pygame.image.load("sprites/player1/dikkeelfsprite6.png").convert_alpha(),]
-
-    player2fronts = [pygame.image.load("sprites/player2/kerstmanfront1.png").convert_alpha(),
-                          pygame.image.load("sprites/player2/kerstmanfront0.png").convert_alpha(),
-                          pygame.image.load("sprites/player2/kerstmanfront2.png").convert_alpha(),]
+    p1img2 = pygame.image.load("sprites/player1/dikkeelfsprite2.png").convert_alpha()
+    p1img2 = pygame.transform.smoothscale(p1img1, (75,75))
     
-    player2backs = [pygame.image.load("sprites/player2/kerstmanachterkant1.png").convert_alpha(),
-                          pygame.image.load("sprites/player2/kerstmanachterkant2.png").convert_alpha(),
-                          pygame.image.load("sprites/player2/kerstmanachterkant0.png").convert_alpha(),]
+    p1img3 = pygame.image.load("sprites/player1/dikkeelfsprite3.png").convert_alpha()
+    p1img3 = pygame.transform.smoothscale(p1img1, (75,75))
+    
+    p1img4 = pygame.image.load("sprites/player1/dikkeelfsprite4.png").convert_alpha()
+    p1img4 = pygame.transform.smoothscale(p1img1, (75,75))
+    
+    p1img5 = pygame.image.load("sprites/player1/dikkeelfsprite5.png").convert_alpha()
+    p1img5 = pygame.transform.smoothscale(p1img1, (75,75))
+    
+    p1img6 = pygame.image.load("sprites/player1/dikkeelfsprite6.png").convert_alpha()
+    p1img6 = pygame.transform.smoothscale(p1img1, (75,75))
+    
+    p2img1 = pygame.image.load("sprites/player2/kerstmanachterkant1.png").convert_alpha()
+    p2img1 = pygame.transform.smoothscale(p1img1, (75,75))
+    
+    p2img2 = pygame.image.load("sprites/player2/kerstmanachterkant0.png").convert_alpha()
+    p2img2 = pygame.transform.smoothscale(p1img1, (75,75))
+    
+    p2img3 = pygame.image.load("sprites/player2/kerstmanachterkant2.png").convert_alpha()
+    p2img3 = pygame.transform.smoothscale(p1img1, (75,75))
+    
+    p2img4 = pygame.image.load("sprites/player2/kerstmanfront1.png").convert_alpha()
+    p2img4 = pygame.transform.smoothscale(p1img1, (75,75))
+
+    p2img5 = pygame.image.load("sprites/player2/kerstmanfront0.png").convert_alpha()
+    p2img5 = pygame.transform.smoothscale(p1img1, (75,75))
+
+    p2img6 = pygame.image.load("sprites/player2/kerstmanfront2.png").convert_alpha()
+    p2img6 = pygame.transform.smoothscale(p1img1, (75,75))
+
+    player1fronts = [p1img1,
+                    p1img2,
+                    p1img3]
+    
+    player1backs = [p1img4,
+                    p1img5,
+                    p1img6]
+
+    player2fronts = [p2img4,
+                    p2img5,
+                    p2img6]
+    
+    player2backs = [p2img1,
+                    p2img2,
+                    p2img3]
     
     current_frame_fr = 0
     current_frame_ba = 0
@@ -566,8 +607,8 @@ def main():
             rifle_timer = 0
             
 
-        for bul, spr in bullet_dict.items():
-            screen.blit(spr, [bul.get_cords()[0] + ] )
+        # for bul, spr in bullet_dict.items():
+        #     screen.blit(spr, [bul.get_cords()[0] + ] )
 
 
 
