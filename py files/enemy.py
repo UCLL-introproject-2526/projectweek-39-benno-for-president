@@ -1,4 +1,4 @@
-
+import pygame
 
 class Enemy:
     def __init__(self, cords, speed, health, dmg):

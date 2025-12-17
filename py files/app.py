@@ -487,44 +487,39 @@ def main():
                 # enforce map bounds
         if 50 > player1.get_cords()[0]:
             player1.set_cords([player1.get_cords()[0] + 5, player1.get_cords()[1]])
-        if cam1.map_width - 50 < player1.get_cords()[0]:
+        if cam1.map_width - 125 < player1.get_cords()[0]:
             player1.set_cords([player1.get_cords()[0] - 5, player1.get_cords()[1]])
-        if 50 > player1.get_cords()[1]:
+        if 45 > player1.get_cords()[1]:
             player1.set_cords([player1.get_cords()[0], player1.get_cords()[1] + 5])
-        if cam1.map_height - 50 < player1.get_cords()[1]:
+        if cam1.map_height - 160 < player1.get_cords()[1]:
             player1.set_cords([player1.get_cords()[0], player1.get_cords()[1] - 5])
         
 
         if 50 > player2.get_cords()[0]:
             player2.set_cords([player2.get_cords()[0] + 5, player2.get_cords()[1]])
-        if cam1.map_width - 50 < player2.get_cords()[0]:
+        if cam1.map_width - 125 < player2.get_cords()[0]:
             player2.set_cords([player2.get_cords()[0] - 5, player2.get_cords()[1]])
-        if 50 > player2.get_cords()[1]:
+        if 45 > player2.get_cords()[1]:
             player2.set_cords([player2.get_cords()[0], player2.get_cords()[1] + 5])
-        if cam1.map_height - 50 < player2.get_cords()[1]:
+        if cam1.map_height - 160 < player2.get_cords()[1]:
             player2.set_cords([player2.get_cords()[0], player2.get_cords()[1] - 5])
         
-        # fullscreen bulSHIT
+   
+        
+        # event handler
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
                 run = False
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_BACKSPACE:
+                if event.key == pygame.K_ESCAPE:
                     fullscreen = not fullscreen
 
                     if fullscreen:
                         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
                     else:
                         screen = pygame.display.set_mode(screen_size)
-        
-
-        # event handler
-        for event in pygame.event.get():
-
-            if event.type == pygame.QUIT:
-                run = False
 
 
         clock.tick(60)

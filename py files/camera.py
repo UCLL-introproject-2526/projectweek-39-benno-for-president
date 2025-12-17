@@ -1,4 +1,4 @@
-
+import pygame
 
 class Camera:
     def __init__(self, width, height, map_size):

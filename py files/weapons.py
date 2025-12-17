@@ -1,4 +1,4 @@
-
+import pygame
 
 class Weapon:
     def __init__(self, dmg, rpm, bullet_speed):
