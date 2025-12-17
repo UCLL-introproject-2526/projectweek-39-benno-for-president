@@ -6,6 +6,7 @@ from player import Player1,Player2
 from weapons import Weapon, Bullet
 from enemy import Enemy
 from camera import Camera
+from health 
 
 def main():
     # pygame setup
@@ -505,7 +506,8 @@ def main():
             player2.set_cords([player2.get_cords()[0], player2.get_cords()[1] - 5])
         
    
-        
+        screen.blit(heart,(cam1.width - 924, cam1.height - 734))
+
         # event handler
         for event in pygame.event.get():
 
