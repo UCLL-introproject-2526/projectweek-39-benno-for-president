@@ -6,7 +6,7 @@ from player import Player1,Player2
 from weapons import Weapon, Bullet
 from enemy import Enemy
 from camera import Camera
-from health 
+
 
 def main():
     # pygame setup
@@ -37,6 +37,9 @@ def main():
 
     # sprites:
     background = pygame.image.load('sprites/icy_background.png').convert()
+
+    heart = pygame.image.load('sprites/hearts/l0_hearts1.png').convert_alpha()
+    heart = pygame.transform.smoothscale(heart, (45,45))
 
     player1_sprite_back = pygame.image.load('sprites/player1/dikkeelfsprite5.png').convert_alpha()
     player1_sprite_back = pygame.transform.smoothscale(player1_sprite_back, (75,75))
@@ -505,8 +508,11 @@ def main():
         if cam1.map_height - 160 < player2.get_cords()[1]:
             player2.set_cords([player2.get_cords()[0], player2.get_cords()[1] - 5])
         
-   
-        screen.blit(heart,(cam1.width - 924, cam1.height - 734))
+
+
+
+        # UI bars
+        screen.blit(heart,(cam1.width / 2, cam1.height - 734 ))
 
         # event handler
         for event in pygame.event.get():
@@ -519,7 +525,7 @@ def main():
                     fullscreen = not fullscreen
 
                     if fullscreen:
-                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+                        screen = pygame.display.set_mode((1024,834), pygame.FULLSCREEN)
                     else:
                         screen = pygame.display.set_mode(screen_size)
 
