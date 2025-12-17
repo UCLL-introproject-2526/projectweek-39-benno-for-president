@@ -116,7 +116,6 @@
 
 
 
-
 import pygame
 from math import sqrt
 import random
@@ -352,47 +351,65 @@ class Enemy:
         if self.__health <= 0:
             self.__alive = False
 
-#testing +
+
+
 class Camera:
-    def __init__(self, width, height):
+    def __init__(self, width, height, screen_size):
         self.width = width
         self.height = height
         self.camera = pygame.Rect(0, 0, width, height)
         self.offset = pygame.Vector2(0,0)
         self.zoom = 1
+        self.screen_size_x = screen_size[0]
+        self.screen_size_y = screen_size[1]
+
+
 
     def dist(self, a, b):
         return ((a[0]-b[0])**2 + (a[1]-b[1])**2) ** 0.5
 
     def update(self, player1, player2): 
-        mouse_pos = list(pygame.mouse.get_pos())
-        cam_x = (player1.get_cords()[0] + player2.get_cords()[0] /2) #+ mouse_pos[0] ) / 3 #x & y cordinaat 3hoek spelers &muis
-        cam_y = (player1.get_cords()[1] + player2.get_cords()[1] /2) #+ mouse_pos[1] ) / 3
+        cam_x = ((player1.get_cords()[0] + player2.get_cords()[0]) /2) #+ mouse_pos[0] ) / 3 #x & y cordinaat 3hoek spelers &muis
+        cam_y = ((player1.get_cords()[1] + player2.get_cords()[1]) /2) #+ mouse_pos[1] ) / 3
 
-        self.offset.x = cam_x - self.width / 2      #offset zodat het middelpunt van 2spelers & muis in het midden van camera is
-        self.offset.y = cam_y - self.height / 2
 
+        self.offset.x = cam_x - (self.width / 2)     #offset zodat het middelpunt van 2spelers & muis in het midden van camera is
+        self.offset.y = cam_y - (self.height / 2)
 
         max_dist = max(self.dist((cam_x, cam_y),player1.get_cords()),
                        self.dist((cam_x, cam_y),player2.get_cords()),
                        )
+        
+        view_w = self.width / self.zoom
+        view_h = self.height / self.zoom
 
+        self.offset.x = max(0, min(self.offset.x, self.screen_size_x - view_w))
+        self.offset.y = max(0, min(self.offset.y, self.screen_size_y - view_h))
+
+       
         target_zoom = 400 / (max_dist + 1)
-        #target_zoom = 800 / (max_dist + 1)
+            #target_zoom = 800 / (max_dist + 1)
 
         self.zoom = max(0.5, min(1.3, target_zoom))
 
     def apply(self, x, y):          #mapcordinaten naar pccordinaten
-        return ((x - self.offset.x) * self.zoom, (y- self.offset.y) * self.zoom)
+        return (int((x - self.offset.x) * self.zoom), int((y- self.offset.y) * self.zoom))
+    
+    def screen_to_world(self, sx, sy):
+        return (
+            sx / self.zoom + self.offset.x,
+            sy / self.zoom + self.offset.y
+            )
+    #screen_pos = cam.world_to_screen(*placed_object.pos)
+    #screen.blit(sprite, screen_pos)
     
 
-#testing -
-
+    
 
 
 player1 = Player1([400,200], 5, 50)
 player2 = Player2([600,200], 5, 50)
-cam1 = Camera(1024,834)
+cam1 = Camera(512,417, (1024,834))
 
 
 def main():
@@ -409,26 +426,29 @@ def main():
     # sprites:
     background = pygame.image.load('sprites/icy_background.png').convert()
 
-    player1_sprite_back = pygame.image.load('sprites/player1/kerstmanachterkant1.png')
-    player1_sprite_front = pygame.image.load('sprites/player1/kerstmanfront1.png')
+    player1_sprite_back = pygame.image.load('sprites/player1/dikkeelfsprite5.png')
+    player1_sprite_front = pygame.image.load('sprites/player1/dikkeelfsprite2.png')
 
-    player2_sprite_back = pygame.image.load('sprites/player2/dikkeelfsprite5.png')
-    player2_sprite_front = pygame.image.load('sprites/player2/dikkeelfsprite2.png')
+    player2_sprite_back = pygame.image.load('sprites/player2/kerstmanachterkant1.png')
+    player2_sprite_front = pygame.image.load('sprites/player2/kerstmanfront1.png')
+    
+    # ------------
 
-    player1fronts = [pygame.image.load("sprites/player1/kerstmanfront1.png").convert_alpha(),
-                          pygame.image.load("sprites/player1/kerstmanfront0.png").convert_alpha(),
-                          pygame.image.load("sprites/player1/kerstmanfront2.png").convert_alpha(),]
+    player1fronts = [pygame.image.load("sprites/player1/dikkeelfsprite1.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/dikkeelfsprite2.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/dikkeelfsprite3.png").convert_alpha(),]
     
-    player1backs = [pygame.image.load("sprites/player1/kerstmanachterkant1.png").convert_alpha(),
-                          pygame.image.load("sprites/player1/kerstmanachterkant0.png").convert_alpha(),
-                          pygame.image.load("sprites/player1/kerstmanachterkant2.png").convert_alpha(),]
-    player2fronts = [pygame.image.load("sprites/player2/dikkeelfsprite1.png").convert_alpha(),
-                          pygame.image.load("sprites/player2/dikkeelfsprite2.png").convert_alpha(),
-                          pygame.image.load("sprites/player2/dikkeelfsprite3.png").convert_alpha(),]
+    player1backs = [pygame.image.load("sprites/player1/dikkeelfsprite4.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/dikkeelfsprite5.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/dikkeelfsprite6.png").convert_alpha(),]
+
+    player2fronts = [pygame.image.load("sprites/player2/kerstmanfront1.png").convert_alpha(),
+                          pygame.image.load("sprites/player2/kerstmanfront0.png").convert_alpha(),
+                          pygame.image.load("sprites/player2/kerstmanfront2.png").convert_alpha(),]
     
-    player2backs = [pygame.image.load("sprites/player2/dikkeelfsprite4.png").convert_alpha(),
-                          pygame.image.load("sprites/player2/dikkeelfsprite5.png").convert_alpha(),
-                          pygame.image.load("sprites/player2/dikkeelfsprite6.png").convert_alpha(),]
+    player2backs = [pygame.image.load("sprites/player2/kerstmanachterkant1.png").convert_alpha(),
+                          pygame.image.load("sprites/player2/kerstmanachterkant2.png").convert_alpha(),
+                          pygame.image.load("sprites/player2/kerstmanachterkant0.png").convert_alpha(),]
     
     current_frame_fr = 0
     current_frame_ba = 0
@@ -448,12 +468,6 @@ def main():
         cam1.update(player1, player2)
 
 
-        # if cam1.zoom != 1.0: # schaalt de spirits als de camera in of uitzoemt
-        #     ...
-        # else:
-        #     screen.blit(sprite, screen_pos)
-
-
         # animation initialisatie
         movingfront = False
         movingback = False
@@ -462,7 +476,6 @@ def main():
 
         # scherm tekenen
         screen.fill((0,0,0))
-        ###screen.blit(background, (0,0))
         screen_pos = cam1.apply(0,0)
         if cam1.zoom != 1.0:
             new_width = int(background.get_width() * cam1.zoom)
@@ -625,11 +638,14 @@ def main():
         else:
             screen.blit(sprite, screen_pos)
 
+
+
+
         # player 2
         key2 = pygame.key.get_pressed()
         if key2[pygame.K_DOWN] and key2[pygame.K_LEFT]:
             player2.move("dl")
-            movingback2 = True
+            movingfront2 = True
             face_me2 = True
             #screen.blit(player2fronts[int(current_frame_fr2)], player2.get_cords())
             pos = player2.get_cords()
@@ -645,7 +661,7 @@ def main():
 
         elif key2[pygame.K_DOWN] and key2[pygame.K_RIGHT]:
             player2.move("dr")
-            movingback2 = True
+            movingfront2 = True
             face_me2 = True
             #screen.blit(player2fronts[int(current_frame_fr2)], player2.get_cords())
             pos = player2.get_cords()
@@ -767,7 +783,6 @@ def main():
             screen.blit(scaled_sprite, screen_pos)
         else:
             screen.blit(sprite, screen_pos)
-
         # animation handler 1
         if movingfront:
             current_frame_fr += animation_speed
