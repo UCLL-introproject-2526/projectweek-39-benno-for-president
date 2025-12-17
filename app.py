@@ -393,12 +393,12 @@ def main():
         key2 = pygame.key.get_pressed()
         if key2[pygame.K_DOWN] and key2[pygame.K_LEFT]:
             player2.move("dl")
-            movingback2 = True
+            movingfront2 = True
             face_me2 = True
             screen.blit(player2fronts[int(current_frame_fr2)], player2.get_cords())
         elif key2[pygame.K_DOWN] and key2[pygame.K_RIGHT]:
             player2.move("dr")
-            movingback2 = True
+            movingfront2 = True
             face_me2 = True
             screen.blit(player2fronts[int(current_frame_fr2)], player2.get_cords())
         elif key2[pygame.K_UP] and key2[pygame.K_LEFT]:
