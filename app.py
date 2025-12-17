@@ -287,26 +287,29 @@ def main():
     # sprites:
     background = pygame.image.load('sprites/icy_background.png').convert()
 
-    player1_sprite_back = pygame.image.load('sprites/player1/kerstmanachterkant1.png')
-    player1_sprite_front = pygame.image.load('sprites/player1/kerstmanfront1.png')
+    player1_sprite_back = pygame.image.load('sprites/player1/dikkeelfsprite5.png')
+    player1_sprite_front = pygame.image.load('sprites/player1/dikkeelfsprite2.png')
 
-    player2_sprite_back = pygame.image.load('sprites/player2/dikkeelfsprite5.png')
-    player2_sprite_front = pygame.image.load('sprites/player2/dikkeelfsprite2.png')
+    player2_sprite_back = pygame.image.load('sprites/player2/kerstmanachterkant1.png')
+    player2_sprite_front = pygame.image.load('sprites/player2/kerstmanfront1.png')
+    
+    # ------------
 
-    player1fronts = [pygame.image.load("sprites/player1/kerstmanfront1.png").convert_alpha(),
-                          pygame.image.load("sprites/player1/kerstmanfront0.png").convert_alpha(),
-                          pygame.image.load("sprites/player1/kerstmanfront2.png").convert_alpha(),]
+    player1fronts = [pygame.image.load("sprites/player1/dikkeelfsprite1.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/dikkeelfsprite2.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/dikkeelfsprite3.png").convert_alpha(),]
     
-    player1backs = [pygame.image.load("sprites/player1/kerstmanachterkant1.png").convert_alpha(),
-                          pygame.image.load("sprites/player1/kerstmanachterkant0.png").convert_alpha(),
-                          pygame.image.load("sprites/player1/kerstmanachterkant2.png").convert_alpha(),]
-    player2fronts = [pygame.image.load("sprites/player2/dikkeelfsprite1.png").convert_alpha(),
-                          pygame.image.load("sprites/player2/dikkeelfsprite2.png").convert_alpha(),
-                          pygame.image.load("sprites/player2/dikkeelfsprite3.png").convert_alpha(),]
+    player1backs = [pygame.image.load("sprites/player1/dikkeelfsprite4.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/dikkeelfsprite5.png").convert_alpha(),
+                          pygame.image.load("sprites/player1/dikkeelfsprite6.png").convert_alpha(),]
+
+    player2fronts = [pygame.image.load("sprites/player2/kerstmanachterkant1.png").convert_alpha(),
+                          pygame.image.load("sprites/player2/kersmanachterkant0.png").convert_alpha(),
+                          pygame.image.load("sprites/player2/kerstmanachterkant2.png").convert_alpha(),]
     
-    player2backs = [pygame.image.load("sprites/player2/dikkeelfsprite4.png").convert_alpha(),
-                          pygame.image.load("sprites/player2/dikkeelfsprite5.png").convert_alpha(),
-                          pygame.image.load("sprites/player2/dikkeelfsprite6.png").convert_alpha(),]
+    player2backs = [pygame.image.load("sprites/player2/kerstmanfront1.png").convert_alpha(),
+                          pygame.image.load("sprites/player2/kerstmanfront0.png").convert_alpha(),
+                          pygame.image.load("sprites/player2/kerstmanfront2.png").convert_alpha(),]
     
     current_frame_fr = 0
     current_frame_ba = 0
