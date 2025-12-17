@@ -19,8 +19,8 @@ def main():
 
     # loop setup
     world_time = 0
-    player1 = Player1([200,200], 5, 50)
-    player2 = Player2([300,200], 5, 50)
+    player1 = Player1([200,200], 3, 50)
+    player2 = Player2([300,200], 3.1, 50)
     cam1 = Camera(1024,834, (2400,2400))
     rifle = Weapon(15, 0.7, 40)
     rifle_timer = 0
@@ -512,7 +512,9 @@ def main():
 
 
         # UI bars
-        screen.blit(heart,(cam1.width / 2, cam1.height - 734 ))
+        screen.blit(heart,(cam1.width / 2, cam1.height - 771 )) #if you read this code.. EASTER EGGG
+        screen.blit(heart,(cam1.width / 2.15, cam1.height - 770 ))
+        screen.blit(heart,(cam1.width / 1.85, cam1.height - 770 ))
 
         # event handler
         for event in pygame.event.get():
