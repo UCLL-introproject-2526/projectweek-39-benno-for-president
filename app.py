@@ -1,5 +1,6 @@
 import pygame
 from math import sqrt
+from math import tan
 import random
 
 pygame.init()
@@ -165,12 +166,13 @@ class Weapon:
 
 
 class Bullet:
-    def __init__(self, x, y, name, Weap, target):
+    def __init__(self, x, y, name, Weap, target, time1):
         self.__x = x
         self.__y = y
         self.__name = name
         self.set_target(target)
         self.__speed = Weap.get_bullet_speed()
+        self.time1 = time1
 
     def get_cords(self):
         return [self.__x, self.__y]
@@ -259,51 +261,67 @@ class Enemy:
 
 
 class Camera:
-    def __init__(self, width, height):
+    def __init__(self, width, height, screen_size):
         self.width = width
         self.height = height
         self.camera = pygame.Rect(0, 0, width, height)
         self.offset = pygame.Vector2(0,0)
         self.zoom = 1
+        self.screen_size_x = screen_size[0]
+        self.screen_size_y = screen_size[1]
+
+
 
     def dist(self, a, b):
         return ((a[0]-b[0])**2 + (a[1]-b[1])**2) ** 0.5
 
     def update(self, player1, player2): 
-        mouse_pos = list(pygame.mouse.get_pos())
-        cam_x = (player1.get_cords()[0] + player2.get_cords()[0] /2) #+ mouse_pos[0] ) / 3 #x & y cordinaat 3hoek spelers &muis
-        cam_y = (player1.get_cords()[1] + player2.get_cords()[1] /2) #+ mouse_pos[1] ) / 3
+        cam_x = ((player1.get_cords()[0] + player2.get_cords()[0]) /2) #+ mouse_pos[0] ) / 3 #x & y cordinaat 3hoek spelers &muis
+        cam_y = ((player1.get_cords()[1] + player2.get_cords()[1]) /2) #+ mouse_pos[1] ) / 3
 
-        self.offset.x = cam_x - self.width / 2      #offset zodat het middelpunt van 2spelers & muis in het midden van camera is
-        self.offset.y = cam_y - self.height / 2
 
+        self.offset.x = cam_x - (self.width / 2)     #offset zodat het middelpunt van 2spelers & muis in het midden van camera is
+        self.offset.y = cam_y - (self.height / 2)
 
         max_dist = max(self.dist((cam_x, cam_y),player1.get_cords()),
                        self.dist((cam_x, cam_y),player2.get_cords()),
                        )
+        
+        view_w = self.width / self.zoom
+        view_h = self.height / self.zoom
 
+        self.offset.x = max(0, min(self.offset.x, self.screen_size_x - view_w))
+        self.offset.y = max(0, min(self.offset.y, self.screen_size_y - view_h))
+
+       
         target_zoom = 400 / (max_dist + 1)
-        #target_zoom = 800 / (max_dist + 1)
+            #target_zoom = 800 / (max_dist + 1)
 
         self.zoom = max(0.5, min(1.3, target_zoom))
 
     def apply(self, x, y):          #mapcordinaten naar pccordinaten
-        return ((x - self.offset.x) * self.zoom, (y- self.offset.y) * self.zoom)
+        return (int((x - self.offset.x) * self.zoom), int((y- self.offset.y) * self.zoom))
     
-
-
+    def screen_to_world(self, sx, sy):
+        return (
+            sx / self.zoom + self.offset.x,
+            sy / self.zoom + self.offset.y
+            )
+    #screen_pos = cam.world_to_screen(*placed_object.pos)
+    #screen.blit(sprite, screen_pos)
 
 
 
 def main():
     # loop setup
+    world_time = 0
     player1 = Player1([400,200], 5, 50)
     player2 = Player2([600,200], 5, 50)
     cam1 = Camera(1024,834)
     rifle = Weapon(15, 0.7, 40)
     rifle_timer = 0
     name_rand = 0
-    bullet_list = []
+    bullet_dict = {}
 
 
     # pygame setup
@@ -358,9 +376,9 @@ def main():
     run = True
     while run:
         # variables
+        world_time += 1/60
         rifle_timer += 1/60
         if rifle_timer >= rifle.get_rpm():
-            rifle_timer = 0
             rifle_delay = True
         else: rifle_delay = False
 
@@ -539,15 +557,18 @@ def main():
         # player 1 shooting
         if key[pygame.K_TAB] and rifle_delay == True:
             last_cursor = list(pygame.mouse.get_pos())
-            bullet = Bullet(player1.get_cords()[0], player1.get_cords()[1], f"bullet{name_rand}", rifle, last_cursor)
+            bullet = Bullet(cam1.screen_to_world()[0], cam1.screen_to_world()[1], f"bullet{name_rand}", rifle, last_cursor, world_time)
             name_rand += 1
-            bullet_list.append(bullet)
-            bullet = pygame.image.load("sprites/bullet")
-            bullet = pygame.transform.smoothscale(bullet, (5,25))
+            bullet_spr = pygame.image.load("sprites/Bullet.png").convert_alpha()
+            bullet_spr = pygame.transform.smoothscale(bullet_spr, (5,25))
+            bullet_spr = pygame.transform.rotate(bullet_spr, tan((bullet.get_target()[0] - player1.get_cords()[0]) /bullet.get_target()[1] - player1.get_cords()[1] ))
+            bullet_dict[bullet] = bullet_spr
+            rifle_timer = 0
             
 
-        for bul in bullet_list:
-            screen.blit(bul, [bul.get_cords()[0] - bul.get_target()[0] + bul.get_speed(), bul.get_cords()[1] - bul.get_target()[1] + bul.get_speed()    ])
+        for bul, spr in bullet_dict.items():
+            screen.blit(spr, [bul.get_cords()[0] + ] )
+
 
 
         # player 2
