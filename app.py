@@ -66,6 +66,7 @@ class Player1:
             self.set_cords([self.get_cords()[0] - diag, self.get_cords()[1] - diag ])
         if key == "zd":
             self.set_cords([self.get_cords()[0] + diag, self.get_cords()[1] - diag ])
+    
         
 
 class Player2:
@@ -129,10 +130,10 @@ class Player2:
             self.set_cords([self.get_cords()[0] + diag, self.get_cords()[1] - diag ])
 
 class Weapon:
-    def __init__(self, dmg, rpm, spread):
+    def __init__(self, dmg, rpm, bullet_speed):
         self.set_dmg(dmg)
         self.set_rpm(rpm)
-        self.set_spread(spread)
+        self.set_bullet_speed(bullet_speed)
 
 
     def get_dmg(self):
@@ -154,14 +155,37 @@ class Weapon:
             raise ValueError("weapon rpm cannot be negative")
         self.__rpm = value
 
-
-    def get_spread(self):
-        return self.__spread
+    def get_bullet_speed(self):
+        return self.__bullet_speed
     
-    def set_spread(self, value):
+    def set_bullet_speed(self, value):
         if value < 0:
-            raise ValueError("weapon spread cannot be negative")
-        self.__spread = value
+            raise ValueError("weapon bullet speed cannot be negative")
+        self.__bullet_speed = value
+
+
+class Bullet:
+    def __init__(self, x, y, name, Weap, target):
+        self.__x = x
+        self.__y = y
+        self.__name = name
+        self.set_target(target)
+        self.__speed = Weap.get_bullet_speed()
+
+    def get_cords(self):
+        return [self.__x, self.__y]
+    
+    def get_name(self):
+        return self.__name
+    
+    def get_target(self):
+        return self.__target
+    
+    def set_target(self, value):
+        self.__target = value
+    
+    def get_speed(self):
+        return self.__speed
 
 class Enemy:
     def __init__(self, cords, speed, health, dmg):
@@ -268,12 +292,20 @@ class Camera:
     
 
 
-player1 = Player1([400,200], 5, 50)
-player2 = Player2([600,200], 5, 50)
-cam1 = Camera(1024,834)
+
 
 
 def main():
+    # loop setup
+    player1 = Player1([400,200], 5, 50)
+    player2 = Player2([600,200], 5, 50)
+    cam1 = Camera(1024,834)
+    rifle = Weapon(15, 0.7, 40)
+    rifle_timer = 0
+    name_rand = 0
+    bullet_list = []
+
+
     # pygame setup
     screen_size = (1024,834)
     screen = pygame.display.set_mode(screen_size)
@@ -325,9 +357,15 @@ def main():
     # game loop
     run = True
     while run:
+        # variables
+        rifle_timer += 1/60
+        if rifle_timer >= rifle.get_rpm():
+            rifle_timer = 0
+            rifle_delay = True
+        else: rifle_delay = False
+
         # camera
         cam1.update(player1, player2)
-
 
         # animation initialisatie
         movingfront = False
@@ -482,7 +520,6 @@ def main():
             else:
                 screen.blit(sprite, screen_pos)
 
-        
         else:
             pos = player1.get_cords()
             screen_pos = cam1.apply(pos[0], pos[1])
@@ -499,7 +536,16 @@ def main():
         else:
             screen.blit(sprite, screen_pos)
 
+        # player 1 shooting
+        if key[pygame.K_TAB] and rifle_delay == True:
+            last_cursor = list(pygame.mouse.get_pos())
+            bullet = Bullet(player1.get_cords()[0], player1.get_cords()[1], f"bullet{name_rand}", rifle, last_cursor)
+            name_rand += 1
+            bullet = pygame.image.load("sprites/bullet")
+            bullet_list.append(bullet)
 
+        for bul in bullet_list:
+            screen.blit(bul, [bul.get_cords()[0] - bul.get_target()[0] + bul.get_speed(), bul.get_cords()[1] - bul.get_target()[1] + bul.get_speed()    ])
 
 
         # player 2
