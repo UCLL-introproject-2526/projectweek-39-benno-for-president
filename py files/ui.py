@@ -13,10 +13,16 @@ background_picture = pygame.image.load('sprites/gui/background_start_screen.png'
 
 manager = pygame_gui.UIManager(screen_size)
 
-# hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
-#                                              text='Say Hello',
-#                                              manager=manager)
+button_image = pygame.image.load('sprites/gui/play_button.png').convert_alpha
 
+
+
+
+hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
+                                             text='Say Hello',
+                                             manager=manager)
+
+hello_button.set_image(button_image)
 clock = pygame.time.Clock()
 is_running = True
 
