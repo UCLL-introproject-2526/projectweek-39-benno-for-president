@@ -20,16 +20,20 @@ def main():
 
     # loop setup
     world_time = 0
-    player1 = Player1([200,200], 3, 50)
-    player2 = Player2([300,200], 3.1, 50)
+    world_time2 = 0
+    player1 = Player1([200,200], 6, 50) #speed was 3
+    player2 = Player2([300,200], 6.1, 50) #(spawncordinat), speed, ...
     cam1 = Camera(1024,834, (2400,2400))
-    rifle = Weapon(15, 0.7, 40)
+    rifle = Weapon(15, 0.7, 400) #damage, shootdelay ,bulletspeed, 
     rifle_timer = 0
     name_rand = 0
     bullet_dict = {}
     fullscreen = False
     Player_lives = 3
     ui_switch = 0
+    shot_delay = 0.5
+    last_shot = 0
+    bullets = []
 
 
     # sound:
@@ -49,6 +53,8 @@ def main():
     heart3 = pygame.image.load('sprites/hearts/l0_hearts1.png').convert_alpha()
     heart3 = pygame.transform.smoothscale(heart3, (45,45))
 
+    crosshair = pygame.image.load('sprites/crosshairs_black.png'). convert_alpha()
+    crosshair = pygame.transform.smoothscale(crosshair, (45,45))
 
     player1_sprite_back = pygame.image.load('sprites/player1/dikkeelfsprite5.png').convert_alpha()
     player1_sprite_back = pygame.transform.smoothscale(player1_sprite_back, (75,75))
@@ -130,12 +136,16 @@ def main():
     run = True
     while run:
         # variables
+        dt = clock.tick(60) / 1000
         world_time += 1/60
-        rifle_timer += 1/60
+        rifle_timer += dt
         if rifle_timer >= rifle.get_rpm():
             rifle_delay = True
         else: rifle_delay = False
         ui_switch += 1
+
+        world_time2 += dt #deze zou fps onafhankelijk moeten zijn
+        rifle_timer += dt
 
         # camera
         cam1.update(player1, player2)
@@ -311,18 +321,26 @@ def main():
 
         # player 1 shooting
         if key[pygame.K_TAB] and rifle_delay == True:
-            last_cursor = pygame.mouse.get_pos()
-            bullet = Bullet(cam1.screen_to_world()[0], cam1.screen_to_world()[1], f"bullet{name_rand}", rifle, last_cursor, world_time)
-            name_rand += 1
-            bullet_spr = pygame.image.load("sprites/Bullet.png").convert_alpha()
-            bullet_spr = pygame.transform.smoothscale(bullet_spr, (5,25))
-            bullet_spr = pygame.transform.rotate(bullet_spr, tan((bullet.get_target()[0] - player1.get_cords()[0]) /bullet.get_target()[1] - player1.get_cords()[1] ))
-            bullet_dict[bullet] = bullet_spr
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            mouse_world_x, mouse_world_y = cam1.screen_to_world(mouse_x, mouse_y)
+
+            bullet = Bullet(
+            (player1.get_cords()[0]+ (20 * cam1.zoom), player1.get_cords()[1]+(20 * cam1.zoom)), 
+            (mouse_world_x, mouse_world_y), rifle, world_time)
+            bullets.append(bullet)
+            rifle.reset_timer()
             rifle_timer = 0
+
+            # last_cursor = pygame.mouse.get_pos()
+            # bullet = Bullet(cam1.screen_to_world()[0], cam1.screen_to_world()[1], f"bullet{name_rand}", rifle, last_cursor, world_time)
+            # name_rand += 1
+            # bullet_spr = pygame.image.load("sprites/Bullet.png").convert_alpha()
+            # bullet_spr = pygame.transform.smoothscale(bullet_spr, (5,25))
+            # bullet_spr = pygame.transform.rotate(bullet_spr, tan((bullet.get_target()[0] - player1.get_cords()[0]) /bullet.get_target()[1] - player1.get_cords()[1] ))
+            # bullet_dict[bullet] = bullet_spr
             
 
-        for bul, spr in bullet_dict.items():
-            screen.blit(spr, [bul.get_cords()[0] + ] )
+        
 
 
 
@@ -497,6 +515,18 @@ def main():
                 current_frame_ba2 = 0
         else:
             current_frame_ba2 = 0
+
+        # draw bullets
+        for bullet in bullets[:]: 
+            bullet.update(dt)
+            
+            bullet_x,bullet_y = bullet.get_cords()
+            screen_pos = cam1.apply(bullet_x, bullet_y)
+            screen.blit(crosshair, screen_pos)
+    
+            if not bullet.existing:
+                bullets.remove(bullet)
+
 
         # enforce map bounds
         if 50 > player1.get_cords()[0]:
