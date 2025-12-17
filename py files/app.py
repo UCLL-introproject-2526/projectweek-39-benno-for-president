@@ -31,7 +31,7 @@ def main():
 
 
     # sound:
-    pygame.mixer.music.load('sounds/lobby_music.ogg')
+    pygame.mixer.music.load('sounds/benno_song.ogg')
     pygame.mixer.music.play(-1, fade_ms=3000)
 
 
