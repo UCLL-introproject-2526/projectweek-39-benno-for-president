@@ -1,7 +1,7 @@
 import sys
 import subprocess
 import pygame
-
+import os
 
 pygame.init()
 pygame.display.set_caption("Menu")
@@ -99,13 +99,23 @@ def toggle_fullscreen():
     quit_btn.rect.topleft = (center_x - quit_img.get_width() // 2, 500)        
 
 def launch_app():
-    # Start app.py met dezelfde Python interpreter als waarmee menu.py draait
+    # Stop muziek en sluit Pygame netjes af
+    pygame.mixer.music.stop()
+    pygame.quit()
+
+    # Pad naar app.py
+    app_path = os.path.join("py_files", "app.py")
+
+    # Start app.py en sluit menu direct af
     try:
-        subprocess.Popen([sys.executable, "py_files/app.py"])
-        pygame.quit()
-        sys.exit(0)
+        subprocess.Popen([sys.executable, app_path], close_fds=True)
+    except FileNotFoundError:
+        print(f"Fout: {app_path} niet gevonden! Controleer het pad.")
     except Exception as e:
-        print("Kon app.py niet starten:", e)
+        print(f"Fout bij starten van app.py: {e}")
+
+    # Sluit menu volledig af
+    sys.exit(0)
 
 def quit_game():
     pygame.quit()
