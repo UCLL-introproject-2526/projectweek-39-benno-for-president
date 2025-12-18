@@ -81,49 +81,27 @@ class Enemy:
 
 
     def spawn_location(self, p1, p2, small_border, big_border): #p1 & p2 moet playerX.get_cords() zijn en min border = min afstand van player dat ze spawnen & big border is max
-        if p1[0] < p2[0]:
-            if p1[1] > p2[1]:
-                square_players = [p1, [p1[0], p2[1]], p2, [p2[0], p1[1]]] #links onder, links boven, rechts boven, rechts onder
-            else:
-                square_players = [[p1[0], p2[1]],p1,[p2[0], p1[1]],  p2]
-        else:
-            if p1[1] > p2[1]:
-                square_players = [p2 [p2[0], p1[1]], p1, [p1[0], p2[1]]] #links onder, links boven, rechts boven, rechts onder
-            else:
-                square_players = [[p2[0], p1[1]],p2,[p1[0], p2[1]],  p1]
+        x_min = min(p1[0], p2[0])
+        x_max = max(p1[0], p2[0])
+        y_min = min(p1[1], p2[1])
+        y_max = max(p1[1], p2[1])
 
+        inner = pygame.Rect(
+            x_min - small_border,
+            y_min - small_border,
+            (x_max - x_min) + 2 * small_border,
+            (y_max - y_min) + 2 * small_border
+            )
 
+        outer = pygame.Rect(
+            x_min - big_border,
+            y_min - big_border,
+            (x_max - x_min) + 2 * big_border,
+            (y_max - y_min) + 2 * big_border)
 
-        square_min_grinch = square_players.copy()
-        
-        square_min_grinch[0][0] -= small_border
-        square_min_grinch[0][1] += small_border
-        square_min_grinch[1][0] -= small_border
-        square_min_grinch[1][1] -= small_border
-        square_min_grinch[2][0] += small_border
-        square_min_grinch[2][1] -= small_border
-        square_min_grinch[3][0] += small_border
-        square_min_grinch[3][1] += small_border
+        while True:
+            x = randint(outer.left, outer.right)
+            y = randint(outer.top, outer.bottom)
 
-        square_big_grinch = square_min_grinch.copy()
-
-        square_big_grinch[0][0] -= big_border
-        square_big_grinch[0][1] += big_border
-        square_big_grinch[1][0] -= big_border
-        square_big_grinch[1][1] -= big_border
-        square_big_grinch[2][0] += big_border
-        square_big_grinch[2][1] -= big_border
-        square_big_grinch[3][0] += big_border
-        square_big_grinch[3][1] += big_border
-
-        mob_x1 = randint(int(square_min_grinch[0][0]), int(square_big_grinch[0][0]))
-        mob_x2 = randint(int(square_min_grinch[3][0]), int(square_big_grinch[3][0]))
-        
-        mob_x = choice([mob_x1, mob_x2])
-
-        mob_y1 = randint(int(square_min_grinch[0][1]), int(square_big_grinch[0][1]))
-        mob_y2 = randint(int(square_min_grinch[3][1]), int(square_big_grinch[3][1]))
-        
-        mob_y = choice([mob_y1, mob_y2])
-
-        return (int(mob_x), int(mob_y))
+            if not inner.collidepoint(x, y):
+                return x, y
