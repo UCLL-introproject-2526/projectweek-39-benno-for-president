@@ -35,9 +35,9 @@ def main():
 
 
     # sound:
-    pygame.mixer.music.load('sounds/game_track.ogg')
+    pygame.mixer.music.load('sounds/music/game_track.ogg')
     pygame.mixer.music.play(-1, fade_ms=3000)
-    pygame.mixer.music.set_volume(0.3)
+    pygame.mixer.music.set_volume(0.7)
 
     shoot_sound = pygame.mixer.Sound("sounds/hitsound_2.mp3")
     shoot_sound.set_volume(0.5)
