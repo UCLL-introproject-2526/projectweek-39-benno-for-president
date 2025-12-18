@@ -2,340 +2,58 @@ import pygame
 from math import sqrt
 from math import tan
 import random
-
-pygame.init()
-
-
-Player_lives = 3
-
-class Player1:
-    def __init__(self, cords, speed, health):
-        self.set_cords(cords)
-        self.set_speed(speed)
-        self.set_health(health)
-        self.__alive = True
-    
-    def alive(self):
-        return self.__alive
-
-    def get_speed(self):
-        return self.__speed
-    
-    def set_speed(self, value):
-        if value < 0:
-            raise ValueError("enemy speed cannot be negative")
-        self.__speed = value
-    
-    def get_health(self):
-        return self.__health
-    
-    def set_health(self, value):
-        if value < 0:
-            raise ValueError("enemy health cannot be negative")
-        self.__health = value
-        if self.__health <= 0:
-            self.__alive = False
-
-    def get_cords(self):
-        return [self.__x, self.__y]
-    
-    def set_cords(self, list_inp):
-        if isinstance(list_inp, list):
-            if len(list_inp) != 2:
-                raise ValueError("player 1 cords cannot be empty")
-            self.__x = list_inp[0]
-            self.__y = list_inp[1]
-        else:
-            raise ValueError("player 1 cords have to be list")
-        
-    def move(self, key):
-        diag = self.__speed / sqrt(2)
-        
-        if key == "q":
-            self.set_cords([self.get_cords()[0] - self.__speed,self.get_cords()[1]])
-        if key == "d":
-            self.set_cords([self.get_cords()[0] + self.__speed,self.get_cords()[1]])
-        if key == "z":
-            self.set_cords([self.get_cords()[0], self.get_cords()[1] - self.__speed])
-        if key == "s":            
-            self.set_cords([self.get_cords()[0], self.get_cords()[1] + self.__speed])
-        if key == "sq":
-            self.set_cords([self.get_cords()[0] - diag, self.get_cords()[1] + diag ])
-        if key == "sd":
-            self.set_cords([self.get_cords()[0] + diag, self.get_cords()[1] + diag ])
-        if key == "zq":
-            self.set_cords([self.get_cords()[0] - diag, self.get_cords()[1] - diag ])
-        if key == "zd":
-            self.set_cords([self.get_cords()[0] + diag, self.get_cords()[1] - diag ])
-    
-        
-
-class Player2:
-    def __init__(self, cords, speed, health):
-        self.set_cords(cords)
-        self.set_speed(speed)
-        self.set_health(health)
-        self.__alive = True
-
-    def alive(self):
-        return self.__alive
-
-    def get_speed(self):
-        return self.__speed
-    
-    def set_speed(self, value):
-        if value < 0:
-            raise ValueError("enemy speed cannot be negative")
-        self.__speed = value
-    
-    def get_health(self):
-        return self.__health
-    
-    def set_health(self, value):
-        if value < 0:
-            raise ValueError("enemy health cannot be negative")
-        self.__health = value
-        if self.__health <= 0:
-            self.__alive = False
-
-    def get_cords(self):
-        return [self.__x, self.__y]
-    
-    def set_cords(self, list_inp):
-        if isinstance(list_inp, list):
-            if len(list_inp) != 2:
-                raise ValueError("player 2 cords cannot be empty")
-            self.__x = list_inp[0]
-            self.__y = list_inp[1]
-        else:
-            raise ValueError("player 2 cords have to be list")
-    
-    def move(self, key):
-        diag = self.__speed / sqrt(2)
-        
-        if key == "left":
-            self.set_cords([self.get_cords()[0] - self.__speed,self.get_cords()[1]])
-        if key == "right":
-            self.set_cords([self.get_cords()[0] + self.__speed,self.get_cords()[1]])
-        if key == "up":
-            self.set_cords([self.get_cords()[0], self.get_cords()[1] - self.__speed])
-        if key == "down":            
-            self.set_cords([self.get_cords()[0], self.get_cords()[1] + self.__speed])
-        if key == "dl":
-            self.set_cords([self.get_cords()[0] - diag, self.get_cords()[1] + diag ])
-        if key == "dr":
-            self.set_cords([self.get_cords()[0] + diag, self.get_cords()[1] + diag ])
-        if key == "ul":
-            self.set_cords([self.get_cords()[0] - diag, self.get_cords()[1] - diag ])
-        if key == "ur":
-            self.set_cords([self.get_cords()[0] + diag, self.get_cords()[1] - diag ])
-
-class Weapon:
-    def __init__(self, dmg, rpm, bullet_speed):
-        self.set_dmg(dmg)
-        self.set_rpm(rpm)
-        self.set_bullet_speed(bullet_speed)
-
-
-    def get_dmg(self):
-        return self.__dmg
-
-    def set_dmg(self, value):
-        if isinstance(value, int):
-            if value <= 0:
-                raise ValueError("weapon dmg cannot be negative")
-            self.__dmg = value
-        else:
-            raise ValueError("weapon dmg must be int")
-            
-    def get_rpm(self):
-        return self.__rpm
-    
-    def set_rpm(self, value):
-        if value < 0:
-            raise ValueError("weapon rpm cannot be negative")
-        self.__rpm = value
-
-    def get_bullet_speed(self):
-        return self.__bullet_speed
-    
-    def set_bullet_speed(self, value):
-        if value < 0:
-            raise ValueError("weapon bullet speed cannot be negative")
-        self.__bullet_speed = value
-
-
-class Bullet:
-    def __init__(self, x, y, name, Weap, target, time1):
-        self.__x = x
-        self.__y = y
-        self.__name = name
-        self.set_target(target)
-        self.__speed = Weap.get_bullet_speed()
-        self.time1 = time1
-
-    def get_cords(self):
-        return [self.__x, self.__y]
-    
-    def get_name(self):
-        return self.__name
-    
-    def get_target(self):
-        return self.__target
-    
-    def set_target(self, value):
-        self.__target = value
-    
-    def get_speed(self):
-        return self.__speed
-
-class Enemy:
-    def __init__(self, cords, speed, health, dmg):
-        self.set_cords(cords)
-        self.set_speed(speed)
-        self.set_health(health)
-        self.set_dmg(dmg)
-        self.__alive = True
-    
-    def get_cords(self):
-        return [self.__x, self.__y]
-
-    def set_cords(self, list_inp):
-        if not isinstance(list_inp, list):
-            if not  len(list_inp) == 2:
-                raise ValueError("enemy cords cannot be empty and has to be list")
-            
-        self.__x = list_inp[0]
-        self.__y = list_inp[1]
-
-    def get_speed(self):
-        return self.__speed
-    
-    def set_speed(self, value):
-        if value < 0:
-            raise ValueError("enemy speed cannot be negative")
-        self.__speed = value
-
-    def get_health(self):
-        return self.__health
-    
-    def set_health(self, value):
-        if value < 0:
-            raise ValueError("enemy health cannot be negative")
-        self.__health = value
-
-    def get_dmg(self):
-        return self.__dmg
-    
-    def set_dmg(self, value):
-        if value < 0:
-            raise ValueError("enemy dmg cannot be negative")
-        self.__dmg = value
-
-    def get_alive(self):
-        return self.__alive
-
-    def get_closest(self, player1, player2):
-        if sqrt((self.__x - player1.get_cords[0])**2 + (self.__y - player1.get_cords[1])**2) < sqrt((self.__x - player2.get_cords[0])**2 + (self.__y - player2.get_cords[1])**2):
-            return player1
-        else:
-            return player2
-
-    def move(self, player):
-        if self.__x < player.get_cords[0]:
-            self.__x =+ self.get_speed()
-        else:
-            self.__x =- self.get_speed()
-
-        if self.__y < player.get_cords[1]:
-            self.__y =+ self.get_speed()
-        else:
-            self.__y =- self.get_speed()
-
-
-    def hit(self, other):
-        diff = max(0, self.__health - other.get_dmg())
-        self.set_health(diff)
-        if self.__health <= 0:
-            self.__alive = False
-
-
-class Camera:
-    def __init__(self, width, height, screen_size):
-        self.width = width
-        self.height = height
-        self.camera = pygame.Rect(0, 0, width, height)
-        self.offset = pygame.Vector2(0,0)
-        self.zoom = 1
-        self.screen_size_x = screen_size[0]
-        self.screen_size_y = screen_size[1]
-
-
-
-    def dist(self, a, b):
-        return ((a[0]-b[0])**2 + (a[1]-b[1])**2) ** 0.5
-
-    def update(self, player1, player2): 
-        cam_x = ((player1.get_cords()[0] + player2.get_cords()[0]) /2) #+ mouse_pos[0] ) / 3 #x & y cordinaat 3hoek spelers &muis
-        cam_y = ((player1.get_cords()[1] + player2.get_cords()[1]) /2) #+ mouse_pos[1] ) / 3
-
-
-        self.offset.x = cam_x - (self.width / 2)     #offset zodat het middelpunt van 2spelers & muis in het midden van camera is
-        self.offset.y = cam_y - (self.height / 2)
-
-        max_dist = max(self.dist((cam_x, cam_y),player1.get_cords()),
-                       self.dist((cam_x, cam_y),player2.get_cords()),
-                       )
-        
-        view_w = self.width / self.zoom
-        view_h = self.height / self.zoom
-
-        self.offset.x = max(0, min(self.offset.x, self.screen_size_x - view_w))
-        self.offset.y = max(0, min(self.offset.y, self.screen_size_y - view_h))
-
-       
-        target_zoom = 400 / (max_dist + 1)
-            #target_zoom = 800 / (max_dist + 1)
-
-        self.zoom = max(0.5, min(1.3, target_zoom))
-
-    def apply(self, x, y):          #mapcordinaten naar pccordinaten
-        return (int((x - self.offset.x) * self.zoom), int((y- self.offset.y) * self.zoom))
-    
-    def screen_to_world(self, sx, sy):
-        return (
-            sx / self.zoom + self.offset.x,
-            sy / self.zoom + self.offset.y
-            )
-    #screen_pos = cam.world_to_screen(*placed_object.pos)
-    #screen.blit(sprite, screen_pos)
-
+from player import Player1,Player2
+from weapons import Weapon, Bullet
+from enemy import Enemy
+from camera import Camera
 
 
 def main():
-    # loop setup
-    world_time = 0
-    player1 = Player1([200,200], 5, 50)
-    player2 = Player2([300,200], 5, 50)
-    cam1 = Camera(1024,2400, (1024,834))
-    rifle = Weapon(15, 0.7, 40)
-    rifle_timer = 0
-    name_rand = 0
-    bullet_dict = {}
-
-
     # pygame setup
+    pygame.init()
+    
+    pygame.display.set_caption("Benno vs Santa")
     screen_size = (1024,834)
     screen = pygame.display.set_mode(screen_size)
     clock = pygame.time.Clock()
+    
+
+    # loop setup
+    world_time = 0
+    world_time2 = 0
+    player1 = Player1([200,200], 6, 50) #speed was 3
+    player2 = Player2([300,200], 6.1, 50) #(spawncordinate), speed, health
+    cam1 = Camera(1024,834, (2400,2400))    #width, height, mapsize
+    rifle = Weapon(15, 0.7, 400) #damage, shootdelay ,bulletspeed, 
+    rifle_timer = 0
+    fullscreen = False
+    Player_lives = 3
+    ui_switch = 0
+    bullets = []
+
 
     # sound:
-    pygame.mixer.music.load('sounds/lobby_music.ogg')
+    pygame.mixer.music.load('sounds/benno_song.ogg')
     pygame.mixer.music.play(-1, fade_ms=3000)
 
 
     # sprites:
     background = pygame.image.load('sprites/icy_background.png').convert()
+
+    heart1 = pygame.image.load('sprites/hearts/l0_hearts1.png').convert_alpha()
+    heart1 = pygame.transform.smoothscale(heart1, (45,45))
+
+    heart2 = pygame.image.load('sprites/hearts/l0_hearts1.png').convert_alpha()
+    heart2 = pygame.transform.smoothscale(heart2, (45,45))
+
+    heart3 = pygame.image.load('sprites/hearts/l0_hearts1.png').convert_alpha()
+    heart3 = pygame.transform.smoothscale(heart3, (45,45))
+
+    crosshair = pygame.image.load('sprites/crosshairs_black.png'). convert_alpha()
+    crosshair = pygame.transform.smoothscale(crosshair, (45,45))
+
+    bullet_spr = pygame.image.load('sprites/kogel2.png').convert_alpha()
+    bullet_spr = pygame.transform.smoothscale(bullet_spr, (45,45))
 
     player1_sprite_back = pygame.image.load('sprites/player1/dikkeelfsprite5.png').convert_alpha()
     player1_sprite_back = pygame.transform.smoothscale(player1_sprite_back, (75,75))
@@ -417,11 +135,16 @@ def main():
     run = True
     while run:
         # variables
+        dt = clock.tick(60) / 1000
         world_time += 1/60
-        rifle_timer += 1/60
+        rifle_timer += dt
         if rifle_timer >= rifle.get_rpm():
             rifle_delay = True
         else: rifle_delay = False
+        ui_switch += 1
+
+        world_time2 += dt #deze zou fps onafhankelijk moeten zijn
+        rifle_timer += dt
 
         # camera
         cam1.update(player1, player2)
@@ -442,7 +165,7 @@ def main():
             screen.blit(scaled_screen, screen_pos)
         else:
             screen.blit(background, screen_pos)
-        
+
 
         # player 1
         key = pygame.key.get_pressed()
@@ -597,18 +320,26 @@ def main():
 
         # player 1 shooting
         if key[pygame.K_TAB] and rifle_delay == True:
-            last_cursor = list(pygame.mouse.get_pos())
-            bullet = Bullet(cam1.screen_to_world()[0], cam1.screen_to_world()[1], f"bullet{name_rand}", rifle, last_cursor, world_time)
-            name_rand += 1
-            bullet_spr = pygame.image.load("sprites/Bullet.png").convert_alpha()
-            bullet_spr = pygame.transform.smoothscale(bullet_spr, (5,25))
-            bullet_spr = pygame.transform.rotate(bullet_spr, tan((bullet.get_target()[0] - player1.get_cords()[0]) /bullet.get_target()[1] - player1.get_cords()[1] ))
-            bullet_dict[bullet] = bullet_spr
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            mouse_world_x, mouse_world_y = cam1.screen_to_world(mouse_x, mouse_y)
+
+            bullet = Bullet(
+            (player1.get_cords()[0]+ (20 * cam1.zoom), player1.get_cords()[1]+(20 * cam1.zoom)), 
+            (mouse_world_x, mouse_world_y), rifle, world_time)
+            bullets.append(bullet)
+            rifle.reset_timer()
             rifle_timer = 0
+
+            # last_cursor = pygame.mouse.get_pos()
+            # bullet = Bullet(cam1.screen_to_world()[0], cam1.screen_to_world()[1], f"bullet{name_rand}", rifle, last_cursor, world_time)
+            # name_rand += 1
+            # bullet_spr = pygame.image.load("sprites/Bullet.png").convert_alpha()
+            # bullet_spr = pygame.transform.smoothscale(bullet_spr, (5,25))
+            # bullet_spr = pygame.transform.rotate(bullet_spr, tan((bullet.get_target()[0] - player1.get_cords()[0]) /bullet.get_target()[1] - player1.get_cords()[1] ))
+            # bullet_dict[bullet] = bullet_spr
             
 
-        # for bul, spr in bullet_dict.items():
-        #     screen.blit(spr, [bul.get_cords()[0] + ] )
+        
 
 
 
@@ -783,27 +514,49 @@ def main():
                 current_frame_ba2 = 0
         else:
             current_frame_ba2 = 0
-        
+
+        # draw bullets
+        for bullet in bullets[:]: 
+            bullet.update(dt)
+            
+            if not bullet.existing:
+                bullets.remove(bullet)
+                               
+            bullet_x,bullet_y = bullet.get_cords()
+            screen_pos = cam1.apply(bullet_x, bullet_y)
+            screen.blit(crosshair, screen_pos)
+    
+
+
+
         # enforce map bounds
         if 50 > player1.get_cords()[0]:
             player1.set_cords([player1.get_cords()[0] + 5, player1.get_cords()[1]])
-        if cam1.screen_size_x - 50 < player1.get_cords()[0]:
+        if cam1.map_width - 125 < player1.get_cords()[0]:
             player1.set_cords([player1.get_cords()[0] - 5, player1.get_cords()[1]])
-        if 50 > player1.get_cords()[1]:
+        if 45 > player1.get_cords()[1]:
             player1.set_cords([player1.get_cords()[0], player1.get_cords()[1] + 5])
-        if cam1.screen_size_y - 50 < player1.get_cords()[1]:
+        if cam1.map_height - 160 < player1.get_cords()[1]:
             player1.set_cords([player1.get_cords()[0], player1.get_cords()[1] - 5])
         
 
         if 50 > player2.get_cords()[0]:
             player2.set_cords([player2.get_cords()[0] + 5, player2.get_cords()[1]])
-        if cam1.screen_size_x - 50 < player2.get_cords()[0]:
+        if cam1.map_width - 125 < player2.get_cords()[0]:
             player2.set_cords([player2.get_cords()[0] - 5, player2.get_cords()[1]])
-        if 50 > player2.get_cords()[1]:
+        if 45 > player2.get_cords()[1]:
             player2.set_cords([player2.get_cords()[0], player2.get_cords()[1] + 5])
-        if cam1.screen_size_y - 50 < player2.get_cords()[1]:
+        if cam1.map_height - 160 < player2.get_cords()[1]:
             player2.set_cords([player2.get_cords()[0], player2.get_cords()[1] - 5])
         
+
+
+
+        # UI bars
+        screen.blit(heart1,(cam1.width // 2 , cam1.height - 771 )) #if you read this code.. EASTER EGGG
+        screen.blit(heart2,(cam1.width // 2 + 35 , cam1.height - 770 ))
+        screen.blit(heart3,(cam1.width // 2 - 35, cam1.height - 770 ))
+
 
 
         # event handler
@@ -811,6 +564,15 @@ def main():
 
             if event.type == pygame.QUIT:
                 run = False
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    fullscreen = not fullscreen
+
+                    if fullscreen:
+                        screen = pygame.display.set_mode((1024,834), pygame.FULLSCREEN)
+                    else:
+                        screen = pygame.display.set_mode(screen_size)
 
 
         clock.tick(60)
@@ -832,3 +594,60 @@ main()
 
 
     #  render_frame(screen, xpos, ypos)
+
+
+
+
+
+    #  camera update dinges
+        # cam_x = ((player1.get_cords()[0] + player2.get_cords()[0]) /2) #+ mouse_pos[0] ) / 3 #x & y cordinaat 3hoek spelers &muis
+        # cam_y = ((player1.get_cords()[1] + player2.get_cords()[1]) /2) #+ mouse_pos[1] ) / 3
+
+
+        # max_dist = max(self.dist((cam_x, cam_y),player1.get_cords()),
+        #                self.dist((cam_x, cam_y),player2.get_cords()),
+        #                )
+
+        # target_zoom = 800 / (max_dist + 1)
+        # self.zoom = max(0.7, min(1.3, target_zoom))
+
+        # view_w = self.width / self.zoom
+        # view_h = self.height / self.zoom
+        # safe_x = self.safe_zone / self.zoom
+        # safe_y = self.safe_zone / self.zoom
+        
+        # self.offset.x = cam_x - (self.width / 2)     #offset zodat het middelpunt van 2spelers & muis in het midden van camera is
+        # self.offset.y = cam_y - (self.height / 2)
+
+        # left   = self.offset.x + safe_x
+        # right  = self.offset.x + view_w - safe_x
+        # top    = self.offset.y + safe_y
+        # bottom = self.offset.y + view_h - safe_y
+    
+
+        # for px, py in (player1.get_cords(), player2.get_cords()):
+
+        #     if px < left:
+        #         self.offset.x = px - safe_x
+        #     elif px > right:
+        #      self.offset.x = px + safe_x - view_w
+
+        #     if py < top:
+        #         self.offset.y = py - safe_y
+        #     elif py > bottom:
+        #         self.offset.y = py + safe_y - view_h
+
+        # self.offset.x = max(0, min(self.offset.x, self.map_width - view_w))
+        # self.offset.y = max(0, min(self.offset.y, self.map_height - view_h))
+
+        # view_w = self.width / self.zoom
+        # view_h = self.height / self.zoom
+
+        # required_w = max(player1.get_cords()[0], player2.get_cords()[0]) - min(player1.get_cords()[0], player2.get_cords()[0]) + 2 * self.safe_zone
+        # required_h = max(player1.get_cords()[1], player2.get_cords()[1]) - min(player1.get_cords()[1], player2.get_cords()[1]) + 2 * self.safe_zone
+
+        # zoom_x = self.width / required_w
+        # zoom_y = self.height / required_h
+
+        # new_zoom = min(zoom_x, zoom_y, 1.3)
+        # self.zoom = max(new_zoom, 0.7)
