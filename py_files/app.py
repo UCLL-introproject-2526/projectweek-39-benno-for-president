@@ -204,8 +204,10 @@ def main():
         wave_timer += 1 * dt
         current_wave = 1
 
+
         # camera update
         cam1.update(player1, player2)
+
 
         # animation initialisatie
         movingfront_enemy = False
@@ -233,6 +235,7 @@ def main():
                 sprite = pygame.transform.scale(sprite, (new_width, new_height))
             screen.blit(sprite, screen_pos)
 
+
         # scherm tekenen
         screen.fill((0, 0, 0))
         screen_pos = cam1.apply(0, 0)
@@ -244,6 +247,7 @@ def main():
         else:
             screen.blit(background, screen_pos)
         
+
         # cursor verbergen
         if pygame.mouse.get_focused():
             pygame.mouse.set_visible(False)
@@ -264,7 +268,6 @@ def main():
         if keys[pygame.K_s]:
             dy1 += 1
         
-
         # movement kanker 1
         if dx1 != 0 or dy1 != 0:
             length = (dx1 ** 2 + dy1 ** 2) ** 0.5
@@ -307,7 +310,6 @@ def main():
                 player2.get_cords()[1] + dy2 * player2.get_speed() * dt
             ])
 
-
             movingfront2 = dy2 > 0
             movingback2 = dy2 < 0
             face_me2 = dy2 >= 0
@@ -342,62 +344,6 @@ def main():
         draw_player(player1, player1fronts, player1backs, movingfront, movingback, face_me1, current_frame_fr, current_frame_ba)
         draw_player(player2, player2fronts, player2backs, movingfront2, movingback2, face_me2, current_frame_fr2, current_frame_ba2)
 
-        # shooting
-        if keys[pygame.K_TAB] and rifle_delay:
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-            mouse_world_x, mouse_world_y = cam1.screen_to_world(mouse_x, mouse_y)
-            bullet = Bullet((player1.get_cords()[0]+(20*cam1.zoom), player1.get_cords()[1]+(20*cam1.zoom)),
-                (mouse_world_x, mouse_world_y), rifle, world_time)
-            
-            bullets.append(bullet)
-            shoot_sound.play()  
-            rifle.reset_timer()
-            rifle_timer = 0
-
-        # animation handlers
-        if movingfront:
-            current_frame_fr += animation_speed
-            if current_frame_fr >= len(player1fronts):
-                current_frame_fr = 0
-        else:
-            current_frame_fr = 0
-
-        if movingback:
-            current_frame_ba += animation_speed
-            if current_frame_ba >= len(player1backs):
-                current_frame_ba = 0
-        else:
-            current_frame_ba = 0
-
-        if movingfront2:
-            current_frame_fr2 += animation_speed
-            if current_frame_fr2 >= len(player2fronts):
-                current_frame_fr2 = 0
-        else:
-            current_frame_fr2 = 0
-
-        if movingback2:
-            current_frame_ba2 += animation_speed
-            if current_frame_ba2 >= len(player2backs):
-                current_frame_ba2 = 0
-        else:
-            current_frame_ba2 = 0
-
-        # bullet updating
-        for bullet in bullets:
-            bullet.update(dt)
-            for enemy in enemies:
-                offset = (enemy.rect.left - bullet.rect.left, enemy.rect.top - bullet.rect.top)
-                if bullet.mask.overlap(enemy.mask, offset):
-                    enemy.hit(bullet.damage) # was (rifle)
-                    bullet.existing = False
-
-            if not bullet.existing:
-                bullets.remove(bullet)
-            bullet_x, bullet_y = bullet.get_cords()
-            screen_pos = cam1.apply(bullet_x, bullet_y)
-            screen.blit(bullet_spr, screen_pos)
-
 
         # player enforce bounds
         def enforce_bounds(player, other):
@@ -418,10 +364,36 @@ def main():
         enforce_bounds(player1, player2)
         enforce_bounds(player2, player1)
 
-        # UI handling
-        screen.blit(heart1, (cam1.width//2 + 75, cam1.height - 771))
-        screen.blit(heart2, (cam1.width//2 + 50, cam1.height - 770))
-        screen.blit(heart3, (cam1.width//2  + 25, cam1.height - 770))
+
+        # shooting
+        if keys[pygame.K_TAB] and rifle_delay:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            mouse_world_x, mouse_world_y = cam1.screen_to_world(mouse_x, mouse_y)
+            bullet = Bullet((player1.get_cords()[0]+(20*cam1.zoom), player1.get_cords()[1]+(20*cam1.zoom)),
+                (mouse_world_x, mouse_world_y), rifle, world_time)
+            
+            bullets.append(bullet)
+            shoot_sound.play()  
+            rifle.reset_timer()
+            rifle_timer = 0
+
+
+
+        # bullet updating
+        for bullet in bullets:
+            bullet.update(dt)
+            for enemy in enemies:
+                offset = (enemy.rect.left - bullet.rect.left, enemy.rect.top - bullet.rect.top)
+                if bullet.mask.overlap(enemy.mask, offset):
+                    enemy.hit(bullet.damage) # was (rifle)
+                    bullet.existing = False
+
+            if not bullet.existing:
+                bullets.remove(bullet)
+            bullet_x, bullet_y = bullet.get_cords()
+            screen_pos = cam1.apply(bullet_x, bullet_y)
+            screen.blit(bullet_spr, screen_pos)
+
 
         # wave checking
         if enemy_count == 0 and wave_timer >= 15:
@@ -526,7 +498,43 @@ def main():
             enemy.move(target, dt)
             draw_enemy(enemy, enemy_fronts, enemy_backs, movingfront_enemy, movingback_enemy, face_me_enemy, current_frame_fr_enemy, current_frame_ba_enemy)
         
+        
+        # animation handlers
+        if movingfront:
+            current_frame_fr += animation_speed
+            if current_frame_fr >= len(player1fronts):
+                current_frame_fr = 0
+        else:
+            current_frame_fr = 0
 
+        if movingback:
+            current_frame_ba += animation_speed
+            if current_frame_ba >= len(player1backs):
+                current_frame_ba = 0
+        else:
+            current_frame_ba = 0
+
+        if movingfront2:
+            current_frame_fr2 += animation_speed
+            if current_frame_fr2 >= len(player2fronts):
+                current_frame_fr2 = 0
+        else:
+            current_frame_fr2 = 0
+
+        if movingback2:
+            current_frame_ba2 += animation_speed
+            if current_frame_ba2 >= len(player2backs):
+                current_frame_ba2 = 0
+        else:
+            current_frame_ba2 = 0
+
+        
+        # UI handling
+        screen.blit(heart1, (cam1.width//2 + 75, cam1.height - 771))
+        screen.blit(heart2, (cam1.width//2 + 50, cam1.height - 770))
+        screen.blit(heart3, (cam1.width//2  + 25, cam1.height - 770))
+
+        
         # event handlers
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -541,6 +549,7 @@ def main():
 
                     pygame.mouse.set_visible(False)
 
+        
         # draw crosshair
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
