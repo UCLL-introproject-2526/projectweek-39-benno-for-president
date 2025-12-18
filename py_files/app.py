@@ -45,7 +45,7 @@ def main():
     shoot_sound.set_volume(0.5)
 
     wave_sound = pygame.mixer.Sound("sounds/sound_effects/new_wave.mp3")
-    wave_sound.set_volume(0.25)
+    wave_sound.set_volume(0.1)
 
 
 
