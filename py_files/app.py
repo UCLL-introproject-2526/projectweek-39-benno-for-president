@@ -35,8 +35,10 @@ def main():
     # sound:
     pygame.mixer.music.load('sounds/game_track.ogg')
     pygame.mixer.music.play(-1, fade_ms=3000)
+    pygame.mixer.music.set_volume(0.3)
 
     shoot_sound = pygame.mixer.Sound("sounds/hitsound_2.mp3")
+    shoot_sound.set_volume(0.5)
 
 
 
@@ -263,6 +265,7 @@ def main():
                 (mouse_world_x, mouse_world_y), rifle, world_time)
             
             bullets.append(bullet)
+            shoot_sound.play()  
             rifle.reset_timer()
             rifle_timer = 0
 
