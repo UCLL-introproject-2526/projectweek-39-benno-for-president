@@ -26,13 +26,9 @@ def main():
     cam1 = Camera(1024,834, (2400,2400))    #width, height, mapsize
     rifle = Weapon(15, 0.7, 400) #damage, shootdelay ,bulletspeed, 
     rifle_timer = 0
-    name_rand = 0
-    bullet_dict = {}
     fullscreen = False
     Player_lives = 3
     ui_switch = 0
-    shot_delay = 0.5
-    last_shot = 0
     bullets = []
 
 
@@ -55,6 +51,9 @@ def main():
 
     crosshair = pygame.image.load('sprites/crosshairs_black.png'). convert_alpha()
     crosshair = pygame.transform.smoothscale(crosshair, (45,45))
+
+    bullet_spr = pygame.image.load('sprites/kogel2.png').convert_alpha()
+    bullet_spr = pygame.transform.smoothscale(bullet_spr, (45,45))
 
     player1_sprite_back = pygame.image.load('sprites/player1/dikkeelfsprite5.png').convert_alpha()
     player1_sprite_back = pygame.transform.smoothscale(player1_sprite_back, (75,75))
@@ -521,13 +520,13 @@ def main():
             bullet.update(dt)
             
             if not bullet.existing:
-                bullets.remove(bullet
+                bullets.remove(bullet)
                                
             bullet_x,bullet_y = bullet.get_cords()
             screen_pos = cam1.apply(bullet_x, bullet_y)
             screen.blit(crosshair, screen_pos)
     
-)
+
 
 
         # enforce map bounds
