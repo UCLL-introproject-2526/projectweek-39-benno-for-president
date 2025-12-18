@@ -90,8 +90,7 @@ class Enemy:
             x_min - small_border,
             y_min - small_border,
             (x_max - x_min) + 2 * small_border,
-            (y_max - y_min) + 2 * small_border
-            )
+            (y_max - y_min) + 2 * small_border)
 
         outer = pygame.Rect(
             x_min - big_border,
@@ -99,9 +98,20 @@ class Enemy:
             (x_max - x_min) + 2 * big_border,
             (y_max - y_min) + 2 * big_border)
 
-        while True:
+        side = choice(["top", "bottom", "left", "right"])
+
+        if side == "top":
             x = randint(outer.left, outer.right)
+            y = outer.top
+        elif side == "bottom":
+            x = randint(outer.left, outer.right)
+            y = outer.bottom
+        elif side == "left":
+            x = outer.left
+            y = randint(outer.top, outer.bottom)
+        else:
+            x = outer.right
             y = randint(outer.top, outer.bottom)
 
-            if not inner.collidepoint(x, y):
-                return x, y
+        return x, y
+
