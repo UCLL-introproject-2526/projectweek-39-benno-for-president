@@ -53,7 +53,7 @@ def main():
     crosshair = pygame.transform.smoothscale(crosshair, (45,45))
 
     bullet_spr = pygame.image.load('sprites/kogel2.png').convert_alpha()
-    bullet_spr = pygame.transform.smoothscale(bullet_spr, (45,45))
+    bullet_spr = pygame.transform.smoothscale(bullet_spr, (20,20))
 
     player1_sprite_back = pygame.image.load('sprites/player1/dikkeelfsprite5.png').convert_alpha()
     player1_sprite_back = pygame.transform.smoothscale(player1_sprite_back, (75,75))
@@ -318,6 +318,7 @@ def main():
         else:
             screen.blit(sprite, screen_pos)
 
+    
         # player 1 shooting
         if key[pygame.K_TAB] and rifle_delay == True:
             mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -524,7 +525,7 @@ def main():
                                
             bullet_x,bullet_y = bullet.get_cords()
             screen_pos = cam1.apply(bullet_x, bullet_y)
-            screen.blit(crosshair, screen_pos)
+            screen.blit(bullet_spr, screen_pos)
     
 
 
