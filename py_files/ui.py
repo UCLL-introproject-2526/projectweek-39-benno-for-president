@@ -37,7 +37,7 @@ play_hover_img = pygame.image.load(
 ).convert_alpha()
 
 quit_img = pygame.image.load(
-    "sprites/gui/quit_button.png"
+    "sprites/gui/closegame_button.png"
 ).convert_alpha()
 
 quit_hover_img = pygame.image.load(
