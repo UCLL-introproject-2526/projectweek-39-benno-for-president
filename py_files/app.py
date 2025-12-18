@@ -508,7 +508,7 @@ def main():
         if enemy_count != 0 and wave_start and spawned == False and current_wave <= 2: 
             for i in range(0, enemy_count):
                 enemy = Enemy((0, 0), 80, 20, 10)
-                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 700, 1400))
+                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100))
                 print(enemy.get_cords())
                 enemies.append(enemy)
             spawned = True
@@ -516,7 +516,7 @@ def main():
         if enemy_count != 0 and wave_start and spawned == False and current_wave > 2: 
             for i in range(0, enemy_count):
                 enemy = Enemy((0, 0), 80, 20, 10)
-                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 500, 1100))
+                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 500, 900))
                 print(enemy.get_cords())
                 enemies.append(enemy)
             spawned = True
