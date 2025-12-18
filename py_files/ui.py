@@ -9,24 +9,15 @@ WIDTH, HEIGHT = 1024, 834
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 
-FONT_BIG = pygame.font.SysFont(None, 72)
-FONT_MED = pygame.font.SysFont(None, 42)
-FONT_SMALL = pygame.font.SysFont(None, 28)
 
 
 
 
 
 
-# Kleuren
+
 BG = pygame.image.load('sprites/gui/background_start_screen.png').convert()
-PANEL = (28, 28, 36)
-WHITE = (235, 235, 235)
-MUTED = (170, 170, 180)
-ACCENT = (110, 180, 255)
-BTN = (45, 45, 60)
-BTN_HOVER = (70, 70, 95)
-BTN_TEXT = (245, 245, 245)
+
 
 play_img = pygame.image.load(
     "sprites/gui/play_button.png"
@@ -41,16 +32,15 @@ quit_img = pygame.image.load(
 ).convert_alpha()
 
 quit_hover_img = pygame.image.load(
-    "sprites/gui/play_button_hover.png"
+    "sprites/gui/closegame_button_hover.png"
 ).convert_alpha()
 
+play_hover_img = pygame.transform.scale(play_hover_img, play_img.get_size())
 
 
+quit_hover_img = pygame.transform.scale(quit_hover_img, quit_img.get_size())
 
-def draw_text(surf, text, font, color, center):
-    img = font.render(text, True, color)
-    rect = img.get_rect(center=center)
-    surf.blit(img, rect)
+
 
 class Button:
     def __init__(self, pos, image, hover_image, on_click):
@@ -73,6 +63,8 @@ class Button:
         else:
             surf.blit(self.image, self.rect)
 
+        pygame.draw.rect(surf, (255, 0, 0), self.rect, 3)
+
 def launch_app():
     # Start app.py met dezelfde Python interpreter als waarmee menu.py draait
     try:
@@ -90,7 +82,7 @@ def quit_game():
 
 
 # Buttons
-btn_w, btn_h = 300, 70
+
 center_x = WIDTH // 2
 start_y = 220
 gap = 18
@@ -103,7 +95,7 @@ play_btn = Button(
 )
 
 quit_btn = Button(
-    pos=(center_x - quit_img.get_width() // 2, start_y + 2*(play_img.get_height()+gap)),
+    pos=(center_x - quit_img.get_width() // 2, start_y + 1 * (play_img.get_height()+gap)),
     image=quit_img,
     hover_image=quit_hover_img,
     on_click=quit_game
@@ -138,7 +130,7 @@ while running:
 
             
         
-
+    # screen.fill((0, 255, 0))
     screen.blit(BG, (0, 0))
 
     for b in buttons_main:
