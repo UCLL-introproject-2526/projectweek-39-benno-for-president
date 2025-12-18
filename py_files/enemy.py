@@ -121,8 +121,6 @@ class Enemy:
         return (int(x), int(y))
 
 
-
-
     # def spawn_location(self, p1, p2, small_border, big_border): #p1 & p2 moet playerX.get_cords() zijn en min border = min afstand van player dat ze spawnen & big border is max
     #     x_min = min(p1[0], p2[0])
     #     x_max = max(p1[0], p2[0])
