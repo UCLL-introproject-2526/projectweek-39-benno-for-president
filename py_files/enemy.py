@@ -1,5 +1,7 @@
 import pygame
 from math import sqrt
+from player import Player1, Player2
+from random import randint, choice
 
 class Enemy:
     def __init__(self, cords, speed, health, dmg):
@@ -70,4 +72,67 @@ class Enemy:
         self.set_health(diff)
         if self.__health <= 0:
             self.__alive = False
+
+
+
+
+    def spawn_location(p1, p2, small_border, big_border): #p1 & p2 moet playerX.get_cords() zijn en min border = min afstand van player dat ze spawnen & big border is max
+        if p1[0] < p2[0]:
+            if p1[1] > p2[1]:
+                square_players = (p1, (p1[0], p2[1]), p2, (p2[0], p1[1])) #links onder, links boven, rechts boven, rechts onder
+            else:
+                square_players = ((p1[0], p2[1]),p1,(p2[0], p1[1]),  p2)
+        else:
+            if p1[1] > p2[1]:
+                square_players = (p2 (p2[0], p1[1]), p1, (p1[0], p2[1])) #links onder, links boven, rechts boven, rechts onder
+            else:
+                square_players = ((p2[0], p1[1]),p2,(p1[0], p2[1]),  p1)
+
+
+
+        square_min_grinch = square_players.copy()
+        
+        square_min_grinch[0][0] -= small_border
+        square_min_grinch[0][1] += small_border
+        square_min_grinch[1][0] -= small_border
+        square_min_grinch[1][1] -= small_border
+        square_min_grinch[2][0] += small_border
+        square_min_grinch[2][1] -= small_border
+        square_min_grinch[3][0] += small_border
+        square_min_grinch[3][1] += small_border
+
+        square_big_grinch = square_min_grinch.copy()
+
+        square_big_grinch[0][0] -= big_border
+        square_big_grinch[0][1] += big_border
+        square_big_grinch[1][0] -= big_border
+        square_big_grinch[1][1] -= big_border
+        square_big_grinch[2][0] += big_border
+        square_big_grinch[2][1] -= big_border
+        square_big_grinch[3][0] += big_border
+        square_big_grinch[3][1] += big_border
+
+        random = (x, y)
+
+        mob_x1 = randint(square_min_grinch[0][0], square_big_grinch[0][0])
+        mob_x2 = randint(square_min_grinch[3][0], square_big_grinch[3][0])
+        
+        mob_x = choice(mob_x1, mob_x2)
+
+        mob_y1 = randint(square_min_grinch[0][1], square_big_grinch[0][1])
+        mob_y2 = randint(square_min_grinch[3][1], square_big_grinch[3][1])
+        
+        mob_y = choice(mob_y1, mob_y2)
+
+        return (mob_x, mob_y)
+
+
+
+
+
+
+
+        
+
+
             
