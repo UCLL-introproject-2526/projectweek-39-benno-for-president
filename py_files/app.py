@@ -41,8 +41,11 @@ def main():
     pygame.mixer.music.play(-1, fade_ms=3000)
     pygame.mixer.music.set_volume(0.7)
 
-    shoot_sound = pygame.mixer.Sound("sounds/hitsound_2.mp3")
+    shoot_sound = pygame.mixer.Sound("sounds/sound_effects/shoot_sound.mp3")
     shoot_sound.set_volume(0.5)
+
+    wave_sound = pygame.mixer.Sound("sounds/sound_effects/new_wave.mp3")
+    wave_sound.set_volume(0.5)
 
 
 
@@ -396,6 +399,7 @@ def main():
                     dt2 = clock.tick(60) / 1000
                     write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
                     Title_timer += 1 * dt2
+                    wave_sound.play()
 
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT:
@@ -467,6 +471,15 @@ def main():
                         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
                     else:
                         screen = pygame.display.set_mode((1024, 834))
+
+                    pygame.mouse.set_visible(False)
+
+        # draw crosshair
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        crosshair_rect = crosshair.get_rect(center=(mouse_x, mouse_y))
+        screen.blit(crosshair, crosshair_rect)
+
 
         pygame.display.flip()
 
