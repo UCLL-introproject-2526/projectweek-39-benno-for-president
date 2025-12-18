@@ -99,9 +99,11 @@ class Enemy:
             (x_max - x_min) + 2 * big_border,
             (y_max - y_min) + 2 * big_border)
 
-        while True:
+        coll = True
+        while coll:
             x = randint(outer.left, outer.right)
             y = randint(outer.top, outer.bottom)
 
             if not inner.collidepoint(x, y):
-                return x, y
+                return (x, y)
+                coll = False
