@@ -58,6 +58,10 @@ class Bullet:
         self.spawn_time = spawn_time
         self.existing = True
 
+        self.image = pygame.image.load("sprites.kogel2.png").conver_alpha()
+        self.rect = self.image.get_rect(center=self.pos)
+        self.mask = pygame.mask.from_surface(self.image)
+
     def get_cords(self):
         return [self.pos.x, self.pos.y]
     
@@ -69,6 +73,7 @@ class Bullet:
     
     def update(self, dt):
         self.pos += self.vel * dt
+        self.rect.center = self.pos
         
         x, y = self.pos.x, self.pos.y       #kogel verdwijnen na map
         if x < 0 or x > 2400 or y < 0 or y > 2400: 

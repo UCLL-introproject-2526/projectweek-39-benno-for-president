@@ -10,7 +10,10 @@ class Enemy:
         self.set_health(health)
         self.set_dmg(dmg)
         self.__alive = True
-    
+        self.image = pygame.image.load("sprites/enemy.png").convert_alpha()
+        self.rect = self.image.get_rect(topleft=self.get_cords())
+        self.mask = pygame.mask.from_surface(self.image)
+
     def get_cords(self):
         return [self.__x, self.__y]
 
