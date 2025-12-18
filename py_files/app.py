@@ -137,11 +137,10 @@ def main():
     wave_timer = 0
 
     # writing function
-    text_font = pygame.font.Font("Nothing Smoothie.ttf", 1000)
-
-    def write(text, font, text_col, x, y):
-        img = font.render(text, True, text_col)
+    def write(text, text_col, x, y):
+        img = pygame.font.Font("Nothing Smoothie.ttf", 50).render(text, True, text_col)
         screen.blit(img, (x,y))
+
 
     # benno_img = pygame.image.load('sprites/bigbenno_sprite.png').convert_alpha()
     # benno_img = pygame.transform.smoothscale(benno_img, (100, 100))
@@ -159,13 +158,8 @@ def main():
             rifle_delay = True 
         else: 
             rifle_delay = False
-        wave_timer += 1
+        wave_timer += 1 * dt
         current_wave = 0
-
-        # wave checking
-        if wave_timer >= 5:
-            current_wave += 1
-            write(f"wave {current_wave} starting", text_font, (0,0,0), (cam1.width / 2) * cam1.zoom, (cam1.height / 2) * cam1.zoom)
 
         # camera update
         cam1.update(player1, player2)
@@ -344,9 +338,27 @@ def main():
         enforce_bounds(player2, player1)
 
         # UI handling
-        screen.blit(heart1, (cam1.width//2, cam1.height - 771))
-        screen.blit(heart2, (cam1.width//2 + 35, cam1.height - 770))
-        screen.blit(heart3, (cam1.width//2 - 35, cam1.height - 770))
+        screen.blit(heart1, (cam1.width//2 + 75, cam1.height - 771))
+        screen.blit(heart2, (cam1.width//2 + 50, cam1.height - 770))
+        screen.blit(heart3, (cam1.width//2  + 25, cam1.height - 770))
+
+        # wave checking
+        if enemy_count == 0 and wave_timer >= 10:
+
+            if current_wave == 0:
+                # wave start en enemy count terug verhogen
+                write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
+                if enemy_count == 0:
+                    current_wave += 1
+                    wave_timer = 0
+
+            elif current_wave == 1:
+                # wave start en enemy count terug verhogen (momenteel 2 waves maken)
+                write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
+                if enemy_count == 0:
+                    current_wave += 1
+                    wave_timer = 0
+
 
         # event handlers
         for event in pygame.event.get():
