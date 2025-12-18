@@ -379,17 +379,24 @@ def main():
 
 
 
-        # bullet updating
-        for bullet in bullets:
-            bullet.update(dt)
-            for enemy in enemies:
-                offset = (enemy.rect.left - bullet.rect.left, enemy.rect.top - bullet.rect.top)
-                if bullet.mask.overlap(enemy.mask, offset):
-                    enemy.hit(bullet.damage) # was (rifle)
-                    bullet.existing = False
-
-            if not bullet.existing:
-                bullets.remove(bullet)
+   # bullet updating
+    for bullet in bullets[:]:  # Gebruik een kopie om veilig te kunnen verwijderen
+        bullet.update(dt)
+        for enemy in enemies[:]:  # Ook hier kopie voor veilige verwijdering
+            # Bereken de offset correct: relatieve positie van vijand t.o.v. kogel
+            offset_x = enemy.rect.x - bullet.rect.x
+            offset_y = enemy.rect.y - bullet.rect.y
+            
+            if bullet.mask.overlap(enemy.mask, (offset_x, offset_y)):
+                enemy.hit(bullet.damage)
+                
+                # Verwijder de kogel bij treffer
+                if bullet in bullets:
+                    bullets.remove(bullet)
+                break  # Stop met controleren voor deze kogel
+        
+        # Kogel tekenen alleen als het nog bestaat
+        if bullet.existing:
             bullet_x, bullet_y = bullet.get_cords()
             screen_pos = cam1.apply(bullet_x, bullet_y)
             screen.blit(bullet_spr, screen_pos)

@@ -73,10 +73,14 @@ class Enemy:
         self.rect.topleft = (self.__x, self.__y)
 
     def hit(self, damage):
-        self.__health -= damage
+        diff = max(0, self.__health - damage)
+        self.set_health(diff)
+    
         if self.__health <= 0:
             self.__health = 0
             self.__alive = False
+
+        
         # diff = max(0, self.__health - other.get_dmg())
         # self.set_health(diff)
         # if self.__health <= 0:
