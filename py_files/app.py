@@ -22,7 +22,7 @@ def main():
     world_time = 0
     world_time2 = 0
     player1 = Player1([200,200], 100, 50) #speed was 3
-    player2 = Player2([300,200], 110, 50) #(spawncordinate), speed, health
+    player2 = Player2([300,200], 125, 50) #(spawncordinate), speed, health
     cam1 = Camera(1024,834, (2400,2400))    #width, height, mapsize
     rifle = Weapon(15, 0.7, 400) #damage, shootdelay ,bulletspeed, 
     rifle_timer = 0
@@ -35,8 +35,10 @@ def main():
     # sound:
     pygame.mixer.music.load('sounds/game_track.ogg')
     pygame.mixer.music.play(-1, fade_ms=3000)
+    pygame.mixer.music.set_volume(0.3)
 
     shoot_sound = pygame.mixer.Sound("sounds/hitsound_2.mp3")
+    shoot_sound.set_volume(0.5)
 
 
 
@@ -137,15 +139,16 @@ def main():
     # game loop
     run = True
     while run:
-        # delta time
+        # variables
         dt = clock.tick(60) / 1000  # seconden per frame
         world_time += dt
         rifle_timer += dt
         world_time2 += dt  # fps onafhankelijk
         ui_switch += 1
-
-        # rifle delay check
-        rifle_delay = rifle_timer >= rifle.get_rpm()
+        if rifle_timer >= rifle.get_rpm(): 
+            rifle_delay = True 
+        else: 
+            rifle_delay = False
 
         # camera update
         cam1.update(player1, player2)
@@ -165,7 +168,8 @@ def main():
         else:
             screen.blit(background, screen_pos)
 
-        # ---- PLAYER MOVEMENT FPS-ONAFHANKELIJK ----
+
+        # player movement
         # Player1 input
         keys = pygame.key.get_pressed()
         dx1 = dy1 = 0
@@ -177,8 +181,9 @@ def main():
             dy1 -= 1
         if keys[pygame.K_s]:
             dy1 += 1
+        
 
-        # normaliseer diagonale snelheid
+        # movement kanker 1
         if dx1 != 0 or dy1 != 0:
             length = (dx1 ** 2 + dy1 ** 2) ** 0.5
             dx1 /= length
@@ -187,10 +192,18 @@ def main():
                 player1.get_cords()[0] + dx1 * player1.get_speed() * dt,
                 player1.get_cords()[1] + dy1 * player1.get_speed() * dt
             ])
+
+            
             movingfront = dy1 > 0
             movingback = dy1 < 0
             face_me1 = dy1 >= 0
 
+            # sideways animations:
+            if keys[pygame.K_d] and not keys[pygame.K_z]:
+                movingfront = True
+            elif keys[pygame.K_q] and not keys[pygame.K_z]:
+                movingfront = True
+            
         # Player2 input
         dx2 = dy2 = 0
         if keys[pygame.K_LEFT]:
@@ -202,6 +215,7 @@ def main():
         if keys[pygame.K_DOWN]:
             dy2 += 1
 
+        # movment kanker 2
         if dx2 != 0 or dy2 != 0:
             length = (dx2 ** 2 + dy2 ** 2) ** 0.5
             dx2 /= length
@@ -210,14 +224,23 @@ def main():
                 player2.get_cords()[0] + dx2 * player2.get_speed() * dt,
                 player2.get_cords()[1] + dy2 * player2.get_speed() * dt
             ])
+
+
             movingfront2 = dy2 > 0
             movingback2 = dy2 < 0
             face_me2 = dy2 >= 0
+
+            # sideways
+            if keys[pygame.K_RIGHT] and not keys[pygame.K_UP]:
+                movingfront2 = True
+            elif keys[pygame.K_LEFT] and not keys[pygame.K_UP]:
+                movingfront2 = True
 
         # draw players
         def draw_player(player, front_sprites, back_sprites, moving_front, moving_back, face_front, current_frame_fr, current_frame_ba):
             pos = player.get_cords()
             screen_pos = cam1.apply(pos[0], pos[1])
+
             if moving_front:
                 sprite = front_sprites[int(current_frame_fr)]
             elif moving_back:
@@ -242,6 +265,7 @@ def main():
                 (mouse_world_x, mouse_world_y), rifle, world_time)
             
             bullets.append(bullet)
+            shoot_sound.play()  
             rifle.reset_timer()
             rifle_timer = 0
 
@@ -284,16 +308,23 @@ def main():
             screen.blit(bullet_spr, screen_pos)
 
         # player enforce bounds
-        def enforce_bounds(player):
+        def enforce_bounds(player, other):
             x, y = player.get_cords()
             if x < 50: x = 50
             if x > cam1.map_width - 125: x = cam1.map_width - 125
             if y < 45: y = 45
             if y > cam1.map_height - 160: y = cam1.map_height - 160
+
+            # player seperation
+            if x > other.get_cords()[0] + 950: x = other.get_cords()[0] + 950
+            if x < other.get_cords()[0] - 950: x = other.get_cords()[0] - 950
+            if y > other.get_cords()[1] + 950: y = other.get_cords()[1] + 950
+            if y < other.get_cords()[1] - 950: y = other.get_cords()[1] - 950
+
             player.set_cords([x, y])
 
-        enforce_bounds(player1)
-        enforce_bounds(player2)
+        enforce_bounds(player1, player2)
+        enforce_bounds(player2, player1)
 
         # UI handling
         screen.blit(heart1, (cam1.width//2, cam1.height - 771))
