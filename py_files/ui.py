@@ -63,7 +63,7 @@ class Button:
         else:
             surf.blit(self.image, self.rect)
 
-        pygame.draw.rect(surf, (255, 0, 0), self.rect, 3)
+        
 
 def launch_app():
     # Start app.py met dezelfde Python interpreter als waarmee menu.py draait
@@ -88,14 +88,14 @@ start_y = 220
 gap = 18
 
 play_btn = Button(
-    pos=(center_x - play_img.get_width() // 2, start_y),
+    pos=(center_x - play_img.get_width() // 2, 400),
     image=play_img,
     hover_image=play_hover_img,
     on_click=launch_app
 )
 
 quit_btn = Button(
-    pos=(center_x - quit_img.get_width() // 2, start_y + 1 * (play_img.get_height()+gap)),
+    pos=(center_x - quit_img.get_width() // 2, 500),
     image=quit_img,
     hover_image=quit_hover_img,
     on_click=quit_game
@@ -130,7 +130,6 @@ while running:
 
             
         
-    # screen.fill((0, 255, 0))
     screen.blit(BG, (0, 0))
 
     for b in buttons_main:
