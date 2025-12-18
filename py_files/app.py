@@ -6,6 +6,8 @@ from player import Player1,Player2
 from weapons import Weapon, Bullet
 from enemy import Enemy
 from camera import Camera
+from defeat_screen import EndScreen
+
 
 
 def main():
@@ -15,6 +17,9 @@ def main():
     pygame.display.set_caption("Benno vs Santa")
     screen_size = (1024,834)
     screen = pygame.display.set_mode(screen_size)
+    endscreen = EndScreen(screen, 1024, 834, restart_script="app.py")
+
+
     clock = pygame.time.Clock()
     pygame.scrap.init()
     pygame.font.init()
@@ -201,13 +206,13 @@ def main():
             rifle_delay = True 
         else: 
             rifle_delay = False
-        wave_timer += 1 * dt
-        current_wave = 1
+            wave_timer += 1 * dt
+            current_wave = 1
 
-        # camera update
+            # camera update
         cam1.update(player1, player2)
 
-        # animation initialisatie
+            # animation initialisatie
         movingfront_enemy = False
         movingback_enemy = False
         movingfront = movingback = False
@@ -531,6 +536,9 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+
+            endscreen.handle_event(event)
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     fullscreen = not fullscreen
@@ -539,7 +547,20 @@ def main():
                     else:
                         screen = pygame.display.set_mode((1024, 834))
 
+                    
+
                     pygame.mouse.set_visible(False)
+
+        # GAME OVER screen
+        if (not player1.alive() or not player2.alive()) and not endscreen.active:
+             endscreen.show()
+
+        if endscreen.active:
+            endscreen.draw()
+            pygame.display.flip()
+            continue
+
+
 
         # draw crosshair
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -547,12 +568,18 @@ def main():
         crosshair_rect = crosshair.get_rect(center=(mouse_x, mouse_y))
         screen.blit(crosshair, crosshair_rect)
 
+        # force dood na 5 sec voor test
+        if world_time > 5 and not endscreen.active:
+            player1.set_health(0)
 
+
+
+        endscreen.draw()
         pygame.display.flip()
 
-
-
-main()
+#vr restart game
+if __name__ == "__main__":
+    main()
 
 
 

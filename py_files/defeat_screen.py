@@ -2,12 +2,14 @@
 import pygame
 import sys
 import subprocess
+import os
+
 fullscreen = False
 
 
 
 class Button:
-    def __init__(self, pos, image, hover_image, on_click, click_sound=None, click_delay_ms=120):
+    def __init__(self, pos, image, hover_image, on_click, click_sound=None, click_delay_ms=300):
         self.image = image
         self.hover_image = hover_image
         self.on_click = on_click
@@ -61,11 +63,11 @@ class EndScreen:
         overlay_alpha: int = 170,
         title_text: str = "GAME OVER",
         subtitle_text: str = "je bent verloren loser",
-        menu_script: str = "menu.py",
+        restart_script: str = "app.py",
         # Assets:
         click_sound_path: str = "sounds/sound_effects/click_sound.mp3",
-        menu_img_path: str = "sprites/gui/play_button.png",
-        menu_hover_path: str = "sprites/gui/play_button_hover.png",
+        menu_img_path: str = "sprites/gui/try_again_button.png",
+        menu_hover_path: str = "sprites/gui/image.png",
         quit_img_path: str = "sprites/gui/closegame_button.png",
         quit_hover_path: str = "sprites/gui/closegame_button_hover.png",
         # Layout:
@@ -79,7 +81,8 @@ class EndScreen:
         self.HEIGHT = height
 
         self.active = False
-        self.menu_script = menu_script
+        self.restart_script = restart_script
+
 
         self.title_text = title_text
         self.subtitle_text = subtitle_text
@@ -89,8 +92,11 @@ class EndScreen:
         self.overlay.fill((0, 0, 0, max(0, min(255, overlay_alpha))))
 
         # Fonts
-        self.font_big = pygame.font.Font(None, 110)
-        self.font_small = pygame.font.Font(None, 44)
+        FONT_PATH = "Nothing Smoothie.ttf"
+
+        self.font_big = pygame.font.Font(FONT_PATH, 110)
+        self.font_small = pygame.font.Font(FONT_PATH, 44)
+
 
         # Sound
         self.click_sound = None
@@ -107,9 +113,18 @@ class EndScreen:
         self.quit_img = pygame.image.load(quit_img_path).convert_alpha()
         self.quit_hover = pygame.image.load(quit_hover_path).convert_alpha()
 
-        # Zorg dat hover even groot is als base
-        self.menu_hover = pygame.transform.scale(self.menu_hover, self.menu_img.get_size())
-        self.quit_hover = pygame.transform.scale(self.quit_hover, self.quit_img.get_size())
+        #print("try again:", self.menu_img.get_size())
+        #print("quit:", self.quit_img.get_size())
+
+                
+        MENU_SIZE = (406, 66)  
+        QUIT_SIZE = (406, 66)   
+        # scale base images
+        self.menu_img = pygame.transform.smoothscale(self.menu_img, MENU_SIZE)
+        self.menu_hover = pygame.transform.smoothscale(self.menu_hover, MENU_SIZE)
+
+        self.quit_img = pygame.transform.smoothscale(self.quit_img, QUIT_SIZE)
+        self.quit_hover = pygame.transform.smoothscale(self.quit_hover, QUIT_SIZE)
 
         center_x = self.WIDTH // 2
         self.title_pos = (center_x, title_y)
@@ -119,7 +134,7 @@ class EndScreen:
             (center_x - self.menu_img.get_width() // 2, menu_btn_y),
             self.menu_img,
             self.menu_hover,
-            self.go_to_menu,
+            self.restart_game,
             click_sound=self.click_sound,
         )
 
@@ -141,11 +156,12 @@ class EndScreen:
         self.active = False
 
     # ---- Actions ----
-    def go_to_menu(self):
-        # Start menu.py en sluit huidige game
-        subprocess.Popen([sys.executable, self.menu_script])
+    def restart_game(self):
         pygame.quit()
-        sys.exit()
+        os.execl(sys.executable, sys.executable, *sys.argv)
+
+
+
 
     def quit_game(self):
         pygame.quit()
@@ -175,7 +191,7 @@ class EndScreen:
             b.draw(self.screen)
 
 
-#force open
+#open in this file
 if __name__ == "__main__":
     pygame.init()
     pygame.mixer.init()
@@ -185,13 +201,12 @@ if __name__ == "__main__":
     pygame.display.set_caption("EndScreen Demo")
     clock = pygame.time.Clock()
 
-    # Demo achtergrond
+    # temp bg
     bg = pygame.Surface((WIDTH, HEIGHT))
     bg.fill((30, 60, 90))
 
     endscreen = EndScreen(screen, WIDTH, HEIGHT)
-    endscreen.show()  # demo: meteen tonen
-
+    endscreen.show() 
     running = True
     while running:
         for event in pygame.event.get():
@@ -208,13 +223,12 @@ if __name__ == "__main__":
                 else:
                     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-                # belangrijk: endscreen moet naar nieuwe screen wijzen
+                
                 endscreen.screen = screen
 
-        # Teken "gameplay"
+        
         screen.blit(bg, (0, 0))
 
-        # Teken overlay erover
         endscreen.draw()
 
         pygame.display.flip()
