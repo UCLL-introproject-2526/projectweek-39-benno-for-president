@@ -20,7 +20,8 @@ click_sound = pygame.mixer.Sound(
 )
 click_sound.set_volume(0.8)
 
-
+pygame.mixer.music.load("sounds/music/menu_music.ogg")
+pygame.mixer.music.play()
 
 
 BG = pygame.image.load('sprites/gui/background_start_screen.png').convert()
