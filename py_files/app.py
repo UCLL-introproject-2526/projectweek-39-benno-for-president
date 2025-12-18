@@ -311,8 +311,14 @@ def main():
             current_frame_ba2 = 0
 
         # bullet updating
-        for bullet in bullets[:]:
+        for bullet in bullets:
             bullet.update(dt)
+            for enemy in enemies:
+                offset = (enemy.rect.left - bullet.rect.left, enemy.rect.top - bullet.rect.top)
+                if bullet.mask.overlap(enemy.mask, offset):
+                    enemy.hit(rifle)
+                    bullet.existing = false
+
             if not bullet.existing:
                 bullets.remove(bullet)
             bullet_x, bullet_y = bullet.get_cords()

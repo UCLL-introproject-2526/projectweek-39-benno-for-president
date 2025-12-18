@@ -58,7 +58,7 @@ class Bullet:
         self.spawn_time = spawn_time
         self.existing = True
 
-        self.image = pygame.image.load("sprites.kogel2.png").conver_alpha()
+        self.image = pygame.image.load("sprites/kogel2.png").convert_alpha()
         self.rect = self.image.get_rect(center=self.pos)
         self.mask = pygame.mask.from_surface(self.image)
 
