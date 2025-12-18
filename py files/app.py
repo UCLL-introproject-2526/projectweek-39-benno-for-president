@@ -520,12 +520,14 @@ def main():
         for bullet in bullets[:]: 
             bullet.update(dt)
             
+            if not bullet.existing:
+                bullets.remove(bullet
+                               
             bullet_x,bullet_y = bullet.get_cords()
             screen_pos = cam1.apply(bullet_x, bullet_y)
             screen.blit(crosshair, screen_pos)
     
-            if not bullet.existing:
-                bullets.remove(bullet)
+)
 
 
         # enforce map bounds
