@@ -447,6 +447,15 @@ def main():
                     else:
                         screen = pygame.display.set_mode((1024, 834))
 
+                    pygame.mouse.set_visible(False)
+
+        # draw crosshair
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        crosshair_rect = crosshair.get_rect(center=(mouse_x, mouse_y))
+        screen.blit(crosshair, crosshair_rect)
+
+
         pygame.display.flip()
 
 
