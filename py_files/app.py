@@ -63,6 +63,33 @@ def main():
     bullet_spr = pygame.image.load('sprites/kogel2.png').convert_alpha()
     bullet_spr = pygame.transform.smoothscale(bullet_spr, (20,20))
 
+    E1 = pygame.image.load('sprites/enemies/enemy_front1.png').convert_alpha()
+    E1 = pygame.transform.smoothscale(E1, (60,60))
+
+    E2 = pygame.image.load('sprites/enemies/enemy_front2.png').convert_alpha()
+    E2 = pygame.transform.smoothscale(E2, (60,60))
+
+    E3 = pygame.image.load('sprites/enemies/enemy_front3.png').convert_alpha()
+    E3 = pygame.transform.smoothscale(E3, (60,60))
+
+    E4 = pygame.image.load('sprites/enemies/enemy_back1.png').convert_alpha()
+    E4 = pygame.transform.smoothscale(E4, (60,60))
+
+    E5 = pygame.image.load('sprites/enemies/enemy_back2.png').convert_alpha()
+    E5 = pygame.transform.smoothscale(E5, (60,60))
+
+    E6 = pygame.image.load('sprites/enemies/enemy_back3.png').convert_alpha()
+    E6 = pygame.transform.smoothscale(E6, (60,60))
+
+    enemy_fronts = [E1,
+                    E2,
+                    E3]
+    
+    enemy_backs = [E4,
+                   E5,
+                   E6]
+
+
     player1_sprite_back = pygame.image.load('sprites/player1/dikkeelfsprite5.png').convert_alpha()
     player1_sprite_back = pygame.transform.smoothscale(player1_sprite_back, (75,75))
 
@@ -135,6 +162,8 @@ def main():
     current_frame_fr2 = 0
     current_frame_ba2 = 0
     animation_speed = 0.2
+    enemy_animation_speed = 0.4
+    face_me_enemy = False
     face_me1 = False
     face_me2 = False
     wave_timer = 0
