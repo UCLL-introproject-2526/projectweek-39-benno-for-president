@@ -63,7 +63,7 @@ class Button:
         else:
             surf.blit(self.image, self.rect)
 
-        pygame.draw.rect(surf, (255, 0, 0), self.rect, 3)
+        
 
 def launch_app():
     # Start app.py met dezelfde Python interpreter als waarmee menu.py draait
@@ -130,7 +130,6 @@ while running:
 
             
         
-    # screen.fill((0, 255, 0))
     screen.blit(BG, (0, 0))
 
     for b in buttons_main:
