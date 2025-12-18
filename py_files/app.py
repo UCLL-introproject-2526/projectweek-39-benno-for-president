@@ -567,8 +567,8 @@ def main():
         screen.blit(crosshair, crosshair_rect)
 
         # force dood na 5 sec voor test
-        #if world_time > 5 and not endscreen.active:
-            #player1.set_health(0)
+        if world_time > 5 and not endscreen.active:
+            player1.set_health(0)
 
 
 
