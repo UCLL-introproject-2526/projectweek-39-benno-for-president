@@ -21,8 +21,8 @@ def main():
     # loop setup
     world_time = 0
     world_time2 = 0
-    player1 = Player1([200,200], 6, 50) #speed was 3
-    player2 = Player2([300,200], 6.1, 50) #(spawncordinate), speed, health
+    player1 = Player1([200,200], 100, 50) #speed was 3
+    player2 = Player2([300,200], 110, 50) #(spawncordinate), speed, health
     cam1 = Camera(1024,834, (2400,2400))    #width, height, mapsize
     rifle = Weapon(15, 0.7, 400) #damage, shootdelay ,bulletspeed, 
     rifle_timer = 0
@@ -134,30 +134,26 @@ def main():
     # game loop
     run = True
     while run:
-        # variables
-        dt = clock.tick(60) / 1000
-        world_time += 1/60
+        # delta time
+        dt = clock.tick(60) / 1000  # seconden per frame
+        world_time += dt
         rifle_timer += dt
-        if rifle_timer >= rifle.get_rpm():
-            rifle_delay = True
-        else: rifle_delay = False
+        world_time2 += dt  # fps onafhankelijk
         ui_switch += 1
 
-        world_time2 += dt #deze zou fps onafhankelijk moeten zijn
-        rifle_timer += dt
+        # rifle delay check
+        rifle_delay = rifle_timer >= rifle.get_rpm()
 
-        # camera
+        # camera update
         cam1.update(player1, player2)
 
         # animation initialisatie
-        movingfront = False
-        movingback = False
-        movingfront2 = False
-        movingback2 = False
+        movingfront = movingback = False
+        movingfront2 = movingback2 = False
 
         # scherm tekenen
-        screen.fill((0,0,0))
-        screen_pos = cam1.apply(0,0)
+        screen.fill((0, 0, 0))
+        screen_pos = cam1.apply(0, 0)
         if cam1.zoom != 1.0:
             new_width = int(background.get_width() * cam1.zoom)
             new_height = int(background.get_height() * cam1.zoom)
@@ -166,327 +162,87 @@ def main():
         else:
             screen.blit(background, screen_pos)
 
+        # ---- PLAYER MOVEMENT FPS-ONAFHANKELIJK ----
+        # Player1 input
+        keys = pygame.key.get_pressed()
+        dx1 = dy1 = 0
+        if keys[pygame.K_q]:
+            dx1 -= 1
+        if keys[pygame.K_d]:
+            dx1 += 1
+        if keys[pygame.K_z]:
+            dy1 -= 1
+        if keys[pygame.K_s]:
+            dy1 += 1
 
-        # player 1
-        key = pygame.key.get_pressed()
-        if key[pygame.K_s] and key[pygame.K_q]:
-            player1.move("sq")
-            movingfront = True
-            face_me1 = True
-            #screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
-            pos = player1.get_cords()
+        # normaliseer diagonale snelheid
+        if dx1 != 0 or dy1 != 0:
+            length = (dx1 ** 2 + dy1 ** 2) ** 0.5
+            dx1 /= length
+            dy1 /= length
+            player1.set_cords([
+                player1.get_cords()[0] + dx1 * player1.get_speed() * dt,
+                player1.get_cords()[1] + dy1 * player1.get_speed() * dt
+            ])
+            movingfront = dy1 > 0
+            movingback = dy1 < 0
+            face_me1 = dy1 >= 0
+
+        # Player2 input
+        dx2 = dy2 = 0
+        if keys[pygame.K_LEFT]:
+            dx2 -= 1
+        if keys[pygame.K_RIGHT]:
+            dx2 += 1
+        if keys[pygame.K_UP]:
+            dy2 -= 1
+        if keys[pygame.K_DOWN]:
+            dy2 += 1
+
+        if dx2 != 0 or dy2 != 0:
+            length = (dx2 ** 2 + dy2 ** 2) ** 0.5
+            dx2 /= length
+            dy2 /= length
+            player2.set_cords([
+                player2.get_cords()[0] + dx2 * player2.get_speed() * dt,
+                player2.get_cords()[1] + dy2 * player2.get_speed() * dt
+            ])
+            movingfront2 = dy2 > 0
+            movingback2 = dy2 < 0
+            face_me2 = dy2 >= 0
+
+        # draw players
+        def draw_player(player, front_sprites, back_sprites, moving_front, moving_back, face_front, current_frame_fr, current_frame_ba):
+            pos = player.get_cords()
             screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player1fronts[int(current_frame_fr)]
+            if moving_front:
+                sprite = front_sprites[int(current_frame_fr)]
+            elif moving_back:
+                sprite = back_sprites[int(current_frame_ba)]
+            else:
+                sprite = front_sprites[0] if face_front else back_sprites[0]
 
             if cam1.zoom != 1.0:
                 new_width = int(sprite.get_width() * cam1.zoom)
                 new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-
-        elif key[pygame.K_s] and key[pygame.K_d]:
-            player1.move("sd")
-            movingfront = True
-            face_me1 = True
-            #screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
-            pos = player1.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player1fronts[int(current_frame_fr)]
-
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-
-        elif key[pygame.K_z] and key[pygame.K_q]:
-            player1.move("zq")
-            movingback = True
-            face_me1 = False
-            #screen.blit(player1backs[int(current_frame_ba)], player1.get_cords())
-            pos = player1.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player1backs[int(current_frame_ba)]
-
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-
-        elif key[pygame.K_z] and key[pygame.K_d]:
-            player1.move("zd")
-            movingback = True
-            face_me1 = False
-            #screen.blit(player1backs[int(current_frame_ba)], player1.get_cords())
-            pos = player1.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player1backs[int(current_frame_ba)]
-
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-
-        elif key[pygame.K_d]:
-            player1.move("d")
-            movingfront = True
-            #screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
-            pos = player1.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player1fronts[int(current_frame_fr)]
-
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-
-        elif key[pygame.K_q]:
-            player1.move("q")
-            movingfront = True
-            #screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
-            pos = player1.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player1fronts[int(current_frame_fr)]
-
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-
-        elif key[pygame.K_s]:
-            player1.move("s")
-            movingfront = True
-            face_me1 = True
-            #screen.blit(player1fronts[int(current_frame_fr)], player1.get_cords())
-            pos = player1.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player1fronts[int(current_frame_fr)]
-
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-
-        elif key[pygame.K_z]:
-            player1.move("z")
-            movingback = True
-            face_me1 = False
-            #screen.blit(player1backs[int(current_frame_ba)], player1.get_cords())
-            pos = player1.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player1backs[int(current_frame_ba)]
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-
-        else:
-            pos = player1.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            if face_me1:
-                sprite = player1_sprite_front
-            else:
-                sprite = player1_sprite_back
-    
-        if cam1.zoom != 1.0:
-            new_width = int(sprite.get_width() * cam1.zoom)
-            new_height = int(sprite.get_height() * cam1.zoom)
-            scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-            screen.blit(scaled_sprite, screen_pos)
-        else:
+                sprite = pygame.transform.scale(sprite, (new_width, new_height))
             screen.blit(sprite, screen_pos)
 
-    
-        # player 1 shooting
-        if key[pygame.K_TAB] and rifle_delay == True:
+        draw_player(player1, player1fronts, player1backs, movingfront, movingback, face_me1, current_frame_fr, current_frame_ba)
+        draw_player(player2, player2fronts, player2backs, movingfront2, movingback2, face_me2, current_frame_fr2, current_frame_ba2)
+
+        # shooting
+        if keys[pygame.K_TAB] and rifle_delay:
             mouse_x, mouse_y = pygame.mouse.get_pos()
             mouse_world_x, mouse_world_y = cam1.screen_to_world(mouse_x, mouse_y)
-
-            bullet = Bullet(
-            (player1.get_cords()[0]+ (20 * cam1.zoom), player1.get_cords()[1]+(20 * cam1.zoom)), 
-            (mouse_world_x, mouse_world_y), rifle, world_time)
+            bullet = Bullet((player1.get_cords()[0]+(20*cam1.zoom), player1.get_cords()[1]+(20*cam1.zoom)),
+                (mouse_world_x, mouse_world_y), rifle, world_time)
+            
             bullets.append(bullet)
             rifle.reset_timer()
             rifle_timer = 0
 
-            # last_cursor = pygame.mouse.get_pos()
-            # bullet = Bullet(cam1.screen_to_world()[0], cam1.screen_to_world()[1], f"bullet{name_rand}", rifle, last_cursor, world_time)
-            # name_rand += 1
-            # bullet_spr = pygame.image.load("sprites/Bullet.png").convert_alpha()
-            # bullet_spr = pygame.transform.smoothscale(bullet_spr, (5,25))
-            # bullet_spr = pygame.transform.rotate(bullet_spr, tan((bullet.get_target()[0] - player1.get_cords()[0]) /bullet.get_target()[1] - player1.get_cords()[1] ))
-            # bullet_dict[bullet] = bullet_spr
-            
-
-        
-
-
-
-        # player 2
-        key2 = pygame.key.get_pressed()
-        if key2[pygame.K_DOWN] and key2[pygame.K_LEFT]:
-            player2.move("dl")
-            movingfront2 = True
-            face_me2 = True
-            #screen.blit(player2fronts[int(current_frame_fr2)], player2.get_cords())
-            pos = player2.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player2fronts[int(current_frame_fr2)]
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-
-        elif key2[pygame.K_DOWN] and key2[pygame.K_RIGHT]:
-            player2.move("dr")
-            movingfront2 = True
-            face_me2 = True
-            #screen.blit(player2fronts[int(current_frame_fr2)], player2.get_cords())
-            pos = player2.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player2fronts[int(current_frame_fr2)]
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-
-        elif key2[pygame.K_UP] and key2[pygame.K_LEFT]:
-            player2.move("ul")
-            movingback2 = True
-            face_me2 = False
-            #screen.blit(player2backs[int(current_frame_ba2)], player2.get_cords())
-            pos = player2.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player2backs[int(current_frame_ba2)]
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-
-        elif key2[pygame.K_UP] and key2[pygame.K_RIGHT]:
-            player2.move("ur")
-            movingback2 = True
-            face_me2 = False
-            #screen.blit(player2backs[int(current_frame_ba2)], player2.get_cords())
-            pos = player2.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player2backs[int(current_frame_ba2)]
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-        elif key2[pygame.K_RIGHT]:
-            player2.move("right")
-            movingfront2 = True
-            #screen.blit(player2fronts[int(current_frame_fr2)], player2.get_cords())
-            pos = player2.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player2fronts[int(current_frame_fr2)]
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-
-        elif key2[pygame.K_LEFT]:
-            player2.move("left")
-            movingfront2 = True
-            #screen.blit(player2fronts[int(current_frame_fr2)], player2.get_cords())
-            pos = player2.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player2fronts[int(current_frame_fr2)]
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-
-        elif key2[pygame.K_DOWN]:
-            player2.move("down")
-            movingfront2 = True
-            face_me2 = True
-            #screen.blit(player2fronts[int(current_frame_fr2)], player2.get_cords())
-            pos = player2.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player2fronts[int(current_frame_fr2)]
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-
-        elif key2[pygame.K_UP]:
-            player2.move("up")
-            movingback2 = True
-            face_me2 = False
-            #screen.blit(player2backs[int(current_frame_ba2)], player2.get_cords())
-            pos = player2.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            sprite = player2backs[int(current_frame_ba2)]
-            if cam1.zoom != 1.0:
-                new_width = int(sprite.get_width() * cam1.zoom)
-                new_height = int(sprite.get_height() * cam1.zoom)
-                scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-                screen.blit(scaled_sprite, screen_pos)
-            else:
-                screen.blit(sprite, screen_pos)
-        
-        else:
-            pos = player2.get_cords()
-            screen_pos = cam1.apply(pos[0], pos[1])
-            if face_me2:
-                sprite = player2_sprite_front
-            else:
-                sprite = player2_sprite_back
-    
-        if cam1.zoom != 1.0:
-            new_width = int(sprite.get_width() * cam1.zoom)
-            new_height = int(sprite.get_height() * cam1.zoom)
-            scaled_sprite = pygame.transform.scale(sprite, (new_width, new_height))
-            screen.blit(scaled_sprite, screen_pos)
-        else:
-            screen.blit(sprite, screen_pos)
-        # animation handler 1
+        # animation handlers
         if movingfront:
             current_frame_fr += animation_speed
             if current_frame_fr >= len(player1fronts):
@@ -500,8 +256,7 @@ def main():
                 current_frame_ba = 0
         else:
             current_frame_ba = 0
-        
-        # animation handler 2
+
         if movingfront2:
             current_frame_fr2 += animation_speed
             if current_frame_fr2 >= len(player2fronts):
@@ -516,70 +271,46 @@ def main():
         else:
             current_frame_ba2 = 0
 
-        # draw bullets
-        for bullet in bullets[:]: 
+        # bullet updating
+        for bullet in bullets[:]:
             bullet.update(dt)
-            
             if not bullet.existing:
                 bullets.remove(bullet)
-                               
-            bullet_x,bullet_y = bullet.get_cords()
+            bullet_x, bullet_y = bullet.get_cords()
             screen_pos = cam1.apply(bullet_x, bullet_y)
             screen.blit(bullet_spr, screen_pos)
-    
 
+        # player enforce bounds
+        def enforce_bounds(player):
+            x, y = player.get_cords()
+            if x < 50: x = 50
+            if x > cam1.map_width - 125: x = cam1.map_width - 125
+            if y < 45: y = 45
+            if y > cam1.map_height - 160: y = cam1.map_height - 160
+            player.set_cords([x, y])
 
+        enforce_bounds(player1)
+        enforce_bounds(player2)
 
-        # enforce map bounds
-        if 50 > player1.get_cords()[0]:
-            player1.set_cords([player1.get_cords()[0] + 5, player1.get_cords()[1]])
-        if cam1.map_width - 125 < player1.get_cords()[0]:
-            player1.set_cords([player1.get_cords()[0] - 5, player1.get_cords()[1]])
-        if 45 > player1.get_cords()[1]:
-            player1.set_cords([player1.get_cords()[0], player1.get_cords()[1] + 5])
-        if cam1.map_height - 160 < player1.get_cords()[1]:
-            player1.set_cords([player1.get_cords()[0], player1.get_cords()[1] - 5])
-        
+        # UI handling
+        screen.blit(heart1, (cam1.width//2, cam1.height - 771))
+        screen.blit(heart2, (cam1.width//2 + 35, cam1.height - 770))
+        screen.blit(heart3, (cam1.width//2 - 35, cam1.height - 770))
 
-        if 50 > player2.get_cords()[0]:
-            player2.set_cords([player2.get_cords()[0] + 5, player2.get_cords()[1]])
-        if cam1.map_width - 125 < player2.get_cords()[0]:
-            player2.set_cords([player2.get_cords()[0] - 5, player2.get_cords()[1]])
-        if 45 > player2.get_cords()[1]:
-            player2.set_cords([player2.get_cords()[0], player2.get_cords()[1] + 5])
-        if cam1.map_height - 160 < player2.get_cords()[1]:
-            player2.set_cords([player2.get_cords()[0], player2.get_cords()[1] - 5])
-        
-
-
-
-        # UI bars
-        screen.blit(heart1,(cam1.width // 2 , cam1.height - 771 )) #if you read this code.. EASTER EGGG
-        screen.blit(heart2,(cam1.width // 2 + 35 , cam1.height - 770 ))
-        screen.blit(heart3,(cam1.width // 2 - 35, cam1.height - 770 ))
-
-
-
-        # event handler
+        # event handlers
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 run = False
-
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     fullscreen = not fullscreen
-
                     if fullscreen:
-                        screen = pygame.display.set_mode((1024,834), pygame.FULLSCREEN)
+                        screen = pygame.display.set_mode((1024, 834), pygame.FULLSCREEN)
                     else:
-                        screen = pygame.display.set_mode(screen_size)
+                        screen = pygame.display.set_mode((1024, 834))
 
-
-        clock.tick(60)
         pygame.display.flip()
-    
-    pygame.quit()
+
 
 
 main()
