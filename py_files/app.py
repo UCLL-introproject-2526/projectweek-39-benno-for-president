@@ -112,6 +112,8 @@ def main():
     p2img6 = pygame.image.load("sprites/player2/kerstmanfront2.png").convert_alpha()
     p2img6 = pygame.transform.smoothscale(p2img6, (75,75))
 
+    
+
     player1fronts = [p1img1,
                     p1img2,
                     p1img3]
@@ -359,6 +361,12 @@ def main():
                     dt2 = clock.tick(60) / 1000
                     write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
                     Title_timer += 1 * dt2
+
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            Title_timer = 7
+                            run = False
+
                     pygame.display.flip()
 
                 if enemy_count == 0:
@@ -372,11 +380,13 @@ def main():
                     dt2 = clock.tick(60) / 1000
                     write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
                     Title_timer += 1 * dt2
-                    pygame.display.flip()
 
-                if enemy_count == 0:
-                    current_wave += 1
-                    wave_timer = 0
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            Title_timer = 7
+                            run = False
+
+                    pygame.display.flip()
 
 
         # event handlers
