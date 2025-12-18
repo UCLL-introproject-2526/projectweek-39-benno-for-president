@@ -5,7 +5,7 @@ class Weapon:
         self.set_dmg(dmg)
         self.set_rpm(rpm)
         self.set_bullet_speed(bullet_speed)
-
+        self.timer = 0
 
     def get_dmg(self):
         return self.__dmg
@@ -34,27 +34,43 @@ class Weapon:
             raise ValueError("weapon bullet speed cannot be negative")
         self.__bullet_speed = value
 
+    def can_shoot(self):
+        return self.timer >= 60 / self.get_rpm
+    
+    def reset_timer(self):
+        self.timer = 0
+
+    def update(self, dt):
+        self.timer += dt
+
 
 class Bullet:
-    def __init__(self, x, y, name, Weap, target, time1):
-        self.__x = x
-        self.__y = y
-        self.__name = name
-        self.set_target(target)
-        self.__speed = Weap.get_bullet_speed()
-        self.time1 = time1
+    def __init__(self, start_pos, target_pos, weap, spawn_time):
+        self.pos = pygame.Vector2(start_pos)
+        self.__name = f"bullet_{spawn_time}"
+        
+        direction = pygame.Vector2(target_pos) - self.pos   #berekent vector
+        if direction.length() > 0:                          # berekent norm van vecctor
+            direction = direction.normalize() 
+        
+        self.__speed = weap.get_bullet_speed()          # past snelheid aan per wapen
+        self.vel = direction * self.__speed
+        self.spawn_time = spawn_time
+        self.existing = True
 
     def get_cords(self):
-        return [self.__x, self.__y]
+        return [self.pos.x, self.pos.y]
     
     def get_name(self):
         return self.__name
     
-    def get_target(self):
-        return self.__target
-    
-    def set_target(self, value):
-        self.__target = value
-    
     def get_speed(self):
         return self.__speed
+    
+    def update(self, dt):
+        self.pos += self.vel * dt
+        
+        x, y = self.pos.x, self.pos.y       #kogel verdwijnen na map
+        if x < 0 or x > 2400 or y < 0 or y > 2400: 
+            self.existing = False
+
