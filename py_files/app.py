@@ -165,13 +165,13 @@ def main():
     current_frame_ba = 0
     current_frame_fr2 = 0
     current_frame_ba2 = 0
-    animation_speed = 0.2
     current_frame_fr_enemy = 0
     current_frame_ba_enemy = 0
+    animation_speed = 0.2
     enemy_animation_speed = 0.4
-    face_me_enemy = False
     face_me1 = False
     face_me2 = False
+    face_me_enemy = False
     wave_timer = 0
 
     enemies = []
@@ -205,8 +205,30 @@ def main():
         cam1.update(player1, player2)
 
         # animation initialisatie
+        movingfront_enemy = False
+        movingback_enemy = False
         movingfront = movingback = False
         movingfront2 = movingback2 = False
+
+        def draw_enemy(enemy, front_sprites, back_sprites, moving_front, moving_back, face_front, current_frame_fr, current_frame_ba):
+            pos = enemy.get_cords()
+            screen_pos = cam1.apply(pos[0], pos[1])
+
+            if moving_front:
+                sprite = front_sprites[int(current_frame_fr)]
+            elif moving_back:
+                sprite = back_sprites[int(current_frame_ba)]
+            else:
+                if face_front:
+                    sprite = front_sprites[0]
+                else:
+                    sprite = back_sprites[0]
+
+            if cam1.zoom != 1.0:
+                new_width = int(60 * cam1.zoom)
+                new_height = int(60 * cam1.zoom)
+                sprite = pygame.transform.scale(sprite, (new_width, new_height))
+            screen.blit(sprite, screen_pos)
 
         # scherm tekenen
         screen.fill((0, 0, 0))
@@ -297,7 +319,10 @@ def main():
             elif moving_back:
                 sprite = back_sprites[int(current_frame_ba)]
             else:
-                sprite = front_sprites[0] if face_front else back_sprites[0]
+                if face_front:
+                    sprite = front_sprites[0]
+                else:
+                    sprite = back_sprites[0]
 
             if cam1.zoom != 1.0:
                 new_width = int(sprite.get_width() * cam1.zoom)
@@ -453,12 +478,11 @@ def main():
                 enemies.append(enemy)
             spawned = True
 
-            for enemy in enemies:
-                target = enemy.get_closest(player1, player2)
-                enemy.move(target, dt)
-
-                screen_pos = cam1.apply(enemy.get_cords()[0], enemy.get_cords()[1])
-                
+        for enemy in enemies:
+            target = enemy.get_closest(player1, player2)
+            enemy.move(target, dt)
+            draw_enemy(enemy, enemy_fronts, enemy_backs, movingfront_enemy, movingback_enemy, face_me_enemy, current_frame_fr_enemy, current_frame_ba_enemy)
+        
 
         # event handlers
         for event in pygame.event.get():
