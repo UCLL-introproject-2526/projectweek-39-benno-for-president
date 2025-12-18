@@ -2,8 +2,10 @@ import sys
 import subprocess
 import pygame
 
+
 pygame.init()
 pygame.display.set_caption("Menu")
+pygame.mixer.init()
 
 WIDTH, HEIGHT = 1024, 834
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -11,7 +13,12 @@ clock = pygame.time.Clock()
 
 
 
+#sound
 
+click_sound = pygame.mixer.Sound(
+    "sounds/sound_effects/click_sound.mp3"
+)
+click_sound.set_volume(0.8)
 
 
 
@@ -53,9 +60,18 @@ class Button:
     def handle_event(self, event):
         if event.type == pygame.MOUSEMOTION:
             self.hover = self.rect.collidepoint(event.pos)
+
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+         if self.rect.collidepoint(event.pos):
+            click_sound.play()
+
+        elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if self.rect.collidepoint(event.pos):
-                self.on_click()
+                 pygame.time.wait(200)
+                 self.on_click()
+                
+
+
 
     def draw(self, surf):
         if self.hover:
@@ -139,3 +155,4 @@ while running:
 
     pygame.display.flip()
     clock.tick(60)
+    current_time = pygame.time.get_ticks()
