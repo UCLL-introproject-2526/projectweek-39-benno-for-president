@@ -24,7 +24,7 @@ def main():
     world_time = 0
     world_time2 = 0
     player1 = Player1([200,200], 100, 50) #speed was 3
-    player2 = Player2([300,200], 125, 50) #(spawncordinate), speed, health
+    player2 = Player2([300,200], 140, 50) #(spawncordinate), speed, health
     cam1 = Camera(1024,834, (2400,2400))    #width, height, mapsize
     rifle = Weapon(15, 0.7, 400) #damage, shootdelay ,bulletspeed, 
     rifle_timer = 0
@@ -33,6 +33,7 @@ def main():
     enemy_count = 0
     ui_switch = 0
     bullets = []
+    spawned = False
 
 
     # sound:
@@ -42,6 +43,9 @@ def main():
 
     shoot_sound = pygame.mixer.Sound("sounds/sound_effects/shoot_sound.mp3")
     shoot_sound.set_volume(0.5)
+
+    wave_sound = pygame.mixer.Sound("sounds/sound_effects/new_wave.mp3")
+    wave_sound.set_volume(0.1)
 
 
 
@@ -161,13 +165,13 @@ def main():
     current_frame_ba = 0
     current_frame_fr2 = 0
     current_frame_ba2 = 0
-    animation_speed = 0.2
     current_frame_fr_enemy = 0
     current_frame_ba_enemy = 0
+    animation_speed = 0.2
     enemy_animation_speed = 0.4
-    face_me_enemy = False
     face_me1 = False
     face_me2 = False
+    face_me_enemy = False
     wave_timer = 0
 
     enemies = []
@@ -201,8 +205,30 @@ def main():
         cam1.update(player1, player2)
 
         # animation initialisatie
+        movingfront_enemy = False
+        movingback_enemy = False
         movingfront = movingback = False
         movingfront2 = movingback2 = False
+
+        def draw_enemy(enemy, front_sprites, back_sprites, moving_front, moving_back, face_front, current_frame_fr, current_frame_ba):
+            pos = enemy.get_cords()
+            screen_pos = cam1.apply(pos[0], pos[1])
+
+            if moving_front:
+                sprite = front_sprites[int(current_frame_fr)]
+            elif moving_back:
+                sprite = back_sprites[int(current_frame_ba)]
+            else:
+                if face_front:
+                    sprite = front_sprites[0]
+                else:
+                    sprite = back_sprites[0]
+
+            if cam1.zoom != 1.0:
+                new_width = int(60 * cam1.zoom)
+                new_height = int(60 * cam1.zoom)
+                sprite = pygame.transform.scale(sprite, (new_width, new_height))
+            screen.blit(sprite, screen_pos)
 
         # scherm tekenen
         screen.fill((0, 0, 0))
@@ -293,7 +319,10 @@ def main():
             elif moving_back:
                 sprite = back_sprites[int(current_frame_ba)]
             else:
-                sprite = front_sprites[0] if face_front else back_sprites[0]
+                if face_front:
+                    sprite = front_sprites[0]
+                else:
+                    sprite = back_sprites[0]
 
             if cam1.zoom != 1.0:
                 new_width = int(sprite.get_width() * cam1.zoom)
@@ -352,7 +381,7 @@ def main():
                 offset = (enemy.rect.left - bullet.rect.left, enemy.rect.top - bullet.rect.top)
                 if bullet.mask.overlap(enemy.mask, offset):
                     enemy.hit(rifle)
-                    bullet.existing = false
+                    bullet.existing = False
 
             if not bullet.existing:
                 bullets.remove(bullet)
@@ -385,15 +414,17 @@ def main():
         screen.blit(heart3, (cam1.width//2  + 25, cam1.height - 770))
 
         # wave checking
-        if enemy_count == 0 and wave_timer >= 15:
+        if enemy_count == 0 and wave_timer >= 1:
 
             if current_wave == 0:
+                wave_start = True
                 # wave start en enemy count terug verhogen
                 Title_timer = 0
-                while Title_timer <= 7:
+                while Title_timer <= 1:
                     dt2 = clock.tick(60) / 1000
                     write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
                     Title_timer += 1 * dt2
+                    wave_sound.play()
 
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT:
@@ -401,19 +432,22 @@ def main():
                             run = False
 
                     pygame.display.flip()
-
-
+                                
+                spawned = False
                 enemy_count = (current_wave + 3 )** 2
 
                 if enemy_count == 0:
                     current_wave += 1
                     wave_timer = 0
+                    wave_start = False
 
 
             elif current_wave == 1:
-                # wave start en enemy count terug verhogen (momenteel 2 waves maken)
+                wave_start = True
+                spawned = False
+                # wave start en enemy count terug verhogen
                 Title_timer = 0
-                while Title_timer <= 7:
+                while Title_timer <= 1:
                     dt2 = clock.tick(60) / 1000
                     write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
                     Title_timer += 1 * dt2
@@ -431,9 +465,24 @@ def main():
                 if enemy_count == 0:
                     current_wave += 1
                     wave_timer = 0
+                    wave_start = False
+
 
         # enemy spawn loop
+        if enemy_count != 0 and wave_start and spawned == False: 
+            for i in range(0, enemy_count):
+                enemy = Enemy((0, 0), 125, 20, 10)
+                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 400, 300))
+                print(enemy.spawn_location)
+                print(enemy.get_cords())
+                enemies.append(enemy)
+            spawned = True
 
+        for enemy in enemies:
+            target = enemy.get_closest(player1, player2)
+            enemy.move(target, dt)
+            draw_enemy(enemy, enemy_fronts, enemy_backs, movingfront_enemy, movingback_enemy, face_me_enemy, current_frame_fr_enemy, current_frame_ba_enemy)
+        
 
         # event handlers
         for event in pygame.event.get():
