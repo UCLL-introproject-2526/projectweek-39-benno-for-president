@@ -45,15 +45,16 @@ class Weapon:
 
 
 class Bullet:
-    def __init__(self, start_pos, target_pos, weap, spawn_time):
+    def __init__(self, start_pos, target_pos, weapon, spawn_time):
         self.pos = pygame.Vector2(start_pos)
         self.__name = f"bullet_{spawn_time}"
+        self.bullet = weapon.get_dmg()
         
         direction = pygame.Vector2(target_pos) - self.pos   #berekent vector
         if direction.length() > 0:                          # berekent norm van vecctor
             direction = direction.normalize() 
         
-        self.__speed = weap.get_bullet_speed()          # past snelheid aan per wapen
+        self.__speed = weapon.get_bullet_speed()          # past snelheid aan per wapen
         self.vel = direction * self.__speed
         self.spawn_time = spawn_time
         self.existing = True

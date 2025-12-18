@@ -13,6 +13,7 @@ class Enemy:
         self.__alive = True
         self.rect = self.image.get_rect(topleft=self.get_cords())
         self.mask = pygame.mask.from_surface(self.image)
+        self.rect.topleft = self.get_cords()
 
     def get_cords(self):
         return [self.__x, self.__y]
@@ -75,6 +76,7 @@ class Enemy:
         diff = max(0, self.__health - other.get_dmg())
         self.set_health(diff)
         if self.__health <= 0:
+            self.__health = 0
             self.__alive = False
 
 
