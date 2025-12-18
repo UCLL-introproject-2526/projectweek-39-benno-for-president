@@ -397,7 +397,7 @@ def main():
             bullet_x, bullet_y = bullet.get_cords()
             screen_pos = cam1.apply(bullet_x, bullet_y)
             screen.blit(bullet_spr, screen_pos)
-
+            
 
         # player enforce bounds
         def enforce_bounds(player, other):
