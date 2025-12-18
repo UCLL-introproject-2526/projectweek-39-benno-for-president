@@ -195,6 +195,9 @@ def main():
     
     # game loop
     run = True
+    
+
+
     while run:
         # variables
         dt = clock.tick(60) / 1000  # seconden per frame
@@ -206,8 +209,8 @@ def main():
             rifle_delay = True 
         else: 
             rifle_delay = False
-            wave_timer += 1 * dt
-            current_wave = 1
+        wave_timer += 1 * dt
+        current_wave = 1
 
             # camera update
         cam1.update(player1, player2)
@@ -555,11 +558,6 @@ def main():
         if (not player1.alive() or not player2.alive()) and not endscreen.active:
              endscreen.show()
 
-        if endscreen.active:
-            endscreen.draw()
-            pygame.display.flip()
-            continue
-
 
 
         # draw crosshair
@@ -569,8 +567,8 @@ def main():
         screen.blit(crosshair, crosshair_rect)
 
         # force dood na 5 sec voor test
-        if world_time > 5 and not endscreen.active:
-            player1.set_health(0)
+        #if world_time > 5 and not endscreen.active:
+            #player1.set_health(0)
 
 
 
