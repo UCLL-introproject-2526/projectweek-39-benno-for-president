@@ -11,11 +11,13 @@ from camera import Camera
 def main():
     # pygame setup
     pygame.init()
-    
+
     pygame.display.set_caption("Benno vs Santa")
     screen_size = (1024,834)
     screen = pygame.display.set_mode(screen_size)
     clock = pygame.time.Clock()
+    pygame.scrap.init()
+    pygame.font.init()
     
 
     # loop setup
@@ -132,10 +134,18 @@ def main():
     animation_speed = 0.2
     face_me1 = False
     face_me2 = False
+    wave_timer = 0
+
+    # writing function
+    text_font = pygame.font.Font("Nothing Smoothie.ttf", 1000)
+
+    def write(text, font, text_col, x, y):
+        img = font.render(text, True, text_col)
+        screen.blit(img, (x,y))
 
     # benno_img = pygame.image.load('sprites/bigbenno_sprite.png').convert_alpha()
     # benno_img = pygame.transform.smoothscale(benno_img, (100, 100))
-
+    
     # game loop
     run = True
     while run:
@@ -149,6 +159,13 @@ def main():
             rifle_delay = True 
         else: 
             rifle_delay = False
+        wave_timer += 1
+        current_wave = 0
+
+        # wave checking
+        if wave_timer >= 5:
+            current_wave += 1
+            write(f"wave {current_wave} starting", text_font, (0,0,0), (cam1.width / 2) * cam1.zoom, (cam1.height / 2) * cam1.zoom)
 
         # camera update
         cam1.update(player1, player2)
