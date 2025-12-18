@@ -1,46 +1,74 @@
-import pygame
-import pygame_gui
-
+import pygame, sys
+from button import Button
 
 pygame.init()
 
-screen_size = (1024,823)
-pygame.display.set_caption('Main Menu')
-window_surface = pygame.display.set_mode(screen_size)
+SCREEN = pygame.display.set_mode((1280, 720))
+pygame.display.set_caption("Menu")
 
-background_picture = pygame.image.load('sprites/gui/background_start_screen.png')
+BG = pygame.image.load("sprites/gui/background_start_screen.png")
 
+def get_font(size): # Returns Press-Start-2P in the desired size
+    return pygame.font.Font("sprites/gui/font.ttf", size)
 
-manager = pygame_gui.UIManager(screen_size)
+def play():
+    while True:
+        PLAY_MOUSE_POS = pygame.mouse.get_pos()
 
-button_image = pygame.image.load('sprites/gui/play_button.png').convert_alpha
+        SCREEN.fill("black")
 
+        PLAY_TEXT = get_font(45).render("This is the PLAY screen.", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 260))
+        SCREEN.blit(PLAY_TEXT, PLAY_RECT)
 
+        PLAY_BACK = Button(image=None, pos=(640, 460), 
+                            text_input="BACK", font=get_font(75), base_color="White", hovering_color="Green")
 
+        PLAY_BACK.changeColor(PLAY_MOUSE_POS)
+        PLAY_BACK.update(SCREEN)
 
-hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
-                                             text='Say Hello',
-                                             manager=manager)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
+                    main_menu()
 
-hello_button.set_image(button_image)
-clock = pygame.time.Clock()
-is_running = True
+        pygame.display.update()
+    
 
-while is_running:
-    time_delta = clock.tick(60)/1000.0
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            is_running = False
+def main_menu():
+    while True:
+        SCREEN.blit(BG, (0, 0))
 
-        if event.type == pygame_gui.UI_BUTTON_PRESSED:
-            if event.ui_element == hello_button:
-                print('Hello World!')
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
 
-        manager.process_events(event)
+        MENU_TEXT = get_font(100).render("MAIN MENU", True, "#b68f40")
+        MENU_RECT = MENU_TEXT.get_rect(center=(640, 100))
 
-    manager.update(time_delta)
+        PLAY_BUTTON = Button(image=pygame.image.load("sprites/gui/play_button.png"), pos=(640, 250), 
+                            text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+        # QUIT_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(640, 550), 
+        #                     text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
 
-    window_surface.blit(background_picture, (0, 0))
-    manager.draw_ui(window_surface)
+        SCREEN.blit(MENU_TEXT, MENU_RECT)
 
-    pygame.display.update()
+        for button in [PLAY_BUTTON]:
+            button.changeColor(MENU_MOUSE_POS)
+            button.update(SCREEN)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    play()
+                # if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                #     pygame.quit()
+                #     sys.exit()
+
+        pygame.display.update()
+
+main_menu()
