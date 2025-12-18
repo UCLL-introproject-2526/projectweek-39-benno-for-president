@@ -70,7 +70,7 @@ class Enemy:
         if distance != 0:
             self.__x += (dx / distance) * self.__speed * dt
             self.__y += (dy / distance) * self.__speed * dt
-
+        self.rect.topleft = (self.__x, self.__y)
 
     def hit(self, damage):
         self.__health -= damage
