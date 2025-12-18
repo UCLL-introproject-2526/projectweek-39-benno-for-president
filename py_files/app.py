@@ -33,7 +33,7 @@ def main():
 
 
     # sound:
-    pygame.mixer.music.load('sounds/game_track.ogg')
+    pygame.mixer.music.load('sounds/music/game_track.ogg')
     pygame.mixer.music.play(-1, fade_ms=3000)
     pygame.mixer.music.set_volume(0.7)
 
