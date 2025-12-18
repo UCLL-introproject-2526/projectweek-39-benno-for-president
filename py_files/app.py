@@ -92,8 +92,11 @@ def main():
     enemy_backs = [E4,
                    E5,
                    E6]
+    
+    Benno_Boss_Controler = pygame.image.load('sprites/enemies/bigbenno_final_boss.png').convert_alpha()
+    Benno_Boss_Controler = pygame.transform.smoothscale(Benno_Boss_Controler, (150,150))
 
-
+    # ------------
     player1_sprite_back = pygame.image.load('sprites/player1/dikkeelfsprite5.png').convert_alpha()
     player1_sprite_back = pygame.transform.smoothscale(player1_sprite_back, (75,75))
 
@@ -106,7 +109,7 @@ def main():
     player2_sprite_front = pygame.image.load('sprites/player2/kerstmanfront1.png').convert_alpha()
     player2_sprite_front = pygame.transform.smoothscale(player2_sprite_front, (75,75))
     
-    # ------------
+
     p1img1 = pygame.image.load("sprites/player1/dikkeelfsprite1.png").convert_alpha()
     p1img1 = pygame.transform.smoothscale(p1img1, (75,75))
     
@@ -427,7 +430,7 @@ def main():
                 # wave start en enemy count terug verhogen
                 Title_timer = 0
                 wave_sound.play()
-                while Title_timer <= 7:
+                while Title_timer <= 3:
                     dt2 = clock.tick(60) / 1000
                     write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
                     Title_timer += 1 * dt2
@@ -438,7 +441,7 @@ def main():
                             run = False
 
                     pygame.display.flip()
-                print("out of loop")
+                
                 spawned = False
                 enemy_count = (current_wave + 2 )** 2
 
@@ -453,7 +456,7 @@ def main():
                 # wave start en enemy count terug verhogen
                 Title_timer = 0
                 wave_sound.play()
-                while Title_timer <= 7:
+                while Title_timer <= 3:
                     dt2 = clock.tick(60) / 1000
                     write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
                     Title_timer += 1 * dt2
@@ -464,7 +467,7 @@ def main():
                             run = False
 
                     pygame.display.flip()
-                print("out of loop")
+                
                 spawned = False
                 enemy_count = (current_wave + 2 )** 2
 
@@ -474,11 +477,45 @@ def main():
                     wave_start = False
 
 
+            elif current_wave > 2:
+                wave_start = True
+                # wave start en enemy count terug verhogen
+                Title_timer = 0
+                wave_sound.play()
+                while Title_timer <= 3:
+                    dt2 = clock.tick(60) / 1000
+                    write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
+                    Title_timer += 1 * dt2
+
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            Title_timer = 7
+                            run = False
+
+                    pygame.display.flip()
+
+                spawned = False
+                enemy_count = ((current_wave + random.randint(1,5) )// 2) ** 2
+
+                if enemy_count == 0:
+                    current_wave += 1
+                    wave_timer = 0
+                    wave_start = False
+
+
         # enemy spawn loop
-        if enemy_count != 0 and wave_start and spawned == False: 
+        if enemy_count != 0 and wave_start and spawned == False and current_wave <= 2: 
             for i in range(0, enemy_count):
                 enemy = Enemy((0, 0), 80, 20, 10)
-                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 1400, 500))
+                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 1400, 700))
+                print(enemy.get_cords())
+                enemies.append(enemy)
+            spawned = True
+
+        if enemy_count != 0 and wave_start and spawned == False and current_wave > 2: 
+            for i in range(0, enemy_count):
+                enemy = Enemy((0, 0), 80, 20, 10)
+                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 1100, 500))
                 print(enemy.get_cords())
                 enemies.append(enemy)
             spawned = True
