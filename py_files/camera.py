@@ -17,59 +17,7 @@ class Camera:
         return ((a[0]-b[0])**2 + (a[1]-b[1])**2) ** 0.5
 
     def update(self, player1, player2): 
-        # cam_x = ((player1.get_cords()[0] + player2.get_cords()[0]) /2) #+ mouse_pos[0] ) / 3 #x & y cordinaat 3hoek spelers &muis
-        # cam_y = ((player1.get_cords()[1] + player2.get_cords()[1]) /2) #+ mouse_pos[1] ) / 3
-
-
-        # max_dist = max(self.dist((cam_x, cam_y),player1.get_cords()),
-        #                self.dist((cam_x, cam_y),player2.get_cords()),
-        #                )
-
-        # target_zoom = 800 / (max_dist + 1)
-        # self.zoom = max(0.7, min(1.3, target_zoom))
-
-        # view_w = self.width / self.zoom
-        # view_h = self.height / self.zoom
-        # safe_x = self.safe_zone / self.zoom
-        # safe_y = self.safe_zone / self.zoom
         
-        # self.offset.x = cam_x - (self.width / 2)     #offset zodat het middelpunt van 2spelers & muis in het midden van camera is
-        # self.offset.y = cam_y - (self.height / 2)
-
-        # left   = self.offset.x + safe_x
-        # right  = self.offset.x + view_w - safe_x
-        # top    = self.offset.y + safe_y
-        # bottom = self.offset.y + view_h - safe_y
-    
-
-        # for px, py in (player1.get_cords(), player2.get_cords()):
-
-        #     if px < left:
-        #         self.offset.x = px - safe_x
-        #     elif px > right:
-        #      self.offset.x = px + safe_x - view_w
-
-        #     if py < top:
-        #         self.offset.y = py - safe_y
-        #     elif py > bottom:
-        #         self.offset.y = py + safe_y - view_h
-
-        # self.offset.x = max(0, min(self.offset.x, self.map_width - view_w))
-        # self.offset.y = max(0, min(self.offset.y, self.map_height - view_h))
-
-        # view_w = self.width / self.zoom
-        # view_h = self.height / self.zoom
-
-        # required_w = max(player1.get_cords()[0], player2.get_cords()[0]) - min(player1.get_cords()[0], player2.get_cords()[0]) + 2 * self.safe_zone
-        # required_h = max(player1.get_cords()[1], player2.get_cords()[1]) - min(player1.get_cords()[1], player2.get_cords()[1]) + 2 * self.safe_zone
-
-        # zoom_x = self.width / required_w
-        # zoom_y = self.height / required_h
-
-        # new_zoom = min(zoom_x, zoom_y, 1.3)
-        # self.zoom = max(new_zoom, 0.7)
-
-        # Haal de coördinaten van beide spelers
         p1 = player1.get_cords()
         p2 = player2.get_cords()
 
@@ -92,25 +40,21 @@ class Camera:
         view_w = self.width / self.zoom
         view_h = self.height / self.zoom
 
-        # Center tussen spelers of tegen mapranden
+        
         center_x = (p1[0] + p2[0]) / 2
         center_y = (p1[1] + p2[1]) / 2
 
         self.offset.x = center_x - view_w / 2
         self.offset.y = center_y - view_h / 2
 
-        # Clamp tegen mapranden
+    
         self.offset.x = max(0, min(self.offset.x, self.map_width - view_w))
         self.offset.y = max(0, min(self.offset.y, self.map_height - view_h))
 
 
-        # dx = max(0, p2[0] - (self.offset.x + view_w - safe_x), safe_x - (p1[0] - self.offset.x))
-        # dy = max(0, p2[1] - (self.offset.y + view_h - safe_y), safe_y - (p1[1] - self.offset.y))
-        # if dx > 0 or dy > 0:
-        #     self.zoom = min(self.zoom, min(view_w / (view_w + dx), view_h / (view_h + dy)))
 
 
-    def apply(self, x, y):          #mapcordinaten naar pccordinaten
+    def apply(self, x, y):         
         return (int((x - self.offset.x) * self.zoom), int((y- self.offset.y) * self.zoom))
     
     def screen_to_world(self, sx, sy):
