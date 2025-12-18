@@ -88,14 +88,14 @@ start_y = 220
 gap = 18
 
 play_btn = Button(
-    pos=(center_x - play_img.get_width() // 2, start_y),
+    pos=(center_x - play_img.get_width() // 2, 400),
     image=play_img,
     hover_image=play_hover_img,
     on_click=launch_app
 )
 
 quit_btn = Button(
-    pos=(center_x - quit_img.get_width() // 2, start_y + 1 * (play_img.get_height()+gap)),
+    pos=(center_x - quit_img.get_width() // 2, 500),
     image=quit_img,
     hover_image=quit_hover_img,
     on_click=quit_game
