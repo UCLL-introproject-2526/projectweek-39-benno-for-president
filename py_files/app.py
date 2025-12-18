@@ -36,6 +36,9 @@ def main():
     pygame.mixer.music.load('sounds/game_track.ogg')
     pygame.mixer.music.play(-1, fade_ms=3000)
 
+    shoot_sound = pygame.mixer.Sound("sounds/hitsound_2.mp3")
+
+
 
     # sprites:
     background = pygame.image.load('sprites/icy_background.png').convert()
