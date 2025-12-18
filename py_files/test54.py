@@ -6,13 +6,12 @@ from player import Player1,Player2
 from weapons import Weapon, Bullet
 from enemy import Enemy
 from camera import Camera
-
+from hp import DIT_IS_EEN_FUNCTIE
 
 def main():
     # pygame setup
     pygame.init()
     
-    pygame.display.set_caption("Benno vs Santa")
     screen_size = (1024,834)
     screen = pygame.display.set_mode(screen_size)
     clock = pygame.time.Clock()
@@ -20,40 +19,24 @@ def main():
 
     # loop setup
     world_time = 0
-    world_time2 = 0
-    player1 = Player1([200,200], 6, 50) #speed was 3
-    player2 = Player2([300,200], 6.1, 50) #(spawncordinate), speed, health
-    cam1 = Camera(1024,834, (2400,2400))    #width, height, mapsize
-    rifle = Weapon(15, 0.7, 400) #damage, shootdelay ,bulletspeed, 
+    player1 = Player1([200,200], 5, 50)
+    player2 = Player2([300,200], 5, 50)
+    cam1 = Camera(1024,834, (2400,2400))
+    rifle = Weapon(15, 0.7, 40)
     rifle_timer = 0
+    name_rand = 0
+    bullet_dict = {}
     fullscreen = False
     Player_lives = 3
-    ui_switch = 0
-    bullets = []
 
 
     # sound:
-    pygame.mixer.music.load('sounds/game_track.ogg')
+    pygame.mixer.music.load('sounds/benno_song.ogg')
     pygame.mixer.music.play(-1, fade_ms=3000)
 
 
     # sprites:
     background = pygame.image.load('sprites/icy_background.png').convert()
-
-    heart1 = pygame.image.load('sprites/hearts/l0_hearts1.png').convert_alpha()
-    heart1 = pygame.transform.smoothscale(heart1, (45,45))
-
-    heart2 = pygame.image.load('sprites/hearts/l0_hearts1.png').convert_alpha()
-    heart2 = pygame.transform.smoothscale(heart2, (45,45))
-
-    heart3 = pygame.image.load('sprites/hearts/l0_hearts1.png').convert_alpha()
-    heart3 = pygame.transform.smoothscale(heart3, (45,45))
-
-    crosshair = pygame.image.load('sprites/crosshairs_black.png'). convert_alpha()
-    crosshair = pygame.transform.smoothscale(crosshair, (45,45))
-
-    bullet_spr = pygame.image.load('sprites/kogel2.png').convert_alpha()
-    bullet_spr = pygame.transform.smoothscale(bullet_spr, (20,20))
 
     player1_sprite_back = pygame.image.load('sprites/player1/dikkeelfsprite5.png').convert_alpha()
     player1_sprite_back = pygame.transform.smoothscale(player1_sprite_back, (75,75))
@@ -135,16 +118,11 @@ def main():
     run = True
     while run:
         # variables
-        dt = clock.tick(60) / 1000
         world_time += 1/60
-        rifle_timer += dt
+        rifle_timer += 1/60
         if rifle_timer >= rifle.get_rpm():
             rifle_delay = True
         else: rifle_delay = False
-        ui_switch += 1
-
-        world_time2 += dt #deze zou fps onafhankelijk moeten zijn
-        rifle_timer += dt
 
         # camera
         cam1.update(player1, player2)
@@ -318,29 +296,20 @@ def main():
         else:
             screen.blit(sprite, screen_pos)
 
-    
         # player 1 shooting
         if key[pygame.K_TAB] and rifle_delay == True:
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-            mouse_world_x, mouse_world_y = cam1.screen_to_world(mouse_x, mouse_y)
-
-            bullet = Bullet(
-            (player1.get_cords()[0]+ (20 * cam1.zoom), player1.get_cords()[1]+(20 * cam1.zoom)), 
-            (mouse_world_x, mouse_world_y), rifle, world_time)
-            bullets.append(bullet)
-            rifle.reset_timer()
+            last_cursor = list(pygame.mouse.get_pos())
+            bullet = Bullet(cam1.screen_to_world()[0], cam1.screen_to_world()[1], f"bullet{name_rand}", rifle, last_cursor, world_time)
+            name_rand += 1
+            bullet_spr = pygame.image.load("sprites/Bullet.png").convert_alpha()
+            bullet_spr = pygame.transform.smoothscale(bullet_spr, (5,25))
+            bullet_spr = pygame.transform.rotate(bullet_spr, tan((bullet.get_target()[0] - player1.get_cords()[0]) /bullet.get_target()[1] - player1.get_cords()[1] ))
+            bullet_dict[bullet] = bullet_spr
             rifle_timer = 0
-
-            # last_cursor = pygame.mouse.get_pos()
-            # bullet = Bullet(cam1.screen_to_world()[0], cam1.screen_to_world()[1], f"bullet{name_rand}", rifle, last_cursor, world_time)
-            # name_rand += 1
-            # bullet_spr = pygame.image.load("sprites/Bullet.png").convert_alpha()
-            # bullet_spr = pygame.transform.smoothscale(bullet_spr, (5,25))
-            # bullet_spr = pygame.transform.rotate(bullet_spr, tan((bullet.get_target()[0] - player1.get_cords()[0]) /bullet.get_target()[1] - player1.get_cords()[1] ))
-            # bullet_dict[bullet] = bullet_spr
             
 
-        
+        # for bul, spr in bullet_dict.items():
+        #     screen.blit(spr, [bul.get_cords()[0] + ] )
 
 
 
@@ -516,21 +485,7 @@ def main():
         else:
             current_frame_ba2 = 0
 
-        # draw bullets
-        for bullet in bullets[:]: 
-            bullet.update(dt)
-            
-            if not bullet.existing:
-                bullets.remove(bullet)
-                               
-            bullet_x,bullet_y = bullet.get_cords()
-            screen_pos = cam1.apply(bullet_x, bullet_y)
-            screen.blit(bullet_spr, screen_pos)
-    
-
-
-
-        # enforce map bounds
+                # enforce map bounds
         if 50 > player1.get_cords()[0]:
             player1.set_cords([player1.get_cords()[0] + 5, player1.get_cords()[1]])
         if cam1.map_width - 125 < player1.get_cords()[0]:
@@ -550,15 +505,8 @@ def main():
         if cam1.map_height - 160 < player2.get_cords()[1]:
             player2.set_cords([player2.get_cords()[0], player2.get_cords()[1] - 5])
         
-
-
-
-        # UI bars
-        screen.blit(heart1,(cam1.width // 2 , cam1.height - 771 )) #if you read this code.. EASTER EGGG
-        screen.blit(heart2,(cam1.width // 2 + 35 , cam1.height - 770 ))
-        screen.blit(heart3,(cam1.width // 2 - 35, cam1.height - 770 ))
-
-
+   
+        #screen.blit(heart,(cam1.width - 924, cam1.height - 734))
 
         # event handler
         for event in pygame.event.get():
@@ -571,7 +519,7 @@ def main():
                     fullscreen = not fullscreen
 
                     if fullscreen:
-                        screen = pygame.display.set_mode((1024,834), pygame.FULLSCREEN)
+                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
                     else:
                         screen = pygame.display.set_mode(screen_size)
 
