@@ -305,7 +305,7 @@ def main():
             screen.blit(bullet_spr, screen_pos)
 
         # player enforce bounds
-        def enforce_bounds(player):
+        def enforce_bounds(player, other):
             x, y = player.get_cords()
             if x < 50: x = 50
             if x > cam1.map_width - 125: x = cam1.map_width - 125
@@ -313,12 +313,15 @@ def main():
             if y > cam1.map_height - 160: y = cam1.map_height - 160
 
             # player seperation
-            
+            if x > other.get_cords()[0] + 950: x = other.get_cords()[0] + 950
+            if x < other.get_cords()[0] - 950: x = other.get_cords()[0] - 950
+            if y > other.get_cords()[1] + 950: y = other.get_cords()[1] + 950
+            if y < other.get_cords()[1] - 950: y = other.get_cords()[1] - 950
 
             player.set_cords([x, y])
 
-        enforce_bounds(player1)
-        enforce_bounds(player2)
+        enforce_bounds(player1, player2)
+        enforce_bounds(player2, player1)
 
         # UI handling
         screen.blit(heart1, (cam1.width//2, cam1.height - 771))
