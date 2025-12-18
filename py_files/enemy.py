@@ -9,8 +9,8 @@ class Enemy:
         self.set_speed(speed)
         self.set_health(health)
         self.set_dmg(dmg)
+        self.image = pygame.image.load('sprites/enemies/enemy_front1.png')
         self.__alive = True
-        self.image = pygame.image.load("sprites/enemy.png").convert_alpha()
         self.rect = self.image.get_rect(topleft=self.get_cords())
         self.mask = pygame.mask.from_surface(self.image)
 
@@ -53,21 +53,22 @@ class Enemy:
         return self.__alive
 
     def get_closest(self, player1, player2):
-        if sqrt((self.__x - player1.get_cords[0])**2 + (self.__y - player1.get_cords[1])**2) < sqrt((self.__x - player2.get_cords[0])**2 + (self.__y - player2.get_cords[1])**2):
+        if sqrt((self.__x - player1.get_cords()[0])**2 + (self.__y - player1.get_cords()[1])**2) < sqrt((self.__x - player2.get_cords()[0])**2 + (self.__y - player2.get_cords()[1])**2):
             return player1
         else:
             return player2
 
-    def move(self, player):
-        if self.__x < player.get_cords[0]:
-            self.__x =+ self.get_speed()
-        else:
-            self.__x =- self.get_speed()
+    def move(self, player, dt): # player vinden met get closest en dt megeven
+        
+        # Bepaal richting
+        dx = player.get_cords()[0] - self.__x
+        dy = player.get_cords()[1] - self.__y
 
-        if self.__y < player.get_cords[1]:
-            self.__y =+ self.get_speed()
-        else:
-            self.__y =- self.get_speed()
+        distance = sqrt(dx**2 + dy**2)
+
+        if distance != 0:
+            self.__x += (dx / distance) * self.__speed * dt
+            self.__y += (dy / distance) * self.__speed * dt
 
 
     def hit(self, other):
@@ -79,17 +80,17 @@ class Enemy:
 
 
 
-    def spawn_location(p1, p2, small_border, big_border): #p1 & p2 moet playerX.get_cords() zijn en min border = min afstand van player dat ze spawnen & big border is max
+    def spawn_location(self, p1, p2, small_border, big_border): #p1 & p2 moet playerX.get_cords() zijn en min border = min afstand van player dat ze spawnen & big border is max
         if p1[0] < p2[0]:
             if p1[1] > p2[1]:
-                square_players = (p1, (p1[0], p2[1]), p2, (p2[0], p1[1])) #links onder, links boven, rechts boven, rechts onder
+                square_players = [p1, [p1[0], p2[1]], p2, [p2[0], p1[1]]] #links onder, links boven, rechts boven, rechts onder
             else:
-                square_players = ((p1[0], p2[1]),p1,(p2[0], p1[1]),  p2)
+                square_players = [[p1[0], p2[1]],p1,[p2[0], p1[1]],  p2]
         else:
             if p1[1] > p2[1]:
-                square_players = (p2 (p2[0], p1[1]), p1, (p1[0], p2[1])) #links onder, links boven, rechts boven, rechts onder
+                square_players = [p2 [p2[0], p1[1]], p1, [p1[0], p2[1]]] #links onder, links boven, rechts boven, rechts onder
             else:
-                square_players = ((p2[0], p1[1]),p2,(p1[0], p2[1]),  p1)
+                square_players = [[p2[0], p1[1]],p2,[p1[0], p2[1]],  p1]
 
 
 
@@ -115,27 +116,14 @@ class Enemy:
         square_big_grinch[3][0] += big_border
         square_big_grinch[3][1] += big_border
 
-        random = (x, y)
-
-        mob_x1 = randint(square_min_grinch[0][0], square_big_grinch[0][0])
-        mob_x2 = randint(square_min_grinch[3][0], square_big_grinch[3][0])
+        mob_x1 = randint(int(square_min_grinch[0][0]), int(square_big_grinch[0][0]))
+        mob_x2 = randint(int(square_min_grinch[3][0]), int(square_big_grinch[3][0]))
         
-        mob_x = choice(mob_x1, mob_x2)
+        mob_x = choice([mob_x1, mob_x2])
 
-        mob_y1 = randint(square_min_grinch[0][1], square_big_grinch[0][1])
-        mob_y2 = randint(square_min_grinch[3][1], square_big_grinch[3][1])
+        mob_y1 = randint(int(square_min_grinch[0][1]), int(square_big_grinch[0][1]))
+        mob_y2 = randint(int(square_min_grinch[3][1]), int(square_big_grinch[3][1]))
         
-        mob_y = choice(mob_y1, mob_y2)
+        mob_y = choice([mob_y1, mob_y2])
 
-        return (mob_x, mob_y)
-
-
-
-
-
-
-
-        
-
-
-            
+        return (int(mob_x), int(mob_y))
