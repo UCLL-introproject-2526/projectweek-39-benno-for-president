@@ -414,7 +414,7 @@ def main():
         screen.blit(heart3, (cam1.width//2  + 25, cam1.height - 770))
 
         # wave checking
-        if enemy_count == 0 and wave_timer >= 10:
+        if enemy_count == 0 and wave_timer >= 15:
 
             if current_wave == 1:
                 wave_start = True
@@ -447,7 +447,7 @@ def main():
                 spawned = False
                 # wave start en enemy count terug verhogen
                 Title_timer = 0
-                while Title_timer <= 7:
+                while Title_timer <= 5:
                     dt2 = clock.tick(60) / 1000
                     write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
                     Title_timer += 1 * dt2
@@ -471,9 +471,8 @@ def main():
         # enemy spawn loop
         if enemy_count != 0 and wave_start and spawned == False: 
             for i in range(0, enemy_count):
-                enemy = Enemy((0, 0), 125, 20, 10)
-                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 400, 300))
-                print(enemy.spawn_location)
+                enemy = Enemy((0, 0), 105, 20, 10)
+                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 2000, 300))
                 print(enemy.get_cords())
                 enemies.append(enemy)
             spawned = True
