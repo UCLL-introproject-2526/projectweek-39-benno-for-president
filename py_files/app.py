@@ -7,6 +7,7 @@ from weapons import Weapon, Bullet
 from enemy import Enemy
 from camera import Camera
 from defeat_screen import EndScreen
+from victory_screen import VictoryScreen
 
 
 
@@ -18,6 +19,8 @@ def main():
     screen_size = (1024,834)
     screen = pygame.display.set_mode(screen_size)
     endscreen = EndScreen(screen, 1024, 834, restart_script="app.py")
+    victory_screen = VictoryScreen(screen, 1024, 834)
+
 
 
     clock = pygame.time.Clock()
@@ -541,6 +544,7 @@ def main():
                 run = False
 
             endscreen.handle_event(event)
+            victory_screen.handle_event(event)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -558,6 +562,18 @@ def main():
         if (not player1.alive() or not player2.alive()) and not endscreen.active:
              endscreen.show()
 
+        if endscreen.active:
+            endscreen.draw()
+            pygame.display.flip()
+            continue
+
+        if victory_screen.active:
+            victory_screen.update(dt)   # nodig voor credits scroll
+            victory_screen.draw()
+            pygame.display.flip()
+            continue
+       
+
 
 
         # draw crosshair
@@ -567,10 +583,10 @@ def main():
         screen.blit(crosshair, crosshair_rect)
 
         # force dood na 5 sec voor test
-        if world_time > 5 and not endscreen.active:
-            player1.set_health(0)
-
-
+        #if world_time > 5 and not endscreen.active:
+            #player1.set_health(0)
+        if world_time > 3 and not victory_screen.active:
+            victory_screen.show()
 
         endscreen.draw()
         pygame.display.flip()

@@ -135,13 +135,10 @@ class VictoryScreen:
         width: int,
         height: int,
         overlay_alpha: int = 140,
-        title_text: str = "VICTORY!",
-        subtitle_text: str = "je hebt gewonnen.",
+        title_text: str = "VICTORY ROYALE",
+        subtitle_text: str = "je hebt kerstmis gered",
         # Assets
         click_sound_path: str = "sounds/sound_effects/click_sound.mp3",
-        btn_img_path: str = "sprites/gui/play_button.png",
-        btn_hover_path: str = "sprites/gui/play_button_hover.png",
-        credits_music_path: str = "sounds/music/credits_music.ogg",
         # Font
         font_path: str = "Nothing Smoothie.ttf",
     ):
@@ -150,7 +147,7 @@ class VictoryScreen:
         self.HEIGHT = height
 
         self.active = False
-        self.mode = "victory"  # "victory" or "credits"
+        self.mode = "victory"  
 
         self.title_text = title_text
         self.subtitle_text = subtitle_text
@@ -171,19 +168,19 @@ class VictoryScreen:
         except Exception:
             self.click_sound = None
 
-        # credits music
-        self.credits_music_path = credits_music_path
-        self.music_was_playing = False
-        self.saved_music_pos = 0  # not used across formats reliably, so we just stop/resume simply
+        # buttons
+        self.btn_img = pygame.image.load('sprites/gui/credits_button.png').convert_alpha()
+        self.btn_hover = pygame.image.load('sprites/gui/credits_hover.png').convert_alpha()
 
-        # button images
-        self.btn_img = pygame.image.load(btn_img_path).convert_alpha()
-        self.btn_hover = pygame.image.load(btn_hover_path).convert_alpha()
-
-        # normalize sizes
+        self.quit_img = pygame.image.load("sprites/gui/closegame_button.png").convert_alpha()
+        self.quit_hover = pygame.image.load("sprites/gui/closegame_button_hover.png").convert_alpha()
+        
         BTN_SIZE = (406, 66)
         self.btn_img = pygame.transform.smoothscale(self.btn_img, BTN_SIZE)
         self.btn_hover = pygame.transform.smoothscale(self.btn_hover, BTN_SIZE)
+
+        self.quit_img = pygame.transform.smoothscale(self.quit_img, BTN_SIZE)
+        self.quit_hover = pygame.transform.smoothscale(self.quit_hover, BTN_SIZE)
 
         cx = self.WIDTH // 2
         self.title_pos = (cx, 230)
@@ -197,6 +194,7 @@ class VictoryScreen:
             self.open_credits,
             click_sound=self.click_sound,
             click_delay_ms=120,
+
         )
         self.quit_btn = Button(
             (cx - self.btn_img.get_width() // 2, 520),
@@ -206,31 +204,31 @@ class VictoryScreen:
             click_sound=self.click_sound,
             click_delay_ms=120,
         )
+        self.quit_btn = Button(
+        (cx - self.quit_img.get_width() // 2, 520),
+        self.quit_img, self.quit_hover, self.quit_game,
+        click_sound=self.click_sound, click_delay_ms=120
+         )
+
         self.buttons = [self.credits_btn, self.quit_btn]
+
+       
 
         # Button labels (drawn on top of the placeholder buttons)
         self.btn_font = pygame.font.Font(font_path, 40)
 
-        # Credits scroller
         self.scroller = CreditsScroller(
             self.WIDTH,
             self.HEIGHT,
             font_path=font_path,
             font_size=44,
             color=(245, 230, 90),
-            speed_px_per_sec=90,
+            speed_px_per_sec=30,
         )
         credit_text="""
 BENNO VS SANTA
 
-Hier komt ie 😄🎶
-*(op een speelse rap / synthbeat te zingen)*
 
----
-
-**🎤 “Benno Debals – Geode IT’er” 🎤**
-
-**Couplet 1**
 Benno Debals, geode IT’er, diep in het systeem,
 Computer systems, kernels, bits, hij kent het probleem.
 PowerPoint staat klaar, slides strak genummerd,
@@ -241,19 +239,18 @@ Maar de stoelen kijken terug, pure stilte, geen kring.
 “Dit komt op het examen”, zegt hij keer op keer,
 Maar niemand die luistert, niemand die ’t noteert.
 
-**Pre-chorus**
 Hij klikt naar slide 42,
 Maar zelfs Moodle kijkt hem moe.
 Hij weet alles, da’s geen vraag,
 Maar waar is zijn publiek vandaag?
 
-**Refrein**
 🎶 Bennooo Debals, geode IT’er man,
 Goed in computer systems, beter dan je kan.
 Niemand komt naar zijn les, niemand kent zijn slides,
 Maar in zijn hoofd draait Linux — altijd, realtime. 🎶
 
-**Couplet 2**
+Altijd realtime
+
 Cache coherency, mutex locks, race condition fight,
 Hij dropt die termen alsof het niets is, elke site.
 Studenten zeggen: “We kijken de opname wel”,
@@ -264,19 +261,18 @@ Maar attendance blijft null, da’s het echte drama.
 Zijn slides zijn correct, maar niemand die het weet,
 PDF na PDF, ongeopend, te laat, te breed.
 
-**Refrein**
 🎶 Bennooo Debals, geode IT’er man,
 Goed in computer systems, beter dan je kan.
 Niemand komt naar zijn les, niemand kent zijn slides,
 Maar in zijn hoofd draait Linux — altijd, realtime. 🎶
 
-**Bridge**
+Altijd realtime
+
 Misschien geen publiek, geen volle zaal,
 Maar Benno blijft compileren, keer op keer, loyaal.
 Hij doet het voor de kennis, niet voor de faam,
 Een echte engineer, zelfs zonder naam.
 
-**Laatste refrein (rustig → hard)**
 🎶 Benno Debals…
 Geode IT’er, still standing strong.
 Slides onbekend, les bijna leeg,
@@ -326,15 +322,12 @@ THE END
         pygame.quit()
         sys.exit()
 
+    
     def play_credits_music(self):
-        try:
-            # stop any current music and play credits music
-            pygame.mixer.music.stop()
-            pygame.mixer.music.load(self.credits_music_path)
-            pygame.mixer.music.set_volume(0.7)
-            pygame.mixer.music.play(-1)
-        except Exception:
-            pass
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load("sounds/benno_song.ogg")
+        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.play(-1)
 
     def stop_credits_music(self):
         # If you want to resume gameplay music later, do that in app.py after hide().
@@ -387,10 +380,6 @@ THE END
 
             for b in self.buttons:
                 b.draw(self.screen)
-
-            # labels on top of placeholder buttons
-            self.draw_button_label(self.credits_btn, "CREDITS")
-            self.draw_button_label(self.quit_btn, "CLOSE GAME")
 
         elif self.mode == "credits":
             self.scroller.draw(self.screen)
