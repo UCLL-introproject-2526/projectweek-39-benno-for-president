@@ -50,6 +50,7 @@ quit_hover_img = pygame.transform.scale(quit_hover_img, quit_img.get_size())
 
 
 
+
 class Button:
     def __init__(self, pos, image, hover_image, on_click):
         self.image = image
@@ -80,7 +81,22 @@ class Button:
         else:
             surf.blit(self.image, self.rect)
 
-        
+def toggle_fullscreen():
+    global is_fullscreen, screen, WIDTH, HEIGHT, center_x
+
+    is_fullscreen = not is_fullscreen
+    if is_fullscreen:
+        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)  # 0,0 = fullscreen op native resolutie
+        WIDTH, HEIGHT = screen.get_size()
+    else:
+        screen = pygame.display.set_mode((1024, 834))
+        WIDTH, HEIGHT = 1024, 834
+
+    center_x = WIDTH // 2
+
+    # Buttons opnieuw positioneren
+    play_btn.rect.topleft = (center_x - play_img.get_width() // 2, 400)
+    quit_btn.rect.topleft = (center_x - quit_img.get_width() // 2, 500)        
 
 def launch_app():
     # Start app.py met dezelfde Python interpreter als waarmee menu.py draait
@@ -135,19 +151,15 @@ while running:
         
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                is_fullscreen = not is_fullscreen
-
-            if is_fullscreen:
-                screen = pygame.display.set_mode((1024, 834), pygame.FULLSCREEN)
-            else: 
-                screen = pygame.display.set_mode((WIDTH, HEIGHT))
+                toggle_fullscreen()
 
         for b in buttons_main:
             b.handle_event(event)
 
             
         
-    screen.blit(BG, (0, 0))
+    bg_scaled = pygame.transform.scale(BG, (WIDTH, HEIGHT))
+    screen.blit(bg_scaled, (0, 0))
 
     for b in buttons_main:
         b.draw(screen)
