@@ -40,7 +40,7 @@ def main():
     pygame.mixer.music.play(-1, fade_ms=3000)
     pygame.mixer.music.set_volume(0.7)
 
-    shoot_sound = pygame.mixer.Sound("sounds/hitsound_2.mp3")
+    shoot_sound = pygame.mixer.Sound("sounds/sound_effects/shoot_sound.mp3")
     shoot_sound.set_volume(0.5)
 
 
@@ -162,11 +162,15 @@ def main():
     current_frame_fr2 = 0
     current_frame_ba2 = 0
     animation_speed = 0.2
+    current_frame_fr_enemy = 0
+    current_frame_ba_enemy = 0
     enemy_animation_speed = 0.4
     face_me_enemy = False
     face_me1 = False
     face_me2 = False
     wave_timer = 0
+
+    enemies = []
 
     # writing function
     def write(text, text_col, x, y):
@@ -398,9 +402,13 @@ def main():
 
                     pygame.display.flip()
 
+
+                enemy_count = (current_wave + 3 )** 2
+
                 if enemy_count == 0:
                     current_wave += 1
                     wave_timer = 0
+
 
             elif current_wave == 1:
                 # wave start en enemy count terug verhogen (momenteel 2 waves maken)
@@ -418,6 +426,15 @@ def main():
                     pygame.display.flip()
 
 
+                enemy_count = (current_wave + 3 )** 2
+
+                if enemy_count == 0:
+                    current_wave += 1
+                    wave_timer = 0
+
+        # enemy spawn loop
+
+
         # event handlers
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -426,9 +443,18 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     fullscreen = not fullscreen
                     if fullscreen:
-                        screen = pygame.display.set_mode((1024, 834), pygame.FULLSCREEN)
+                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
                     else:
                         screen = pygame.display.set_mode((1024, 834))
+
+                    pygame.mouse.set_visible(False)
+
+        # draw crosshair
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        crosshair_rect = crosshair.get_rect(center=(mouse_x, mouse_y))
+        screen.blit(crosshair, crosshair_rect)
+
 
         pygame.display.flip()
 
