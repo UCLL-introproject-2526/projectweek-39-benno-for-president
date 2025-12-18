@@ -62,13 +62,13 @@ class Button:
             self.hover = self.rect.collidepoint(event.pos)
 
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-         if self.rect.collidepoint(event.pos):
-            click_sound.play()
+            if self.rect.collidepoint(event.pos):
+                click_sound.play()
+                pygame.time.delay(450)
 
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if self.rect.collidepoint(event.pos):
-                 pygame.time.wait(200)
-                 self.on_click()
+                self.on_click()
                 
 
 
