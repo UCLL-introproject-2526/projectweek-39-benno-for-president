@@ -72,12 +72,16 @@ class Enemy:
             self.__y += (dy / distance) * self.__speed * dt
 
 
-    def hit(self, other):
-        diff = max(0, self.__health - other.get_dmg())
-        self.set_health(diff)
+    def hit(self, damage):
+        self.__health -= damage
         if self.__health <= 0:
             self.__health = 0
             self.__alive = False
+        # diff = max(0, self.__health - other.get_dmg())
+        # self.set_health(diff)
+        # if self.__health <= 0:
+        #     self.__health = 0
+        #     self.__alive = False
 
 
 

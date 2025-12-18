@@ -389,7 +389,7 @@ def main():
             for enemy in enemies:
                 offset = (enemy.rect.left - bullet.rect.left, enemy.rect.top - bullet.rect.top)
                 if bullet.mask.overlap(enemy.mask, offset):
-                    enemy.hit(rifle)
+                    enemy.hit(bullet.damage) # was (rifle)
                     bullet.existing = False
 
             if not bullet.existing:
@@ -397,7 +397,7 @@ def main():
             bullet_x, bullet_y = bullet.get_cords()
             screen_pos = cam1.apply(bullet_x, bullet_y)
             screen.blit(bullet_spr, screen_pos)
-            
+
 
         # player enforce bounds
         def enforce_bounds(player, other):

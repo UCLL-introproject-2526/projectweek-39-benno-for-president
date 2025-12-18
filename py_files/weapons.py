@@ -48,7 +48,7 @@ class Bullet:
     def __init__(self, start_pos, target_pos, weapon, spawn_time):
         self.pos = pygame.Vector2(start_pos)
         self.__name = f"bullet_{spawn_time}"
-        self.bullet = weapon.get_dmg()
+        self.damage = weapon.get_dmg()
         
         direction = pygame.Vector2(target_pos) - self.pos   #berekent vector
         if direction.length() > 0:                          # berekent norm van vecctor
