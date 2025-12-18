@@ -263,6 +263,7 @@ def main():
                 (mouse_world_x, mouse_world_y), rifle, world_time)
             
             bullets.append(bullet)
+            shoot_sound.play()  
             rifle.reset_timer()
             rifle_timer = 0
 
