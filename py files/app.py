@@ -137,7 +137,7 @@ def main():
     while run:
         # variables
         dt = clock.tick(60) / 1000
-        world_time += 1/60
+        #world_time += 1/60
         rifle_timer += dt
         if rifle_timer >= rifle.get_rpm():
             rifle_delay = True
@@ -328,7 +328,6 @@ def main():
             (player1.get_cords()[0]+ (20 * cam1.zoom), player1.get_cords()[1]+(20 * cam1.zoom)), 
             (mouse_world_x, mouse_world_y), rifle, world_time)
             bullets.append(bullet)
-            rifle.reset_timer()
             rifle_timer = 0
 
             # last_cursor = pygame.mouse.get_pos()
@@ -519,15 +518,14 @@ def main():
         # draw bullets
         for bullet in bullets[:]: 
             bullet.update(dt)
-            
-            if not bullet.existing:
-                bullets.remove(bullet
                                
             bullet_x,bullet_y = bullet.get_cords()
             screen_pos = cam1.apply(bullet_x, bullet_y)
             screen.blit(crosshair, screen_pos)
+
+            if not bullet.existing:
+                bullets.remove(bullet)
     
-)
 
 
         # enforce map bounds

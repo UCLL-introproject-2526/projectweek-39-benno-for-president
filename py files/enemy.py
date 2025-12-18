@@ -71,3 +71,4 @@ class Enemy:
         if self.__health <= 0:
             self.__alive = False
             
+
