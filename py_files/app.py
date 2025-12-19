@@ -662,9 +662,16 @@ def main():
 
         
         # UI handling
-        screen.blit(heart1, (cam1.width//2 + 75, cam1.height - 771))
-        screen.blit(heart2, (cam1.width//2 + 50, cam1.height - 770))
-        screen.blit(heart3, (cam1.width//2  + 25, cam1.height - 770))
+        if Player_lives == 3:
+            screen.blit(heart1, (cam1.width//2 + 75, cam1.height - 771))
+            screen.blit(heart2, (cam1.width//2 + 50, cam1.height - 770))
+            screen.blit(heart3, (cam1.width//2  + 25, cam1.height - 770))
+        elif Player_lives == 2:
+            screen.blit(heart2, (cam1.width//2 + 50, cam1.height - 770))
+            screen.blit(heart3, (cam1.width//2  + 25, cam1.height - 770))
+        elif Player_lives == 1:
+            screen.blit(heart3, (cam1.width//2  + 25, cam1.height - 770))
+
 
         
         #dood
