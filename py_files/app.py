@@ -211,55 +211,65 @@ def main():
 
     P1H1 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p11.png").convert_alpha()
     P1H1 = pygame.transform.smoothscale(P1H1, (400,125))
+#     P1H1 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p11.png").convert_alpha()
+#     P1H1 = pygame.transform.smoothscale(P1H1, (200,50))
 
     P1H2 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p12.png").convert_alpha()
     P1H2 = pygame.transform.smoothscale(P1H2, (400,125))
+#     P1H2 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p12.png").convert_alpha()
+#     P1H2 = pygame.transform.smoothscale(P1H2, (200,50))
 
     P1H3 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p13.png").convert_alpha()
     P1H3 = pygame.transform.smoothscale(P1H3, (400,125))
+#     P1H3 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p13.png").convert_alpha()
+#     P1H3 = pygame.transform.smoothscale(P1H3, (200,50))
 
     P1H4 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p14.png").convert_alpha()
     P1H4 = pygame.transform.smoothscale(P1H4, (400,125))
+#     P1H4 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p14.png").convert_alpha()
+#     P1H4 = pygame.transform.smoothscale(P1H4, (200,50))
 
     P1H5 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p15.png").convert_alpha()
     P1H5 = pygame.transform.smoothscale(P1H5, (400,125))
+#     P1H5 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p15.png").convert_alpha()
+#     P1H5 = pygame.transform.smoothscale(P1H5, (200,50))
 
-    P1H6 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p16.png").convert_alpha()
-    P1H6 = pygame.transform.smoothscale(P1H6, (400,125))
+#     P1H6 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p16.png").convert_alpha()
+#     P1H6 = pygame.transform.smoothscale(P1H6, (200,50))
 
-# -------------
+# # -------------
 
-    P2H1 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p11.png").convert_alpha()
-    P2H1 = pygame.transform.smoothscale(P2H1, (400,125))
+#     P2H1 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p11.png").convert_alpha()
+#     P2H1 = pygame.transform.smoothscale(P2H1, (200,50))
 
-    P2H2 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p12.png").convert_alpha()
-    P2H2 = pygame.transform.smoothscale(P2H2, (400,125))
+#     P2H2 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p12.png").convert_alpha()
+#     P2H2 = pygame.transform.smoothscale(P2H2, (200,50))
 
-    P2H3 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p13.png").convert_alpha()
-    P2H3 = pygame.transform.smoothscale(P2H3, (400,125))
+#     P2H3 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p13.png").convert_alpha()
+#     P2H3 = pygame.transform.smoothscale(P2H3, (200,50))
 
-    P2H4 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p14.png").convert_alpha()
-    P2H4 = pygame.transform.smoothscale(P2H4, (400,125))
+#     P2H4 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p14.png").convert_alpha()
+#     P2H4 = pygame.transform.smoothscale(P2H4, (200,50))
 
-    P2H5 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p15.png").convert_alpha()
-    P2H5 = pygame.transform.smoothscale(P2H5, (400,125))
+#     P2H5 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p15.png").convert_alpha()
+#     P2H5 = pygame.transform.smoothscale(P2H5, (200,50))
 
-    P2H6 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p16.png").convert_alpha()
-    P2H6 = pygame.transform.smoothscale(P2H6, (400,125))
+#     P2H6 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p16.png").convert_alpha()
+#     P2H6 = pygame.transform.smoothscale(P2H6, (200,50))
 
-    P1_bars = [P1H1,
-               P1H2,
-               P1H3,
-               P1H4,
-               P1H5,
-               P1H6]
+    # #P1_bars = [P1H1,
+    #            P1H2,
+    #            P1H3,
+    #            P1H4,
+    #            P1H5,
+    #            P1H6]
     
-    P2_bars = [P2H1,
-               P2H2,
-               P2H3,
-               P2H4,
-               P2H5,
-               P2H6]
+    # #P2_bars = [P2H1,
+    #            P2H2,
+    #            P2H3,
+    #            P2H4,
+    #            P2H5,
+    #            P2H6]
 
     
 
@@ -561,7 +571,7 @@ def main():
                 player1.hit(enemy.get_dmg())  # of whatever je functie heet
                 print(player1.get_health())
                 hit_timer1 = 0
-                #1_bars.pop(0)
+                #P1_bars.pop(0)
 
             # collision met player 2
             if enemy_rect.colliderect(p2_hitbox) and hit_timer2 > 1:
@@ -726,8 +736,8 @@ def main():
         elif Player_lives == 1:
             screen.blit(heart3, (cam1.width//2  + 25, cam1.height - 770))
 
-        # screen.blit(P1_bars[0], (cam1.width //2 + 75, cam1.height //2 - 550))
-        # screen.blit(P2_bars[0],(cam1.width //2 + 25, cam1.height //2 - 550))
+        # screen.blit(P1_bars[0], (cam1.width //2 - 700, cam1.height //2 - 700))
+        # screen.blit(P2_bars[0],(cam1.width //2 + 700, cam1.height //2 - 700))
 
 
         
@@ -988,12 +998,12 @@ def main():
                         player2.set_health(50)
                         first = True
                            
-                        P2_bars = [P2H1,
-               P2H2,
-               P2H3,
-               P2H4,
-               P2H5,
-               P2H6]
+            #             P2_bars = [P2H1,
+            #    P2H2,
+            #    P2H3,
+            #    P2H4,
+            #    P2H5,
+            #    P2H6]
 
         if player1.alive() == False:
             if first == True:
@@ -1014,12 +1024,12 @@ def main():
                         player1.set_cords(player2.get_cords())
                         player1.set_health(50)
                         first = True
-                        P1_bars = [P1H1,
-                                    P1H2,
-               P1H3,
-               P1H4,
-               P1H5,
-               P1H6]
+            #             P1_bars = [P1H1,
+            #                         P1H2,
+            #    P1H3,
+            #    P1H4,
+            #    P1H5,
+            #    P1H6]
 
 
 
