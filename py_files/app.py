@@ -479,8 +479,10 @@ def main():
                 sprite = pygame.transform.scale(sprite, (new_width, new_height))
             screen.blit(sprite, screen_pos)
 
-        draw_player(player1, player1fronts, player1backs, movingfront, movingback, face_me1, current_frame_fr, current_frame_ba)
-        draw_player(player2, player2fronts, player2backs, movingfront2, movingback2, face_me2, current_frame_fr2, current_frame_ba2)
+        if player1.alive():
+            draw_player(player1, player1fronts, player1backs, movingfront, movingback, face_me1, current_frame_fr, current_frame_ba)
+        if player2.alive():
+            draw_player(player2, player2fronts, player2backs, movingfront2, movingback2, face_me2, current_frame_fr2, current_frame_ba2)
 
 
         # player enforce bounds
