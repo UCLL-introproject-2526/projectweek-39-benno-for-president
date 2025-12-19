@@ -232,6 +232,8 @@ def main():
     face_me1 = False
     face_me2 = False
     face_me_enemy = False
+    hit_timer1 = 0
+    hit_timer2 = 0
     wave_timer = 0
 
     enemies = []
@@ -259,7 +261,8 @@ def main():
         else: 
             rifle_delay = False
         wave_timer += 1 * dt
-        hit_timer += 1 * dt
+        hit_timer1 += 1 * dt
+        hit_timer2 += 1 * dt
 
 
         # camera update
@@ -538,16 +541,16 @@ def main():
             )
 
             # collision met player 1
-            if enemy_rect.colliderect(p1_hitbox) and hit_timer > 1:
+            if enemy_rect.colliderect(p1_hitbox) and hit_timer1 > 1:
                 player1.hit(enemy.get_dmg())  # of whatever je functie heet
                 print(player1.get_health())
-                hit_timer = 0
+                hit_timer1 = 0
 
             # collision met player 2
-            if enemy_rect.colliderect(p2_hitbox) and hit_timer > 1:
+            if enemy_rect.colliderect(p2_hitbox) and hit_timer2 > 1:
                 player2.hit(int(enemy.get_dmg()))
                 print(player2.get_health())
-                hit_timer = 0
+                hit_timer2 = 0
 
             draw_enemy(
                 enemy,
@@ -647,7 +650,7 @@ def main():
 
         if enemy_count != 0 and wave_start and spawned == False and current_wave > 2: 
             for i in range(0, enemy_count):
-                enemy = Enemy((spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100)), 40, 20, 20)
+                enemy = Enemy((spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100)), 40, 20, 10)
                 #enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100))
                 print(enemy.get_cords())
                 enemies.append(enemy)
