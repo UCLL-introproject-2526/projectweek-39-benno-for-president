@@ -2,6 +2,7 @@ import pygame
 from math import sqrt
 from player import Player1, Player2
 from random import randint, choice
+from player import Player1, Player2
 
 class Enemy:
     def __init__(self, cords, speed, health, dmg):
@@ -56,6 +57,11 @@ class Enemy:
         return self.__alive
 
     def get_closest(self, player1, player2):
+        if player1.alive() == False:
+            return player2
+        if player2.alive() == False:
+            return player1
+
         if sqrt((self.__x - player1.get_cords()[0])**2 + (self.__y - player1.get_cords()[1])**2) < sqrt((self.__x - player2.get_cords()[0])**2 + (self.__y - player2.get_cords()[1])**2):
             return player1
         else:
