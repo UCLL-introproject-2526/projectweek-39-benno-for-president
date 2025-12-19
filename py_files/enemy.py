@@ -70,15 +70,15 @@ class Enemy:
     def move(self, player, dt): # player vinden met get closest en dt megeven
         
         # Bepaal richting
-        dx = player.get_cords()[0] - self.__x
-        dy = player.get_cords()[1] - self.__y
+        self.dx = player.get_cords()[0] - self.__x
+        self.dy = player.get_cords()[1] - self.__y
 
-        distance = sqrt(dx**2 + dy**2)
+        distance = sqrt(self.dx**2 + self.dy**2)
 
 
         if distance != 0:
-            self.__x += (dx / distance) * self.__speed * dt
-            self.__y += (dy / distance) * self.__speed * dt
+            self.__x += (self.dx / distance) * self.__speed * dt
+            self.__y += (self.dy / distance) * self.__speed * dt
         self.rect.center = (int(self.__x), int(self.__y))
 
 

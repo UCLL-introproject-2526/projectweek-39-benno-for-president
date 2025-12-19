@@ -233,11 +233,11 @@ def main():
     current_frame_ba2 = 0
     current_frame_fr_enemy = 0
     current_frame_ba_enemy = 0
-    animation_speed = 0.2
-    enemy_animation_speed = 0.4
+    animation_speed = 0.18
+    enemy_animation_speed = 0.35
     face_me1 = False
     face_me2 = False
-    face_me_enemy = False
+    face_me_enemy = True
     hit_timer1 = 0
     hit_timer2 = 0
 
@@ -462,10 +462,10 @@ def main():
             if y > cam1.map_height - 160: y = cam1.map_height - 160
 
             # player seperation
-            if x > other.get_cords()[0] + 950: x = other.get_cords()[0] + 950
-            if x < other.get_cords()[0] - 950: x = other.get_cords()[0] - 950
-            if y > other.get_cords()[1] + 950: y = other.get_cords()[1] + 950
-            if y < other.get_cords()[1] - 950: y = other.get_cords()[1] - 950
+            if x > other.get_cords()[0] + 800: x = other.get_cords()[0] + 800
+            if x < other.get_cords()[0] - 800: x = other.get_cords()[0] - 800
+            if y > other.get_cords()[1] + 800: y = other.get_cords()[1] + 800
+            if y < other.get_cords()[1] - 800: y = other.get_cords()[1] - 800
 
             player.set_cords([x, y])
 
@@ -609,8 +609,11 @@ def main():
         for enemy in enemies:
             target = enemy.get_closest(player1, player2)
             enemy.move(target, dt)
+            face_me_enemy = enemy.dy >= 0
+            movingfront_enemy = enemy.dy > 0
+            movingback_enemy = enemy.dy < 0
             draw_enemy(enemy, enemy_fronts, enemy_backs, movingfront_enemy, movingback_enemy, face_me_enemy, current_frame_fr_enemy, current_frame_ba_enemy)
-        
+
 
 
         # animation handlers
@@ -641,6 +644,21 @@ def main():
                 current_frame_ba2 = 0
         else:
             current_frame_ba2 = 0
+            
+        # enemy animations
+        if movingfront_enemy:
+            current_frame_fr_enemy += enemy_animation_speed
+            if current_frame_fr_enemy >= len(enemy_fronts):
+                current_frame_fr_enemy = 0
+        else:
+            current_frame_fr_enemy = 0
+
+        if movingback_enemy:
+            current_frame_ba_enemy += enemy_animation_speed
+            if current_frame_ba_enemy >= len(enemy_backs):
+                current_frame_ba_enemy = 0
+        else:
+            current_frame_ba_enemy = 0
 
         
         # UI handling
