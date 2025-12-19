@@ -236,6 +236,8 @@ def main():
     face_me1 = False
     face_me2 = False
     face_me_enemy = False
+    hit_timer1 = 0
+    hit_timer2 = 0
 
     # writing function
     def write(text, text_col, x, y):
@@ -260,7 +262,8 @@ def main():
         else: 
             rifle_delay = False
         wave_timer += 1 * dt
-        hit_timer += 1 * dt
+        hit_timer1 += 1 * dt
+        hit_timer2 += 1 * dt
 
 
         # camera update
@@ -505,16 +508,16 @@ def main():
             )
 
             # collision met player 1
-            if enemy_rect.colliderect(p1_hitbox) and hit_timer < 1:
+            if enemy_rect.colliderect(p1_hitbox) and hit_timer1 > 1:
                 player1.hit(enemy.get_dmg())  # of whatever je functie heet
-                print(player2.get_health())
-                hit_timer = 0
+                print(player1.get_health())
+                hit_timer1 = 0
 
             # collision met player 2
-            if enemy_rect.colliderect(p2_hitbox) and hit_timer < 1:
+            if enemy_rect.colliderect(p2_hitbox) and hit_timer2 > 1:
                 player2.hit(int(enemy.get_dmg()))
-                print(player1.get_health())
-                hit_timer = 0
+                print(player2.get_health())
+                hit_timer2 = 0
 
             draw_enemy(
                 enemy,
@@ -606,7 +609,6 @@ def main():
 
 
         #enemy movement
-
         for enemy in enemies:
             target = enemy.get_closest(player1, player2)
             enemy.move(target, dt)
