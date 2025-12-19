@@ -325,7 +325,7 @@ def main():
                 wave_timer = 0
                 wave_state = "START_TEXT"
         elif wave_state == "START_TEXT":
-            write(f"Wave {current_wave} starting", (0,0,0), cam1.width // 2, cam1.height // 2 - 300)
+            write(f"Wave {current_wave} starting", (0,0,0), cam1.width // 2 - 111, cam1.height // 2 - 300)
 
             if wave_timer >= wave_start_text:
                 wave_timer = 0
@@ -336,17 +336,13 @@ def main():
                  # enemy spawn loop
                 if enemy_count != 0 and wave_state == "RUNNING" and spawned == False and current_wave <= 2: 
                     for i in range(enemy_count):
-                        enemy = Enemy((spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100)), 40, 20, 20)
-                        #enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100))
-                        print(enemy.get_cords())
+                        enemy = Enemy((spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100)), 40, 20, 10)
                         enemies.append(enemy)
                     spawned = True
 
                 if enemy_count != 0 and  wave_state == "RUNNING" and spawned == False and current_wave > 2: 
                     for i in range(enemy_count):
-                        enemy = Enemy((spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100)), 40, 20, 20)
-                        #enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100))
-                        print(enemy.get_cords())
+                        enemy = Enemy((spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100)), 40, 20, 10)
                         enemies.append(enemy)
                     spawned = True
 
@@ -356,7 +352,7 @@ def main():
                 wave_state = "END_TEXT"
 
         elif wave_state == "END_TEXT":
-            write(f"Wave {current_wave} cleared!", (255,255,255), cam1.width // 2, cam1.height // 2 - 300)
+            write(f"Wave {current_wave} cleared!", (0,0,0), cam1.width // 2 - 111, cam1.height // 2 - 300)
 
             if wave_timer >= wave_end_text:
                 wave_timer = 0
@@ -715,7 +711,7 @@ def main():
                     # Assets:
                     click_sound_path: str = "sounds/sound_effects/click_sound.mp3",
                     menu_img_path: str = "sprites/gui/try_again_button.png",
-                    menu_hover_path: str = "sprites/gui/image.png",
+                    menu_hover_path: str = "sprites/gui/image.png.webp",
                     quit_img_path: str = "sprites/gui/closegame_button.png",
                     quit_hover_path: str = "sprites/gui/closegame_button_hover.png",
                     # Layout:
