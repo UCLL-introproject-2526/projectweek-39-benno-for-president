@@ -209,6 +209,58 @@ def main():
     p2img6 = pygame.image.load("sprites/player2/kerstmanfront2.png").convert_alpha()
     p2img6 = pygame.transform.smoothscale(p2img6, (75,75))
 
+    P1H1 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p11.png").convert_alpha()
+    P1H1 = pygame.transform.smoothscale(P1H1, (200,50))
+
+    P1H2 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p12.png").convert_alpha()
+    P1H2 = pygame.transform.smoothscale(P1H2, (200,50))
+
+    P1H3 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p13.png").convert_alpha()
+    P1H3 = pygame.transform.smoothscale(P1H3, (200,50))
+
+    P1H4 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p14.png").convert_alpha()
+    P1H4 = pygame.transform.smoothscale(P1H4, (200,50))
+
+    P1H5 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p15.png").convert_alpha()
+    P1H5 = pygame.transform.smoothscale(P1H5, (200,50))
+
+    P1H6 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p16.png").convert_alpha()
+    P1H6 = pygame.transform.smoothscale(P1H6, (200,50))
+
+# -------------
+
+    P2H1 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p11.png").convert_alpha()
+    P2H1 = pygame.transform.smoothscale(P2H1, (200,50))
+
+    P2H2 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p12.png").convert_alpha()
+    P2H2 = pygame.transform.smoothscale(P2H2, (200,50))
+
+    P2H3 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p13.png").convert_alpha()
+    P2H3 = pygame.transform.smoothscale(P2H3, (200,50))
+
+    P2H4 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p14.png").convert_alpha()
+    P2H4 = pygame.transform.smoothscale(P2H4, (200,50))
+
+    P2H5 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p15.png").convert_alpha()
+    P2H5 = pygame.transform.smoothscale(P2H5, (200,50))
+
+    P2H6 = pygame.image.load("sprites/hearts/health_bar_p1/l0_health_bar_p16.png").convert_alpha()
+    P2H6 = pygame.transform.smoothscale(P2H6, (200,50))
+
+    P1_bars = [P1H1,
+               P1H2,
+               P1H3,
+               P1H4,
+               P1H5,
+               P1H6]
+    
+    P2_bars = [P2H1,
+               P2H2,
+               P2H3,
+               P2H4,
+               P2H5,
+               P2H6]
+
     
 
     player1fronts = [p1img1,
