@@ -91,7 +91,7 @@ def main():
     wave_timer = 0
     current_wave = 1
     wave_state = 'IDLE'
-    wave_pause_time = 12
+    wave_pause_time = 5
     wave_start_text = 3.5
     wave_end_text = 3.5
     enemies = []
@@ -561,14 +561,14 @@ def main():
                 player1.hit(enemy.get_dmg())  # of whatever je functie heet
                 print(player1.get_health())
                 hit_timer1 = 0
-                P1_bars.pop(0)
+                #1_bars.pop(0)
 
             # collision met player 2
             if enemy_rect.colliderect(p2_hitbox) and hit_timer2 > 1:
                 player2.hit(int(enemy.get_dmg()))
                 print(player2.get_health())
                 hit_timer2 = 0
-                P2_bars.pop(0)
+                #P2_bars.pop(0)
 
             draw_enemy(
                 enemy,
@@ -726,8 +726,8 @@ def main():
         elif Player_lives == 1:
             screen.blit(heart3, (cam1.width//2  + 25, cam1.height - 770))
 
-        screen.blit(P1_bars[0], (cam1.width //2 + 75, cam1.height //2 - 550))
-        screen.blit(P2_bars[0],(cam1.width //2 + 25, cam1.height //2 - 550))
+        # screen.blit(P1_bars[0], (cam1.width //2 + 75, cam1.height //2 - 550))
+        # screen.blit(P2_bars[0],(cam1.width //2 + 25, cam1.height //2 - 550))
 
 
         
