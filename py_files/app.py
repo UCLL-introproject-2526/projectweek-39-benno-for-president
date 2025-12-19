@@ -561,12 +561,14 @@ def main():
                 player1.hit(enemy.get_dmg())  # of whatever je functie heet
                 print(player1.get_health())
                 hit_timer1 = 0
+                P1_bars.pop(0)
 
             # collision met player 2
             if enemy_rect.colliderect(p2_hitbox) and hit_timer2 > 1:
                 player2.hit(int(enemy.get_dmg()))
                 print(player2.get_health())
                 hit_timer2 = 0
+                P2_bars.pop(0)
 
             draw_enemy(
                 enemy,
@@ -723,6 +725,9 @@ def main():
             screen.blit(heart3, (cam1.width//2  + 25, cam1.height - 770))
         elif Player_lives == 1:
             screen.blit(heart3, (cam1.width//2  + 25, cam1.height - 770))
+
+        screen.blit(P1_bars[0], (cam1.width //2 - 700, cam1.height //2 - 700))
+        screen.blit(P2_bars[0],(cam1.width //2 + 700, cam1.height //2 - 700))
 
 
         
@@ -961,6 +966,7 @@ def main():
 
 
         # LIVES
+ 
         
         if player2.alive() == False:
             if first == True:
@@ -981,6 +987,13 @@ def main():
                         player2.set_cords(player1.get_cords())
                         player2.set_health(50)
                         first = True
+                           
+                        P2_bars = [P2H1,
+               P2H2,
+               P2H3,
+               P2H4,
+               P2H5,
+               P2H6]
 
         if player1.alive() == False:
             if first == True:
@@ -1001,6 +1014,12 @@ def main():
                         player1.set_cords(player2.get_cords())
                         player1.set_health(50)
                         first = True
+                        P1_bars = [P1H1,
+                                    P1H2,
+               P1H3,
+               P1H4,
+               P1H5,
+               P1H6]
 
 
 
