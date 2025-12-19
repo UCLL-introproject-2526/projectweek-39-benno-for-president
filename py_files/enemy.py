@@ -10,18 +10,20 @@ class Enemy:
         self.set_health(health)
         self.set_dmg(dmg)
         self.image = pygame.image.load('sprites/enemies/enemy_front1.png')
+        self.image = pygame.transform.smoothscale(self.image, (60,60))
         self.__alive = True
-        self.rect = self.image.get_rect(topleft=self.get_cords())
-        self.mask = pygame.mask.from_surface(self.image)
-        self.rect.topleft = self.get_cords()
+        self.rect = self.image.get_rect()
+        #self.mask = pygame.mask.from_surface(self.image)
+        self.rect.center = self.get_cords()
 
     def get_cords(self):
         return [self.__x, self.__y]
 
     def set_cords(self, list_inp):
-        if not isinstance(list_inp, list):
-            if not  len(list_inp) == 2:
-                raise ValueError("enemy cords cannot be empty and has to be list")
+        def set_cords(self, list_inp):
+            self.__x = float(list_inp[0])
+            self.__y = float(list_inp[1])
+            raise ValueError("enemy cords cannot be empty and has to be list")
             
         self.__x = list_inp[0]
         self.__y = list_inp[1]
@@ -67,20 +69,19 @@ class Enemy:
 
         distance = sqrt(dx**2 + dy**2)
 
+
         if distance != 0:
             self.__x += (dx / distance) * self.__speed * dt
             self.__y += (dy / distance) * self.__speed * dt
-        self.rect.topleft = (self.__x, self.__y)
+        self.rect.center = (int(self.__x), int(self.__y))
+
+
 
     def hit(self, damage):
-        diff = max(0, self.__health - damage)
-        self.set_health(diff)
-    
+        self.__health -= damage
         if self.__health <= 0:
             self.__health = 0
             self.__alive = False
-
-        
         # diff = max(0, self.__health - other.get_dmg())
         # self.set_health(diff)
         # if self.__health <= 0:
@@ -89,47 +90,56 @@ class Enemy:
 
 
 
-    def spawn_location(self, p1, p2, small_border, big_border):
-        x_min = min(p1[0], p2[0])
-        x_max = max(p1[0], p2[0])
-        y_min = min(p1[1], p2[1])
-        y_max = max(p1[1], p2[1])
+    
 
-        inner = pygame.Rect(
-            x_min - small_border,
-            y_min - small_border,
-            (x_max - x_min) + 2 * small_border,
-            (y_max - y_min) + 2 * small_border
-        )
 
-        outer = pygame.Rect(
-            x_min - big_border,
-            y_min - big_border,
-            (x_max - x_min) + 2 * big_border,
-            (y_max - y_min) + 2 * big_border
-        )
 
-        zones = ["top", "bottom", "left", "right"]
-        side = choice(zones)
 
-        if side == "top":
-            x = randint(outer.left, outer.right)
-            y = randint(outer.top, inner.top)
 
-        elif side == "bottom":
-            x = randint(outer.left, outer.right)
-            y = randint(inner.bottom, outer.bottom)
 
-        elif side == "left":
-            x = randint(outer.left, inner.left)
-            y = randint(inner.top, inner.bottom)
+    def draw_enemy(enemy, front_sprites, back_sprites, moving_front, moving_back, face_front, current_frame_fr, current_frame_ba):
+        pos = enemy.get_cords()
+        screen_pos = cam1.apply(pos[0], pos[1])
+        
+        # Kies de juiste sprite
+        if moving_front:
+            sprite = front_sprites[int(current_frame_fr)]
+        elif moving_back:
+            sprite = back_sprites[int(current_frame_ba)]
+        else:
+            sprite = front_sprites[0] if face_front else back_sprites[0]
+        
+        # Schaal de sprite voor display
+        if cam1.zoom != 1.0:
+            new_width = int(60 * cam1.zoom)
+            new_height = int(60 * cam1.zoom)
+            sprite = pygame.transform.scale(sprite, (new_width, new_height))
+        
+        # UPDATE: Schaal ook de rect en mask van de enemy!
+        # Dit is cruciaal voor correcte collision
+        enemy.scaled_rect = sprite.get_rect(center=screen_pos)
+        enemy.scaled_mask = pygame.mask.from_surface(sprite)
+        
+        screen.blit(sprite, screen_pos)
 
-        else:  # right
-            x = randint(inner.right, outer.right)
-            y = randint(inner.top, inner.bottom)
+    def get_scaled_rect(self, zoom=1.0):
+        #"""Retourneer een rect die geschaald is met de zoom factor"""
+        # Basis grootte is 60x60 (zoals in __init__)
+        scaled_width = int(60 * zoom)
+        scaled_height = int(60 * zoom)
+        
+        # Maak nieuwe rect gecentreerd op enemy positie
+        scaled_rect = pygame.Rect(0, 0, scaled_width, scaled_height)
+        scaled_rect.center = self.get_cords()
+        return scaled_rect
 
-        return (int(x), int(y))
-
+    def get_scaled_mask(self, zoom=1.0):
+        #"""Retourneer een mask voor de geschaalde sprite"""
+        # Laad de sprite opnieuw en schaal
+        image = pygame.image.load('sprites/enemies/enemy_front1.png')
+        scaled_size = int(60 * zoom)
+        image = pygame.transform.smoothscale(image, (scaled_size, scaled_size))
+        return pygame.mask.from_surface(image)
 
     # def spawn_location(self, p1, p2, small_border, big_border): #p1 & p2 moet playerX.get_cords() zijn en min border = min afstand van player dat ze spawnen & big border is max
     #     x_min = min(p1[0], p2[0])
@@ -165,4 +175,3 @@ class Enemy:
     #         y = randint(outer.top, outer.bottom)
 
     #     return x, y
-

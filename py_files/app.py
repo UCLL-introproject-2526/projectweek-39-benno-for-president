@@ -6,7 +6,60 @@ from player import Player1,Player2
 from weapons import Weapon, Bullet
 from enemy import Enemy
 from camera import Camera
+from random import randint, choice
 
+def get_player_hitbox(player, cam, base_size=35, offset=(0, 0)):
+    
+
+    size = int(base_size * cam.zoom)
+    rect = pygame.Rect(0, 0, size, size)
+    rect.center = (
+        int(player.get_cords()[0] + offset[0]),
+        int(player.get_cords()[1] + offset[1])
+    )
+    return rect
+
+
+def spawn_location(p1, p2, small_border, big_border):
+        x_min = min(p1[0], p2[0])
+        x_max = max(p1[0], p2[0])
+        y_min = min(p1[1], p2[1])
+        y_max = max(p1[1], p2[1])
+
+        inner = pygame.Rect(
+            x_min - small_border,
+            y_min - small_border,
+            (x_max - x_min) + 2 * small_border,
+            (y_max - y_min) + 2 * small_border
+        )
+
+        outer = pygame.Rect(
+            x_min - big_border,
+            y_min - big_border,
+            (x_max - x_min) + 2 * big_border,
+            (y_max - y_min) + 2 * big_border
+        )
+
+        zones = ["top", "bottom", "left", "right"]
+        side = choice(zones)
+
+        if side == "top":
+            x = randint(outer.left, outer.right)
+            y = randint(outer.top, inner.top)
+
+        elif side == "bottom":
+            x = randint(outer.left, outer.right)
+            y = randint(inner.bottom, outer.bottom)
+
+        elif side == "left":
+            x = randint(outer.left, inner.left)
+            y = randint(inner.top, inner.bottom)
+
+        else:  # right
+            x = randint(inner.right, outer.right)
+            y = randint(inner.top, inner.bottom)
+
+        return (int(x), int(y))
 
 def main():
     # pygame setup
@@ -336,29 +389,6 @@ def main():
                     wave_timer = 0
                     wave_start = False
 
-
-        # enemy spawn loop
-        if enemy_count != 0 and wave_start and spawned == False and current_wave <= 2: 
-            for i in range(0, enemy_count):
-                enemy = Enemy((0, 0), 80, 20, 10)
-                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100))
-                print(enemy.get_cords())
-                enemies.append(enemy)
-            spawned = True
-
-        if enemy_count != 0 and wave_start and spawned == False and current_wave > 2: 
-            for i in range(0, enemy_count):
-                enemy = Enemy((0, 0), 80, 20, 10)
-                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 500, 900))
-                print(enemy.get_cords())
-                enemies.append(enemy)
-            spawned = True
-
-        for enemy in enemies:
-            target = enemy.get_closest(player1, player2)
-            enemy.move(target, dt)
-            draw_enemy(enemy, enemy_fronts, enemy_backs, movingfront_enemy, movingback_enemy, face_me_enemy, current_frame_fr_enemy, current_frame_ba_enemy)
-        
         
 
 
@@ -485,28 +515,141 @@ def main():
             rifle_timer = 0
 
 
-
-   # bullet updating
-    for bullet in bullets[:]:  # Gebruik een kopie om veilig te kunnen verwijderen
-        bullet.update(dt)
-        for enemy in enemies[:]:  # Ook hier kopie voor veilige verwijdering
-            # Bereken de offset correct: relatieve positie van vijand t.o.v. kogel
-            offset_x = enemy.rect.x - bullet.rect.x
-            offset_y = enemy.rect.y - bullet.rect.y
-            
-            if bullet.mask.overlap(enemy.mask, (offset_x, offset_y)):
-                enemy.hit(bullet.damage)
-                
-                # Verwijder de kogel bij treffer
-                if bullet in bullets:
-                    bullets.remove(bullet)
-                break  # Stop met controleren voor deze kogel
+        #player hitboxes
+        p1_hitbox = get_player_hitbox(player1, cam1, base_size=35, offset=(37, 45))   
         
-        # Kogel tekenen alleen als het nog bestaat
-        if bullet.existing:
-            bullet_x, bullet_y = bullet.get_cords()
-            screen_pos = cam1.apply(bullet_x, bullet_y)
-            screen.blit(bullet_spr, screen_pos)
+
+        p2_hitbox = get_player_hitbox(player2, cam1, base_size=35, offset=(37, 45))
+
+        for enemy in enemies[:]:
+            target = enemy.get_closest(player1, player2)
+            enemy.move(target, dt)
+
+            # enemy hitbox
+            e_size = int(25 * cam1.zoom)
+            enemy_rect = pygame.Rect(0, 0, e_size, e_size)
+            enemy_rect.center = (
+                int(enemy.get_cords()[0] + 15),
+                int(enemy.get_cords()[1] + 30)
+            )
+
+            # collision met player 1
+            if enemy_rect.colliderect(p1_hitbox):
+                player1.hit(enemy.get_dmg())  # of whatever je functie heet
+                print(player2.get_health())
+
+            # collision met player 2
+            if enemy_rect.colliderect(p2_hitbox):
+                player2.hit(int(enemy.get_dmg()))
+                print(player1.get_health())
+
+            draw_enemy(
+                enemy,
+                enemy_fronts,
+                enemy_backs,
+                movingfront_enemy,
+                movingback_enemy,
+                face_me_enemy,
+                current_frame_fr_enemy,
+                current_frame_ba_enemy
+            )
+
+
+        # bullet updating
+        # bullet updating loop
+        for bullet in bullets[:]:
+            bullet.update(dt)
+            
+            # 1. Maak een TIJDELIJKE kogel-hitbox die meeschaalt
+            # Stel de originele kogel is 10 pixels breed
+            b_size = max(2, int(6 * cam1.zoom)) 
+            scaled_bullet_rect = pygame.Rect(0, 0, b_size, b_size)
+            scaled_bullet_rect.center = (int(bullet.pos.x), int(bullet.pos.y))
+
+            base_enemy_size = 25
+            e_size = int(base_enemy_size * cam1.zoom) 
+
+            for enemy in enemies[:]:
+                # 3. Maak een TIJDELIJKE vijand-hitbox
+                collision_rect = pygame.Rect(0, 0, e_size, e_size)
+                collision_rect.center = (int(enemy.get_cords()[0]+ 15), int(enemy.get_cords()[1]+ 30))
+
+                # 4. Check collision tussen de twee GESCHAALDE rects
+                if scaled_bullet_rect.colliderect(collision_rect):
+                    enemy.hit(bullet.damage)
+                    bullet.existing = False
+                    if not enemy.get_alive():
+                        enemies.remove(enemy)
+                        enemy_count -= 1
+                    break 
+
+            if not bullet.existing:
+                if bullet in bullets: bullets.remove(bullet)
+                continue
+
+            # Tekenen
+            bullet_screen_pos = cam1.apply(bullet.pos.x, bullet.pos.y)
+            screen.blit(bullet_spr, bullet_screen_pos)
+        # for bullet in bullets[:]: 
+        #     bullet.update(dt) # Hier wordt self.pos bijgewerkt
+        #     scaled_size = int(60 * cam1.zoom)
+        #     # Check of de kogel nog in de lijst zit en bestaat
+        #     if not bullet.existing:
+        #         if bullet in bullets: bullets.remove(bullet)
+        #         continue
+
+        #     # Gebruik de functie die je al hebt gemaakt om de error te voorkomen
+        #     # Dit haalt de [x, y] lijst op uit je kogel klasse
+        #     cords = bullet.get_cords() 
+        #     current_bullet_x = cords[0]
+        #     current_bullet_y = cords[1]
+
+        #     # Collision check
+        #     for enemy in enemies:
+        #         scaled_rect = pygame.Rect(0, 0, scaled_size, scaled_size)
+                
+        #         if bullet.rect.colliderect(enemy.rect):
+        #             enemy.hit(bullet.damage)
+        #             bullet.existing = False
+        #             if not enemy.get_alive():
+        #                 enemies.remove(enemy)
+        #                 enemy_count -= 1
+        #             break
+
+        #     if not bullet.existing:
+        #         if bullet in bullets: bullets.remove(bullet)
+        #         continue
+
+        #     # TEKENEN
+        #     # We gebruiken hier de lokale variabelen die we net gevuld hebben
+        #     bullet_screen_pos = cam1.apply(current_bullet_x, current_bullet_y)
+        #     screen.blit(bullet_spr, bullet_screen_pos)
+
+  
+
+
+        # enemy spawn loop
+        if enemy_count != 0 and wave_start and spawned == False and current_wave <= 2: 
+            for i in range(0, enemy_count):
+                enemy = Enemy((spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100)), 80, 20, 20)
+                #enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100))
+                print(enemy.get_cords())
+                enemies.append(enemy)
+            spawned = True
+
+        if enemy_count != 0 and wave_start and spawned == False and current_wave > 2: 
+            for i in range(0, enemy_count):
+                enemy = Enemy((spawn_location(player1.get_cords(), player2.get_cords())), 80, 20, 10)
+                #enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 500, 900))
+                print(enemy.get_cords())
+                enemies.append(enemy)
+            spawned = True
+
+        for enemy in enemies:
+            target = enemy.get_closest(player1, player2)
+            enemy.move(target, dt)
+            draw_enemy(enemy, enemy_fronts, enemy_backs, movingfront_enemy, movingback_enemy, face_me_enemy, current_frame_fr_enemy, current_frame_ba_enemy)
+        
 
 
         # animation handlers

@@ -1,7 +1,5 @@
-import pygame
-
 class Camera:
-    def __init__(self, width, height, map_size):
+    def init(self, width, height, map_size):
         self.width = width
         self.height = height
         self.camera = pygame.Rect(0, 0, width, height)
@@ -14,10 +12,10 @@ class Camera:
 
 
     def dist(self, a, b):
-        return ((a[0]-b[0])**2 + (a[1]-b[1])**2) ** 0.5
+        return ((a[0]-b[0])2 + (a[1]-b[1])2) ** 0.5
 
     def update(self, player1, player2): 
-        
+
         p1 = player1.get_cords()
         p2 = player2.get_cords()
 
@@ -40,23 +38,23 @@ class Camera:
         view_w = self.width / self.zoom
         view_h = self.height / self.zoom
 
-        
+
         center_x = (p1[0] + p2[0]) / 2
         center_y = (p1[1] + p2[1]) / 2
 
         self.offset.x = center_x - view_w / 2
         self.offset.y = center_y - view_h / 2
 
-    
+
         self.offset.x = max(0, min(self.offset.x, self.map_width - view_w))
         self.offset.y = max(0, min(self.offset.y, self.map_height - view_h))
 
 
 
 
-    def apply(self, x, y):         
+    def apply(self, x, y):
         return (int((x - self.offset.x) * self.zoom), int((y- self.offset.y) * self.zoom))
-    
+
     def screen_to_world(self, sx, sy):
         return (
             sx / self.zoom + self.offset.x,
@@ -64,4 +62,3 @@ class Camera:
             )
     #screen_pos = cam.world_to_screen(*placed_object.pos)
     #screen.blit(sprite, screen_pos)
-

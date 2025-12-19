@@ -23,6 +23,7 @@ class Player1:
     def get_health(self):
         return self.__health
     
+    
     def set_health(self, value):
         if value < 0:
             raise ValueError("enemy health cannot be negative")
@@ -30,6 +31,11 @@ class Player1:
         if self.__health <= 0:
             self.__alive = False
 
+    def hit(self, damage):
+        health = self.get_health() - int(damage)
+        self.set_health = health
+        return health
+    
     def get_cords(self):
         return [self.__x, self.__y]
     
@@ -64,13 +70,18 @@ class Player2:
     
     def get_health(self):
         return self.__health
-    
+
     def set_health(self, value):
         if value < 0:
             raise ValueError("enemy health cannot be negative")
         self.__health = value
         if self.__health <= 0:
             self.__alive = False
+    
+    def hit(self, damage):
+        health = self.get_health() - int(damage)
+        self.set_health = health
+        return health
 
     def get_cords(self):
         return [self.__x, self.__y]
