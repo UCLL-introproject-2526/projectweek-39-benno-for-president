@@ -86,10 +86,15 @@ def main():
     enemy_count = 0
     ui_switch = 0
     bullets = []
-    spawned = False
-    current_wave_finished = True
-    wave_start = False
+    wave_state = "waiting"
     hit_timer = 0
+    wave_timer = 0
+    current_wave = 1
+    wave_state = 'IDLE'
+    wave_pause_time = 12
+    wave_start_text = 3.5
+    wave_end_text = 3.5
+    enemies = []
 
 
     # sound:
@@ -231,9 +236,6 @@ def main():
     face_me1 = False
     face_me2 = False
     face_me_enemy = False
-    wave_timer = 0
-
-    enemies = []
 
     # writing function
     def write(text, text_col, x, y):
@@ -258,7 +260,6 @@ def main():
         else: 
             rifle_delay = False
         wave_timer += 1 * dt
-        current_wave = 1
         hit_timer += 1 * dt
 
 
@@ -315,84 +316,49 @@ def main():
 
         # enemy looping
         # wave checking
-        if enemy_count == 0 and wave_timer >= 15 and current_wave_finished:
 
-            if current_wave == 1:
-                if wave_start == False:
-                    Title_timer = 0
-                    wave_start = True
-                    spawned = False
-                    
-                wave_sound.play()
+        if wave_state == "IDLE":
+            if wave_timer >= wave_pause_time:
+                wave_timer = 0
+                wave_state = "START_TEXT"
+        elif wave_state == "START_TEXT":
+            write(f"Wave {current_wave} starting", (0,0,0), cam1.width // 2, cam1.height // 2 - 300)
+
+            if wave_timer >= wave_start_text:
+                wave_timer = 0
+                wave_state = "RUNNING"
+                enemy_count = int((current_wave ** 1.4) + 10)
+                spawned = False
                 
-                if Title_timer <= 3:
-                    write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
-                    Title_timer += 1 * dt
-                else:
-                    enemy_count = 0
-                    # enemy_count = (current_wave + 2 )** 2
-                    current_wave_finished = False
-                    
+                 # enemy spawn loop
+                if enemy_count != 0 and wave_state == "RUNNING" and spawned == False and current_wave <= 2: 
+                    for i in range(enemy_count):
+                        enemy = Enemy((spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100)), 40, 20, 20)
+                        #enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100))
+                        print(enemy.get_cords())
+                        enemies.append(enemy)
+                    spawned = True
 
+                if enemy_count != 0 and  wave_state == "RUNNING" and spawned == False and current_wave > 2: 
+                    for i in range(enemy_count):
+                        enemy = Enemy((spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100)), 40, 20, 20)
+                        #enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100))
+                        print(enemy.get_cords())
+                        enemies.append(enemy)
+                    spawned = True
 
-                    if enemy_count == 0 and not current_wave_finished:
-                        current_wave += 1
-                        wave_timer = 0
-                        wave_start = False
-                        current_wave_finished = True
+        elif wave_state == "RUNNING":
+            if len(enemies) == 0:
+                wave_timer = 0
+                wave_state = "END_TEXT"
 
+        elif wave_state == "END_TEXT":
+            write(f"Wave {current_wave} cleared!", (255,255,255), cam1.width // 2, cam1.height // 2 - 300)
 
-            elif current_wave == 2:
-                if wave_start == False:
-                    Title_timer = 0
-                    wave_start = True
-                    spawned = False
-                    
-                wave_sound.play()
-                
-                if Title_timer <= 3:
-                    write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
-                    Title_timer += 1 * dt
-                else:
-                    enemy_count = 0
-                    # enemy_count = (current_wave + 2 )** 2
-                    current_wave_finished = False
-                    
-
-
-                    if enemy_count == 0 and not current_wave_finished:
-                        current_wave += 1
-                        wave_timer = 0
-                        wave_start = False
-                        current_wave_finished = True
-
-
-            elif current_wave > 2:
-                if wave_start == False:
-                    Title_timer = 0
-                    wave_start = True
-                    spawned = False
-                    
-                wave_sound.play()
-                
-                if Title_timer <= 3:
-                    write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
-                    Title_timer += 1 * dt
-                else:
-                    enemy_count = 0
-                    # enemy_count = (current_wave + 2 )** 2
-                    current_wave_finished = False
-                    
-
-
-                    if enemy_count == 0 and not current_wave_finished:
-                        current_wave += 1
-                        wave_timer = 0
-                        wave_start = False
-                        current_wave_finished = True
-
-
-        
+            if wave_timer >= wave_end_text:
+                wave_timer = 0
+                current_wave += 1
+                wave_state = "IDLE"
 
 
         # player movement
@@ -585,11 +551,12 @@ def main():
                 if scaled_bullet_rect.colliderect(collision_rect):
                     enemy.hit(bullet.damage)
                     bullet.existing = False
-                    if not enemy.get_alive():
+                    if enemy.get_alive() == False:
                         enemies.remove(enemy)
                         enemy_count -= 1
                         print(enemy_count)
-                    break 
+                    #
+                    # break 
 
             if not bullet.existing:
                 if bullet in bullets: bullets.remove(bullet)
@@ -637,22 +604,8 @@ def main():
   
 
 
-        # enemy spawn loop
-        if enemy_count != 0 and wave_start and spawned == False and current_wave <= 2: 
-            for i in range(0, enemy_count):
-                enemy = Enemy((spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100)), 40, 20, 20)
-                #enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100))
-                print(enemy.get_cords())
-                enemies.append(enemy)
-            spawned = True
 
-        if enemy_count != 0 and wave_start and spawned == False and current_wave > 2: 
-            for i in range(0, enemy_count):
-                enemy = Enemy((spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100)), 40, 20, 20)
-                #enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100))
-                print(enemy.get_cords())
-                enemies.append(enemy)
-            spawned = True
+        #enemy movement
 
         for enemy in enemies:
             target = enemy.get_closest(player1, player2)
