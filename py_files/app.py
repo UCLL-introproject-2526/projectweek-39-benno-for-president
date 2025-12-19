@@ -90,6 +90,7 @@ def main():
     current_wave_finished = True
     wave_start = False
     hit_timer = 0
+    current_wave = 1
 
 
     # sound:
@@ -258,7 +259,6 @@ def main():
         else: 
             rifle_delay = False
         wave_timer += 1 * dt
-        current_wave = 1
         hit_timer += 1 * dt
 
 
@@ -329,8 +329,7 @@ def main():
                     write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
                     Title_timer += 1 * dt
                 else:
-                    enemy_count = 0
-                    # enemy_count = (current_wave + 2 )** 2
+                    enemy_count = (current_wave + 2 )** 2
                     current_wave_finished = False
                     
 
@@ -539,15 +538,15 @@ def main():
             )
 
             # collision met player 1
-            if enemy_rect.colliderect(p1_hitbox) and hit_timer < 1:
+            if enemy_rect.colliderect(p1_hitbox) and hit_timer > 1:
                 player1.hit(enemy.get_dmg())  # of whatever je functie heet
-                print(player2.get_health())
+                print(player1.get_health())
                 hit_timer = 0
 
             # collision met player 2
-            if enemy_rect.colliderect(p2_hitbox) and hit_timer < 1:
+            if enemy_rect.colliderect(p2_hitbox) and hit_timer > 1:
                 player2.hit(int(enemy.get_dmg()))
-                print(player1.get_health())
+                print(player2.get_health())
                 hit_timer = 0
 
             draw_enemy(
