@@ -6,6 +6,9 @@ from player import Player1,Player2
 from weapons import Weapon, Bullet
 from enemy import Enemy
 from camera import Camera
+from defeat_screen import EndScreen
+from victory_screen import VictoryScreen
+
 
 
 def main():
@@ -15,6 +18,11 @@ def main():
     pygame.display.set_caption("Benno vs Santa")
     screen_size = (1024,834)
     screen = pygame.display.set_mode(screen_size)
+    endscreen = EndScreen(screen, 1024, 834, restart_script="app.py")
+    victory_screen = VictoryScreen(screen, 1024, 834)
+
+
+
     clock = pygame.time.Clock()
     pygame.scrap.init()
     pygame.font.init()
@@ -92,8 +100,11 @@ def main():
     enemy_backs = [E4,
                    E5,
                    E6]
+    
+    Benno_Boss_Controler = pygame.image.load('sprites/enemies/bigbenno_final_boss.png').convert_alpha()
+    Benno_Boss_Controler = pygame.transform.smoothscale(Benno_Boss_Controler, (150,150))
 
-
+    # ------------
     player1_sprite_back = pygame.image.load('sprites/player1/dikkeelfsprite5.png').convert_alpha()
     player1_sprite_back = pygame.transform.smoothscale(player1_sprite_back, (75,75))
 
@@ -106,7 +117,7 @@ def main():
     player2_sprite_front = pygame.image.load('sprites/player2/kerstmanfront1.png').convert_alpha()
     player2_sprite_front = pygame.transform.smoothscale(player2_sprite_front, (75,75))
     
-    # ------------
+
     p1img1 = pygame.image.load("sprites/player1/dikkeelfsprite1.png").convert_alpha()
     p1img1 = pygame.transform.smoothscale(p1img1, (75,75))
     
@@ -187,6 +198,9 @@ def main():
     
     # game loop
     run = True
+    
+
+
     while run:
         # variables
         dt = clock.tick(60) / 1000  # seconden per frame
@@ -201,10 +215,10 @@ def main():
         wave_timer += 1 * dt
         current_wave = 1
 
-        # camera update
+            # camera update
         cam1.update(player1, player2)
 
-        # animation initialisatie
+            # animation initialisatie
         movingfront_enemy = False
         movingback_enemy = False
         movingfront = movingback = False
@@ -394,6 +408,7 @@ def main():
             bullet_x, bullet_y = bullet.get_cords()
             screen_pos = cam1.apply(bullet_x, bullet_y)
             screen.blit(bullet_spr, screen_pos)
+            
 
         # player enforce bounds
         def enforce_bounds(player, other):
@@ -427,7 +442,7 @@ def main():
                 # wave start en enemy count terug verhogen
                 Title_timer = 0
                 wave_sound.play()
-                while Title_timer <= 7:
+                while Title_timer <= 3:
                     dt2 = clock.tick(60) / 1000
                     write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
                     Title_timer += 1 * dt2
@@ -438,7 +453,7 @@ def main():
                             run = False
 
                     pygame.display.flip()
-                print("out of loop")
+                
                 spawned = False
                 enemy_count = (current_wave + 2 )** 2
 
@@ -453,7 +468,7 @@ def main():
                 # wave start en enemy count terug verhogen
                 Title_timer = 0
                 wave_sound.play()
-                while Title_timer <= 7:
+                while Title_timer <= 3:
                     dt2 = clock.tick(60) / 1000
                     write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
                     Title_timer += 1 * dt2
@@ -464,7 +479,7 @@ def main():
                             run = False
 
                     pygame.display.flip()
-                print("out of loop")
+                
                 spawned = False
                 enemy_count = (current_wave + 2 )** 2
 
@@ -474,11 +489,45 @@ def main():
                     wave_start = False
 
 
+            elif current_wave > 2:
+                wave_start = True
+                # wave start en enemy count terug verhogen
+                Title_timer = 0
+                wave_sound.play()
+                while Title_timer <= 3:
+                    dt2 = clock.tick(60) / 1000
+                    write(f"wave {current_wave} starting", (0,0,0), cam1.width // 2 - 100, cam1.height // 2 - 300)
+                    Title_timer += 1 * dt2
+
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            Title_timer = 7
+                            run = False
+
+                    pygame.display.flip()
+
+                spawned = False
+                enemy_count = ((current_wave + random.randint(1,5) )// 2) ** 2
+
+                if enemy_count == 0:
+                    current_wave += 1
+                    wave_timer = 0
+                    wave_start = False
+
+
         # enemy spawn loop
-        if enemy_count != 0 and wave_start and spawned == False: 
+        if enemy_count != 0 and wave_start and spawned == False and current_wave <= 2: 
             for i in range(0, enemy_count):
                 enemy = Enemy((0, 0), 80, 20, 10)
-                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 1400, 500))
+                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 700, 1100))
+                print(enemy.get_cords())
+                enemies.append(enemy)
+            spawned = True
+
+        if enemy_count != 0 and wave_start and spawned == False and current_wave > 2: 
+            for i in range(0, enemy_count):
+                enemy = Enemy((0, 0), 80, 20, 10)
+                enemy.set_cords(enemy.spawn_location(player1.get_cords(), player2.get_cords(), 500, 900))
                 print(enemy.get_cords())
                 enemies.append(enemy)
             spawned = True
@@ -493,6 +542,10 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+
+            endscreen.handle_event(event)
+            victory_screen.handle_event(event)
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     fullscreen = not fullscreen
@@ -501,7 +554,27 @@ def main():
                     else:
                         screen = pygame.display.set_mode((1024, 834))
 
+                    
+
                     pygame.mouse.set_visible(False)
+
+        # GAME OVER screen
+        if (not player1.alive() or not player2.alive()) and not endscreen.active:
+             endscreen.show()
+
+        if endscreen.active:
+            endscreen.draw()
+            pygame.display.flip()
+            continue
+
+        if victory_screen.active:
+            victory_screen.update(dt)   # nodig voor credits scroll
+            victory_screen.draw()
+            pygame.display.flip()
+            continue
+       
+
+
 
         # draw crosshair
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -509,12 +582,18 @@ def main():
         crosshair_rect = crosshair.get_rect(center=(mouse_x, mouse_y))
         screen.blit(crosshair, crosshair_rect)
 
+        # force dood na 5 sec voor test
+        #if world_time > 5 and not endscreen.active:
+            #player1.set_health(0)
+        if world_time > 3 and not victory_screen.active:
+            victory_screen.show()
 
+        endscreen.draw()
         pygame.display.flip()
 
-
-
-main()
+#vr restart game
+if __name__ == "__main__":
+    main()
 
 
 

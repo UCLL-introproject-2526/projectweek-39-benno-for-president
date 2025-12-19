@@ -13,6 +13,7 @@ class Enemy:
         self.__alive = True
         self.rect = self.image.get_rect(topleft=self.get_cords())
         self.mask = pygame.mask.from_surface(self.image)
+        self.rect.topleft = self.get_cords()
 
     def get_cords(self):
         return [self.__x, self.__y]
@@ -75,52 +76,51 @@ class Enemy:
         diff = max(0, self.__health - other.get_dmg())
         self.set_health(diff)
         if self.__health <= 0:
+            self.__health = 0
             self.__alive = False
 
 
 
-def spawn_location(self, p1, p2, small_border, big_border):
-    x_min = min(p1[0], p2[0])
-    x_max = max(p1[0], p2[0])
-    y_min = min(p1[1], p2[1])
-    y_max = max(p1[1], p2[1])
+    def spawn_location(self, p1, p2, small_border, big_border):
+        x_min = min(p1[0], p2[0])
+        x_max = max(p1[0], p2[0])
+        y_min = min(p1[1], p2[1])
+        y_max = max(p1[1], p2[1])
 
-    inner = pygame.Rect(
-        x_min - small_border,
-        y_min - small_border,
-        (x_max - x_min) + 2 * small_border,
-        (y_max - y_min) + 2 * small_border
-    )
+        inner = pygame.Rect(
+            x_min - small_border,
+            y_min - small_border,
+            (x_max - x_min) + 2 * small_border,
+            (y_max - y_min) + 2 * small_border
+        )
 
-    outer = pygame.Rect(
-        x_min - big_border,
-        y_min - big_border,
-        (x_max - x_min) + 2 * big_border,
-        (y_max - y_min) + 2 * big_border
-    )
+        outer = pygame.Rect(
+            x_min - big_border,
+            y_min - big_border,
+            (x_max - x_min) + 2 * big_border,
+            (y_max - y_min) + 2 * big_border
+        )
 
-    zones = ["top", "bottom", "left", "right"]
-    side = choice(zones)
+        zones = ["top", "bottom", "left", "right"]
+        side = choice(zones)
 
-    if side == "top":
-        x = randint(outer.left, outer.right)
-        y = randint(outer.top, inner.top)
+        if side == "top":
+            x = randint(outer.left, outer.right)
+            y = randint(outer.top, inner.top)
 
-    elif side == "bottom":
-        x = randint(outer.left, outer.right)
-        y = randint(inner.bottom, outer.bottom)
+        elif side == "bottom":
+            x = randint(outer.left, outer.right)
+            y = randint(inner.bottom, outer.bottom)
 
-    elif side == "left":
-        x = randint(outer.left, inner.left)
-        y = randint(inner.top, inner.bottom)
+        elif side == "left":
+            x = randint(outer.left, inner.left)
+            y = randint(inner.top, inner.bottom)
 
-    else:  # right
-        x = randint(inner.right, outer.right)
-        y = randint(inner.top, inner.bottom)
+        else:  # right
+            x = randint(inner.right, outer.right)
+            y = randint(inner.top, inner.bottom)
 
-    return int(x), int(y)
-
-
+        return (int(x), int(y))
 
 
     # def spawn_location(self, p1, p2, small_border, big_border): #p1 & p2 moet playerX.get_cords() zijn en min border = min afstand van player dat ze spawnen & big border is max
