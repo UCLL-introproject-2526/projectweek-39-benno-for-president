@@ -11,6 +11,9 @@ class Player1:
     
     def alive(self):
         return self.__alive
+    
+    def set_alive(self, value):
+        self.__alive = value
 
     def get_speed(self):
         return self.__speed
@@ -57,6 +60,9 @@ class Player2:
 
     def alive(self):
         return self.__alive
+    
+    def set_alive(self, value):
+        self.__alive = value
 
     def get_speed(self):
         return self.__speed

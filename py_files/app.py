@@ -95,6 +95,8 @@ def main():
     wave_start_text = 3.5
     wave_end_text = 3.5
     enemies = []
+    count_tijdtijd = 1
+    first = True
 
 
     # sound:
@@ -264,7 +266,6 @@ def main():
         wave_timer += 1 * dt
         hit_timer1 += 1 * dt
         hit_timer2 += 1 * dt
-
 
         # camera update
         cam1.update(player1, player2)
@@ -882,7 +883,51 @@ def main():
                 pygame.quit()
 
 
+        # LIVES
         
+        if player2.alive() == False:
+            if first == True:
+                count_tijdtijd = 0
+                first = False
+                Player_lives -= 1
+            else:
+
+                if Player_lives < 1:
+                    write(f"HMMM,out of lives! {Player_lives}", (0,0,0), cam1.width // 2 - 111, cam1.height // 2 - 300)
+                else:
+                
+                    if count_tijdtijd <= 3:
+                        write(f"ooof, you died!", (0,0,0), cam1.width // 2 - 111, cam1.height // 2 - 300)
+                        count_tijdtijd += 1 * dt
+                    else:
+                        player2.set_alive(True)
+                        player2.set_cords(player1.get_cords())
+                        player2.set_health(50)
+                        first = True
+
+        if player1.alive() == False:
+            if first == True:
+                count_tijdtijd = 0
+                first = False
+                Player_lives -= 1
+            else:
+                    
+                if Player_lives < 1:
+                    write(f"HMMM,out of lives!", (0,0,0), cam1.width // 2 - 111, cam1.height // 2 - 300)
+                else:
+                
+                    if count_tijdtijd < 3:
+                        write(f"ooof, you died!", (0,0,0), cam1.width // 2 - 111, cam1.height // 2 - 300)
+                        count_tijdtijd += 1 * dt
+                    else:
+                        player1.set_alive(True)
+                        player1.set_cords(player2.get_cords())
+                        player1.set_health(50)
+                        first = True
+
+
+
+
         # event handlers
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
