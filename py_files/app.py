@@ -286,6 +286,7 @@ def main():
                 new_width = int(60 * cam1.zoom)
                 new_height = int(60 * cam1.zoom)
                 sprite = pygame.transform.scale(sprite, (new_width, new_height))
+                
             screen.blit(sprite, screen_pos)
 
 

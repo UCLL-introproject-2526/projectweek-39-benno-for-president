@@ -1,5 +1,7 @@
+import pygame
+
 class Camera:
-    def init(self, width, height, map_size):
+    def __init__(self, width, height, map_size):
         self.width = width
         self.height = height
         self.camera = pygame.Rect(0, 0, width, height)
@@ -12,7 +14,7 @@ class Camera:
 
 
     def dist(self, a, b):
-        return ((a[0]-b[0])2 + (a[1]-b[1])2) ** 0.5
+        return ((a[0]-b[0])**2 + (a[1]-b[1])**2) ** 0.5
 
     def update(self, player1, player2): 
 
